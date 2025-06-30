@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Play, Zap, Compass } from 'lucide-react'
+import { X, Sparkles, Play, Zap, Compass, AlertCircle } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 import { WelcomeModal } from './WelcomeModal'
 
@@ -29,63 +29,111 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+  const [connectionStatus, setConnectionStatus] = useState<string>('connecting')
+  const [debugInfo, setDebugInfo] = useState<string[]>([])
+
+  const addDebugInfo = (info: string) => {
+    const timestamp = new Date().toLocaleTimeString()
+    setDebugInfo(prev => [`[${timestamp}] ${info}`, ...prev.slice(0, 9)])
+    console.log(`[DEBUG] ${info}`)
+  }
 
   useEffect(() => {
+    addDebugInfo('Initializing Supabase connection...')
+    
+    // Test Supabase connection
+    const testConnection = async () => {
+      try {
+        const { data, error } = await supabase.from('_test').select('*').limit(1)
+        if (error && error.code !== 'PGRST116') { // PGRST116 is "table not found" which is expected
+          addDebugInfo(`Supabase connection error: ${error.message}`)
+        } else {
+          addDebugInfo('Supabase connection successful')
+        }
+      } catch (err) {
+        addDebugInfo(`Connection test failed: ${err}`)
+      }
+    }
+    
+    testConnection()
+
     // Subscribe to Spline events via Supabase Realtime
     const channel = supabase.channel('spline-events')
     
     channel
       .on('broadcast', { event: 'spline_interaction' }, (payload) => {
         const event = payload.payload as SplineEvent
+        
+        addDebugInfo('=== NEW SPLINE EVENT ===')
+        addDebugInfo(`Event type: ${event.type}`)
+        addDebugInfo(`Payload: ${JSON.stringify(event.payload)}`)
+        
         console.log('=== SPLINE EVENT RECEIVED ===')
         console.log('Full event:', JSON.stringify(event, null, 2))
         console.log('Event type:', event.type)
         console.log('Event payload:', JSON.stringify(event.payload, null, 2))
         
-        setEvents(prev => [event, ...prev.slice(0, 9)]) // Keep last 10 events
+        setEvents(prev => [event, ...prev.slice(0, 9)])
         setCurrentEvent(event)
         
         // Close both modals first
         setShowLifeGoalsModal(false)
         setShowWelcomeModal(false)
         
-        // Use explicit modalType if available, otherwise fall back to other checks
+        // Detailed analysis of the payload
+        const number = event.payload.number
         const modalType = event.payload.modalType
-        console.log('Modal type from payload:', modalType)
+        const action = event.payload.action
+        
+        addDebugInfo(`Analyzing: number=${number} (${typeof number}), modalType=${modalType}, action=${action}`)
+        
+        // Decision logic with detailed logging
+        let shouldShowWelcome = false
+        let shouldShowGoals = false
         
         if (modalType === 'welcome') {
-          console.log('🚢 TRIGGERING WELCOME MODAL')
-          setTimeout(() => setShowWelcomeModal(true), 100)
+          shouldShowWelcome = true
+          addDebugInfo('Decision: Welcome modal (explicit modalType)')
         } else if (modalType === 'goals') {
-          console.log('🎯 TRIGGERING GOALS MODAL')
-          setTimeout(() => setShowLifeGoalsModal(true), 100)
+          shouldShowGoals = true
+          addDebugInfo('Decision: Goals modal (explicit modalType)')
+        } else if (number === 2) {
+          shouldShowWelcome = true
+          addDebugInfo('Decision: Welcome modal (number === 2)')
+        } else if (number === 1) {
+          shouldShowGoals = true
+          addDebugInfo('Decision: Goals modal (number === 1)')
+        } else if (action === 'second_api') {
+          shouldShowWelcome = true
+          addDebugInfo('Decision: Welcome modal (action === second_api)')
+        } else if (action === 'first_api') {
+          shouldShowGoals = true
+          addDebugInfo('Decision: Goals modal (action === first_api)')
         } else {
-          // Fallback logic
-          console.log('Using fallback logic...')
-          console.log('- number:', event.payload.number, typeof event.payload.number)
-          console.log('- action:', event.payload.action)
-          console.log('- event type:', event.type)
-          
-          if (event.payload.number === 2 || 
-              event.type === 'spline_welcome_trigger' ||
-              event.payload.action === 'second_api') {
-            console.log('🚢 FALLBACK: TRIGGERING WELCOME MODAL')
-            setTimeout(() => setShowWelcomeModal(true), 100)
-          } else {
-            console.log('🎯 FALLBACK: TRIGGERING GOALS MODAL')
-            setTimeout(() => setShowLifeGoalsModal(true), 100)
-          }
+          shouldShowGoals = true
+          addDebugInfo('Decision: Goals modal (default fallback)')
         }
         
-        // Call the optional callback
+        // Execute the decision
+        if (shouldShowWelcome) {
+          addDebugInfo('🚢 SHOWING WELCOME MODAL')
+          setTimeout(() => setShowWelcomeModal(true), 100)
+        } else if (shouldShowGoals) {
+          addDebugInfo('🎯 SHOWING GOALS MODAL')
+          setTimeout(() => setShowLifeGoalsModal(true), 100)
+        }
+        
         onEventReceived?.(event)
       })
       .subscribe((status) => {
         console.log('Realtime subscription status:', status)
+        setConnectionStatus(status)
+        addDebugInfo(`Realtime status: ${status}`)
       })
 
     return () => {
       supabase.removeChannel(channel)
+      addDebugInfo('Disconnected from Supabase')
     }
   }, [onEventReceived])
 
@@ -96,7 +144,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   const handleLifeGoalSubmit = (goal: string) => {
     console.log('Life goal submitted:', goal)
-    // Here you could save the goal to Supabase database
+    addDebugInfo(`Life goal submitted: ${goal.substring(0, 50)}...`)
   }
 
   const getEventIcon = (event: SplineEvent) => {
@@ -132,7 +180,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
         onClose={() => {
-          console.log('Closing life goals modal')
+          addDebugInfo('Closing life goals modal')
           setShowLifeGoalsModal(false)
         }}
         onSubmit={handleLifeGoalSubmit}
@@ -142,17 +190,36 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       <WelcomeModal
         isOpen={showWelcomeModal}
         onClose={() => {
-          console.log('Closing welcome modal')
+          addDebugInfo('Closing welcome modal')
           setShowWelcomeModal(false)
         }}
       />
 
-      {/* Debug Panel - shows current modal states */}
-      <div className="fixed bottom-4 left-4 z-40 bg-black/80 text-white p-3 rounded-lg text-xs font-mono">
-        <div>Goals Modal: {showLifeGoalsModal ? '✅' : '❌'}</div>
-        <div>Welcome Modal: {showWelcomeModal ? '✅' : '❌'}</div>
-        <div>Last Event: {currentEvent?.payload?.number || 'none'}</div>
-        <div>Modal Type: {currentEvent?.payload?.modalType || 'none'}</div>
+      {/* Enhanced Debug Panel */}
+      <div className="fixed bottom-4 left-4 z-50 bg-black/90 text-white p-4 rounded-lg text-xs font-mono max-w-md">
+        <div className="flex items-center gap-2 mb-2">
+          <AlertCircle className="w-4 h-4" />
+          <span className="font-bold">Debug Panel</span>
+        </div>
+        
+        <div className="space-y-1 mb-3">
+          <div>Connection: <span className={connectionStatus === 'SUBSCRIBED' ? 'text-green-400' : 'text-yellow-400'}>{connectionStatus}</span></div>
+          <div>Goals Modal: {showLifeGoalsModal ? '✅ OPEN' : '❌ CLOSED'}</div>
+          <div>Welcome Modal: {showWelcomeModal ? '✅ OPEN' : '❌ CLOSED'}</div>
+          <div>Last Event Number: {currentEvent?.payload?.number || 'none'}</div>
+          <div>Modal Type: {currentEvent?.payload?.modalType || 'none'}</div>
+        </div>
+        
+        <div className="border-t border-white/20 pt-2">
+          <div className="font-bold mb-1">Recent Debug Log:</div>
+          <div className="max-h-32 overflow-y-auto space-y-1">
+            {debugInfo.slice(0, 8).map((info, index) => (
+              <div key={index} className="text-xs text-white/80 break-words">
+                {info}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Event History Panel */}
