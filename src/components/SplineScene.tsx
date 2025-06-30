@@ -6,6 +6,13 @@ export const SplineScene: React.FC = () => {
     console.error('Spline scene error:', error);
   };
 
+  const handleSplineLoad = () => {
+    console.log('Spline scene loaded successfully');
+  };
+
+  // Add cache busting parameter to force reload
+  const splineUrl = `https://prod.spline.design/edOeRvrcuWyGaD41/scene.splinecode?v=${Date.now()}`;
+
   return (
     <div className="fixed inset-0 z-0">
       <Suspense fallback={
@@ -14,8 +21,9 @@ export const SplineScene: React.FC = () => {
         </div>
       }>
         <Spline
-          scene="https://prod.spline.design/edOeRvrcuWyGaD41/scene.splinecode"
+          scene={splineUrl}
           style={{ width: '100%', height: '100%' }}
+          onLoad={handleSplineLoad}
           onError={handleSplineError}
         />
       </Suspense>
