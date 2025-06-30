@@ -55,9 +55,9 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                           before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
                           before:pointer-events-none overflow-hidden">
             
-            {/* Header */}
+            {/* Header without logo */}
             <div className="text-center mb-10 relative z-10">
-              <h2 className="text-[42px] font-playfair font-normal text-white mb-6 leading-tight">
+              <h2 className="text-[45px] font-playfair font-normal text-white mb-6 leading-tight">
                 What kind of person do you want to become?
               </h2>
               
