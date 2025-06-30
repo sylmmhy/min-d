@@ -283,7 +283,6 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
                     {JSON.stringify(currentEvent.payload, null, 2)}
                   </pre>
                 </div>
-              </div>
               )}
             </div>
 
