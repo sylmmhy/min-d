@@ -57,12 +57,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
           <button
             onClick={toggleMic}
             className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                        backdrop-blur-md border shadow-lg relative overflow-hidden group ${
+                        backdrop-blur-md border shadow-lg relative overflow-visible group ${
               micEnabled 
                 ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
                 : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
             }`}
-            title={micEnabled ? 'Turn off microphone' : 'Turn on microphone'}
           >
             {/* Button inner glow */}
             <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
@@ -76,18 +75,28 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             ) : (
               <MicOff className="w-5 h-5 text-white relative z-10" />
             )}
+
+            {/* Custom hover tooltip */}
+            <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 
+                           bg-gradient-to-br from-white/15 via-white/10 to-white/8 
+                           backdrop-blur-md border border-white/25 rounded-md 
+                           text-sm text-white/90 whitespace-nowrap 
+                           opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                           transition-all duration-300 z-20
+                           shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]">
+              {micEnabled ? 'Turn off microphone' : 'Turn on microphone'}
+            </span>
           </button>
 
           {/* Video Control */}
           <button
             onClick={toggleVideo}
             className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                        backdrop-blur-md border shadow-lg relative overflow-hidden group ${
+                        backdrop-blur-md border shadow-lg relative overflow-visible group ${
               videoEnabled 
                 ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
                 : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
             }`}
-            title={videoEnabled ? 'Turn off video' : 'Turn on video'}
           >
             {/* Button inner glow */}
             <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
@@ -101,18 +110,28 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             ) : (
               <VideoOff className="w-5 h-5 text-white relative z-10" />
             )}
+
+            {/* Custom hover tooltip */}
+            <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 
+                           bg-gradient-to-br from-white/15 via-white/10 to-white/8 
+                           backdrop-blur-md border border-white/25 rounded-md 
+                           text-sm text-white/90 whitespace-nowrap 
+                           opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                           transition-all duration-300 z-20
+                           shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]">
+              {videoEnabled ? 'Turn off camera' : 'Turn on camera'}
+            </span>
           </button>
 
           {/* Screen Share Control */}
           <button
             onClick={toggleScreenShare}
             className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                        backdrop-blur-md border shadow-lg relative overflow-hidden group ${
+                        backdrop-blur-md border shadow-lg relative overflow-visible group ${
               screenShareEnabled 
                 ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
                 : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
             }`}
-            title={screenShareEnabled ? 'Stop screen sharing' : 'Start screen sharing'}
           >
             {/* Button inner glow */}
             <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
@@ -126,6 +145,17 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             ) : (
               <MonitorOff className="w-5 h-5 text-white relative z-10" />
             )}
+
+            {/* Custom hover tooltip */}
+            <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 
+                           bg-gradient-to-br from-white/15 via-white/10 to-white/8 
+                           backdrop-blur-md border border-white/25 rounded-md 
+                           text-sm text-white/90 whitespace-nowrap 
+                           opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                           transition-all duration-300 z-20
+                           shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]">
+              {screenShareEnabled ? 'Stop screen sharing' : 'Start screen sharing'}
+            </span>
           </button>
 
           {/* End Voyage Button with custom hover tooltip */}
@@ -144,7 +174,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             <Anchor className="w-5 h-5 text-white relative z-10" />
             
             {/* Custom hover tooltip */}
-            <span className="absolute top-full left-0 mt-2 px-3 py-1.5 
+            <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-1.5 
                            bg-gradient-to-br from-white/15 via-white/10 to-white/8 
                            backdrop-blur-md border border-white/25 rounded-md 
                            text-sm text-white/90 whitespace-nowrap 
