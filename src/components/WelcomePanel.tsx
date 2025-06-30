@@ -99,17 +99,19 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-[480px]" 
-         style={{ left: '65%', transform: 'translateX(-50%) translateY(-50%)' }}>
-      {/* Enhanced glass panel with Apple-inspired depth */}
-      <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
-                      backdrop-blur-2xl border border-white/25 rounded-3xl p-10
-                      shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
-                      before:absolute before:inset-0 before:rounded-3xl 
-                      before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
-                      before:pointer-events-none overflow-hidden transition-all duration-500">
+    // Fullscreen glass overlay - covers entire screen
+    <div className="fixed inset-0 z-40 bg-gradient-to-br from-white/12 via-white/8 to-white/6 
+                    backdrop-blur-2xl border-0
+                    shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
+                    before:absolute before:inset-0 
+                    before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
+                    before:pointer-events-none overflow-hidden transition-all duration-500">
+      
+      {/* Content container - positioned where the original panel was */}
+      <div className="absolute top-1/2 transform -translate-y-1/2 w-[480px]" 
+           style={{ left: '65%', transform: 'translateX(-50%) translateY(-50%)' }}>
         
-        <div className="relative z-10">
+        <div className="relative z-10 p-10">
           {currentStep === 'welcome' && (
             <div className="space-y-6">
               {/* Header - left aligned title, 32px */}
