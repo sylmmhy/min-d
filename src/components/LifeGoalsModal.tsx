@@ -66,11 +66,11 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
           
           <h2 className={`${designSystem.typography.sizes['3xl']} ${designSystem.typography.fonts.heading} 
                          ${designSystem.typography.weights.semibold} ${designSystem.colors.text.primary} mb-2`}>
-            你的人生目标是什么？
+            What kind of person do you want to become?
           </h2>
           
           <p className={`${designSystem.colors.text.muted} ${designSystem.typography.sizes.lg} ${designSystem.typography.fonts.body}`}>
-            分享你内心深处的梦想与追求
+            The Mind Boat gently filters out distractions, helping you focus on what truly matters and guiding you toward self-awareness and personal growth.
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
             <textarea
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
-              placeholder="在这里写下你的人生目标..."
+              placeholder="Share your thoughts on who you want to become..."
               className={`w-full h-32 px-4 py-3 ${designSystem.patterns.inputField}
                          resize-none ${designSystem.typography.fonts.body}`}
               maxLength={500}
@@ -100,7 +100,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
               onClick={handleClose}
               className={`flex-1 ${getButtonStyle('glass', 'lg')}`}
             >
-              取消
+              Cancel
             </button>
             
             <button
@@ -114,12 +114,12 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                 <>
                   <div className="w-4 h-4 border-2 border-white/30 border-t-white 
                                   rounded-full animate-spin"></div>
-                  提交中...
+                  Submitting...
                 </>
               ) : (
                 <>
                   <Heart className="w-4 h-4" />
-                  分享目标
+                  Share Vision
                 </>
               )}
             </button>
