@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Play, Zap } from 'lucide-react'
+import { X, Sparkles, Play, Zap, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 
 interface SplineEvent {
@@ -9,6 +9,8 @@ interface SplineEvent {
     number?: number
     action?: string
     buttonId?: string
+    scene_id?: string
+    ui_type?: string
     [key: string]: any
   }
   timestamp: string
@@ -24,6 +26,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
+  const [showSetGoalOverlay, setShowSetGoalOverlay] = useState(false)
 
   useEffect(() => {
     // Subscribe to Spline events via Supabase Realtime
@@ -37,8 +40,14 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         setEvents(prev => [event, ...prev.slice(0, 9)]) // Keep last 10 events
         setCurrentEvent(event)
         
-        // Show life goals modal when receiving Spline event
-        setShowLifeGoalsModal(true)
+        // Handle different types of Spline interactions
+        if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') {
+          // This is the "Set a goal" interaction
+          setShowSetGoalOverlay(true)
+        } else if (event.payload.number === 1 || !event.payload.scene_id) {
+          // This is the original life goals modal interaction
+          setShowLifeGoalsModal(true)
+        }
         
         // Call the optional callback
         onEventReceived?.(event)
@@ -66,35 +75,142 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
     // based on the submitted goal
   }
 
+  const handleSetGoalSubmit = (goal: string) => {
+    console.log('Set a goal submitted:', goal)
+    // Handle the "Set a goal" submission
+    // This could be different from the life goals submission
+    // For example, you might want to save it to a different table
+    // or trigger different animations
+  }
+
   const getEventIcon = (event: SplineEvent) => {
+    if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') return <Target className="w-6 h-6" />
     if (event.payload.number === 1) return <Play className="w-6 h-6" />
     if (event.payload.action) return <Zap className="w-6 h-6" />
     return <Sparkles className="w-6 h-6" />
   }
 
   const getEventTitle = (event: SplineEvent) => {
+    if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') return "Set a Goal Triggered!"
     if (event.payload.number === 1) return "Animation Triggered!"
     if (event.payload.action) return `Action: ${event.payload.action}`
     return "Spline Interaction"
   }
 
   const getEventDescription = (event: SplineEvent) => {
+    if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') {
+      return "Set a goal interaction activated"
+    }
+    
     const parts = []
     if (event.payload.number) parts.push(`Number: ${event.payload.number}`)
     if (event.payload.buttonId) parts.push(`Button: ${event.payload.buttonId}`)
     if (event.payload.action) parts.push(`Action: ${event.payload.action}`)
+    if (event.payload.scene_id) parts.push(`Scene: ${event.payload.scene_id}`)
+    if (event.payload.ui_type) parts.push(`UI Type: ${event.payload.ui_type}`)
     
     return parts.length > 0 ? parts.join(' • ') : 'Interactive element activated'
   }
 
   return (
     <>
-      {/* Life Goals Modal */}
+      {/* Life Goals Modal - Original */}
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
         onClose={() => setShowLifeGoalsModal(false)}
         onSubmit={handleLifeGoalSubmit}
       />
+
+      {/* Set a Goal Overlay - New */}
+      {showSetGoalOverlay && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="relative bg-gradient-to-br from-emerald-500/10 to-teal-500/5 backdrop-blur-md 
+                          border border-emerald-400/20 rounded-3xl p-8 max-w-lg w-full mx-4 
+                          transform transition-all duration-500 scale-100 animate-in">
+            
+            {/* Close button */}
+            <button
+              onClick={() => setShowSetGoalOverlay(false)}
+              className="absolute top-4 right-4 text-white/60 hover:text-white 
+                         transition-colors p-2 rounded-full hover:bg-white/10"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header with icon */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center justify-center w-16 h-16 
+                              bg-gradient-to-br from-emerald-400/20 to-teal-400/20 
+                              rounded-full mb-4 backdrop-blur-sm border border-emerald-400/20">
+                <Target className="w-8 h-8 text-emerald-300" />
+              </div>
+              
+              <h2 className="text-3xl font-playfair font-semibold text-white mb-2">
+                Set a Goal
+              </h2>
+              
+              <p className="text-white/70 text-lg font-inter">
+                Define your next milestone and take action
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={(e) => {
+              e.preventDefault()
+              const formData = new FormData(e.currentTarget)
+              const goal = formData.get('goal') as string
+              if (goal.trim()) {
+                handleSetGoalSubmit(goal.trim())
+                setShowSetGoalOverlay(false)
+              }
+            }} className="space-y-6">
+              <div className="relative">
+                <textarea
+                  name="goal"
+                  placeholder="What goal would you like to set?"
+                  className="w-full h-32 px-4 py-3 bg-white/10 backdrop-blur-sm 
+                             border border-emerald-400/20 rounded-xl text-white placeholder-white/50
+                             focus:outline-none focus:ring-2 focus:ring-emerald-400/50 
+                             focus:border-emerald-400/50 transition-all duration-300
+                             resize-none font-inter"
+                  maxLength={300}
+                  required
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex gap-3 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSetGoalOverlay(false)}
+                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 
+                             text-white rounded-xl transition-all duration-300
+                             border border-white/20 hover:border-white/30
+                             font-inter font-medium"
+                >
+                  Cancel
+                </button>
+                
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500/80 to-teal-500/80
+                             hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl 
+                             transition-all duration-300 font-inter font-medium
+                             flex items-center justify-center gap-2"
+                >
+                  <Target className="w-4 h-4" />
+                  Set Goal
+                </button>
+              </div>
+            </form>
+
+            {/* Decorative elements */}
+            <div className="absolute -top-2 -left-2 w-4 h-4 bg-emerald-400/30 rounded-full blur-sm"></div>
+            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-teal-400/30 rounded-full blur-sm"></div>
+            <div className="absolute top-1/2 -right-4 w-2 h-2 bg-emerald-300/20 rounded-full blur-sm"></div>
+          </div>
+        </div>
+      )}
 
       {/* Event History Panel */}
       {events.length > 0 && (
