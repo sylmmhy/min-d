@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Play, Zap } from 'lucide-react'
+import { X, Sparkles, Compass, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
+import { WelcomePanel } from './WelcomePanel'
+import { JourneyPanel } from './JourneyPanel'
+import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem'
 
 interface SplineEvent {
   type: string
@@ -9,6 +12,12 @@ interface SplineEvent {
     number?: number
     action?: string
     buttonId?: string
+    apiEndpoint?: string
+    modalType?: string
+    uiAction?: string
+    message?: string
+    source?: string
+    timestamp?: string
     [key: string]: any
   }
   timestamp: string
@@ -17,30 +26,124 @@ interface SplineEvent {
 
 interface SplineEventHandlerProps {
   onEventReceived?: (event: SplineEvent) => void
+  onModalStateChange?: (isOpen: boolean) => void
 }
 
-export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventReceived }) => {
-  const [events, setEvents] = useState<SplineEvent[]>([])
+export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ 
+  onEventReceived,
+  onModalStateChange 
+}) => {
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
+  const [showWelcomePanel, setShowWelcomePanel] = useState(false)
+  const [showJourneyPanel, setShowJourneyPanel] = useState(false)
+
+  // 通知父组件模态框状态变化
+  useEffect(() => {
+    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel || showJourneyPanel;
+    onModalStateChange?.(isAnyModalOpen);
+    
+    // 也可以通过自定义事件通知
+    const event = new CustomEvent('modalStateChange', { 
+      detail: { isOpen: isAnyModalOpen } 
+    });
+    window.dispatchEvent(event);
+  }, [showModal, showLifeGoalsModal, showWelcomePanel, showJourneyPanel, onModalStateChange]);
 
   useEffect(() => {
+    console.log('🚀 初始化 Spline 事件处理器...')
+
     // Subscribe to Spline events via Supabase Realtime
     const channel = supabase.channel('spline-events')
     
     channel
       .on('broadcast', { event: 'spline_interaction' }, (payload) => {
         const event = payload.payload as SplineEvent
-        console.log('Received Spline event:', event)
         
-        setEvents(prev => [event, ...prev.slice(0, 9)]) // Keep last 10 events
+        console.log('=== 前端收到 SPLINE 事件 ===')
+        console.log('完整事件:', JSON.stringify(event, null, 2))
+        
         setCurrentEvent(event)
         
-        // Show life goals modal when receiving Spline event
-        setShowLifeGoalsModal(true)
+        // 先关闭所有模态框，避免冲突
+        setShowLifeGoalsModal(false)
+        setShowWelcomePanel(false)
+        setShowJourneyPanel(false)
         
-        // Call the optional callback
+        // 简化且明确的决策逻辑
+        const apiEndpoint = event.payload.apiEndpoint
+        const source = event.payload.source
+        const modalType = event.payload.modalType
+        const uiAction = event.payload.uiAction
+        
+        let shouldShowWelcome = false
+        let shouldShowGoals = false
+        let shouldShowJourney = false
+        
+        // 优先级1: 基于 API 端点和来源的精确匹配
+        if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook') {
+          shouldShowWelcome = true
+        } else if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook') {
+          shouldShowGoals = true
+        } else if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook') {
+          shouldShowJourney = true
+        }
+        // 优先级2: 基于 Modal 类型
+        else if (modalType === 'welcome') {
+          shouldShowWelcome = true
+        } else if (modalType === 'goals') {
+          shouldShowGoals = true
+        } else if (modalType === 'journey') {
+          shouldShowJourney = true
+        }
+        // 优先级3: 基于 UI 动作
+        else if (uiAction === 'show_welcome') {
+          shouldShowWelcome = true
+        } else if (uiAction === 'show_goals') {
+          shouldShowGoals = true
+        } else if (uiAction === 'show_journey') {
+          shouldShowJourney = true
+        }
+        // 优先级4: 基于事件类型
+        else if (event.type === 'spline_welcome_trigger') {
+          shouldShowWelcome = true
+        } else if (event.type === 'spline_goals_trigger') {
+          shouldShowGoals = true
+        } else if (event.type === 'spline_journey_trigger') {
+          shouldShowJourney = true
+        }
+        // 优先级5: 基于数字值
+        else if (event.payload.number === 2) {
+          shouldShowWelcome = true
+        } else if (event.payload.number === 1) {
+          shouldShowGoals = true
+        } else if (event.payload.number === 3) {
+          shouldShowJourney = true
+        }
+        // 默认回退
+        else {
+          shouldShowGoals = true
+        }
+        
+        // 执行决策 - 使用延迟确保状态更新
+        setTimeout(() => {
+          if (shouldShowWelcome) {
+            setShowWelcomePanel(true)
+            setShowLifeGoalsModal(false)
+            setShowJourneyPanel(false)
+          } else if (shouldShowGoals) {
+            setShowLifeGoalsModal(true)
+            setShowWelcomePanel(false)
+            setShowJourneyPanel(false)
+          } else if (shouldShowJourney) {
+            setShowJourneyPanel(true)
+            setShowWelcomePanel(false)
+            setShowLifeGoalsModal(false)
+          }
+        }, 100)
+        
+        // Call the callback if provided
         onEventReceived?.(event)
       })
       .subscribe((status) => {
@@ -59,111 +162,143 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   const handleLifeGoalSubmit = (goal: string) => {
     console.log('Life goal submitted:', goal)
-    // Here you could save the goal to Supabase database
-    // For now, we'll just log it and show a success message
-    
-    // You could also trigger another Spline animation or update the 3D scene
-    // based on the submitted goal
+    // Here you could save to Supabase database if needed
+  }
+
+  const handleVoiceSubmitSuccess = () => {
+    // Close welcome panel and show journey panel
+    setShowWelcomePanel(false)
+    setShowJourneyPanel(true)
   }
 
   const getEventIcon = (event: SplineEvent) => {
-    if (event.payload.number === 1) return <Play className="w-6 h-6" />
-    if (event.payload.action) return <Zap className="w-6 h-6" />
-    return <Sparkles className="w-6 h-6" />
+    const { apiEndpoint, modalType, uiAction, source } = event.payload
+    
+    if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
+        modalType === 'welcome' || uiAction === 'show_welcome') {
+      return <Compass className="w-6 h-6 text-blue-400" />
+    }
+    if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook' || 
+        modalType === 'goals' || uiAction === 'show_goals') {
+      return <Target className="w-6 h-6 text-purple-400" />
+    }
+    if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook' || 
+        modalType === 'journey' || uiAction === 'show_journey') {
+      return <Heart className="w-6 h-6 text-green-400" />
+    }
+    return <Sparkles className="w-6 h-6 text-white" />
   }
 
   const getEventTitle = (event: SplineEvent) => {
-    if (event.payload.number === 1) return "Animation Triggered!"
-    if (event.payload.action) return `Action: ${event.payload.action}`
-    return "Spline Interaction"
+    const { apiEndpoint, modalType, uiAction, source, message } = event.payload
+    
+    if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
+        modalType === 'welcome' || uiAction === 'show_welcome') {
+      return "欢迎启航!"
+    }
+    if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook' || 
+        modalType === 'goals' || uiAction === 'show_goals') {
+      return "人生目标!"
+    }
+    if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook' || 
+        modalType === 'journey' || uiAction === 'show_journey') {
+      return "旅程面板!"
+    }
+    if (message) return message
+    return "Spline 交互"
   }
 
   const getEventDescription = (event: SplineEvent) => {
     const parts = []
-    if (event.payload.number) parts.push(`Number: ${event.payload.number}`)
-    if (event.payload.buttonId) parts.push(`Button: ${event.payload.buttonId}`)
-    if (event.payload.action) parts.push(`Action: ${event.payload.action}`)
+    if (event.payload.apiEndpoint) parts.push(`端点: ${event.payload.apiEndpoint}`)
+    if (event.payload.source) parts.push(`来源: ${event.payload.source}`)
+    if (event.payload.modalType) parts.push(`模态: ${event.payload.modalType}`)
+    if (event.payload.uiAction) parts.push(`动作: ${event.payload.uiAction}`)
     
-    return parts.length > 0 ? parts.join(' • ') : 'Interactive element activated'
+    return parts.length > 0 ? parts.join(' • ') : '交互元素已激活'
   }
 
   return (
     <>
-      {/* Life Goals Modal */}
+      {/* 人生目标模态框 */}
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
         onClose={() => setShowLifeGoalsModal(false)}
         onSubmit={handleLifeGoalSubmit}
       />
 
-      {/* Event History Panel */}
-      {events.length > 0 && (
-        <div className="fixed top-4 left-4 z-40 bg-white/10 backdrop-blur-md border border-white/20 
-                        rounded-lg p-4 max-w-sm">
-          <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-            <Sparkles className="w-4 h-4" />
-            Recent Events ({events.length})
-          </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
-            {events.slice(0, 5).map((event, index) => (
-              <div key={index} className="text-xs text-white/80 bg-white/5 rounded p-2">
-                <div className="font-medium">{getEventTitle(event)}</div>
-                <div className="text-white/60">
-                  {new Date(event.timestamp).toLocaleTimeString()}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* 欢迎面板 - 左侧固定位置 */}
+      <WelcomePanel
+        isVisible={showWelcomePanel}
+        onClose={() => setShowWelcomePanel(false)}
+        onVoiceSubmitSuccess={handleVoiceSubmitSuccess}
+      />
 
-      {/* Event Modal */}
+      {/* 旅程面板 - 全屏横向布局 */}
+      <JourneyPanel
+        isVisible={showJourneyPanel}
+        onClose={() => setShowJourneyPanel(false)}
+      />
+
+      {/* 事件详情模态框 - 使用透明玻璃设计系统 */}
       {showModal && currentEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 
-                          max-w-md w-full mx-4 transform transition-all duration-300 scale-100">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3 text-white">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className={`${getPanelStyle()} p-8 max-w-md w-full mx-4 
+                          transform transition-all duration-300 scale-100`}>
+            
+            {/* Very subtle inner glow overlay */}
+            <div className={designSystem.patterns.innerGlow}></div>
+            
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <div className={`flex items-center gap-3 ${designSystem.colors.text.primary}`}>
                 {getEventIcon(currentEvent)}
-                <h2 className="text-xl font-semibold">{getEventTitle(currentEvent)}</h2>
+                <h2 className={`${designSystem.typography.sizes.xl} ${designSystem.typography.weights.semibold}`}>
+                  {getEventTitle(currentEvent)}
+                </h2>
               </div>
               <button
                 onClick={closeModal}
-                className="text-white/60 hover:text-white transition-colors p-1"
+                className={`${designSystem.colors.text.subtle} hover:${designSystem.colors.text.primary} 
+                           ${designSystem.effects.transitions.default} p-1 rounded-full hover:bg-white/10`}
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-white/80">
-              <p className="text-lg">{getEventDescription(currentEvent)}</p>
+            <div className={`space-y-4 ${designSystem.colors.text.muted} relative z-10`}>
+              <p className={designSystem.typography.sizes.lg}>{getEventDescription(currentEvent)}</p>
               
-              <div className="bg-white/5 rounded-lg p-4">
-                <h3 className="font-medium mb-2 text-white">Event Details:</h3>
-                <div className="space-y-1 text-sm">
-                  <div>Source: {currentEvent.source}</div>
-                  <div>Type: {currentEvent.type}</div>
-                  <div>Time: {new Date(currentEvent.timestamp).toLocaleString()}</div>
+              <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
+                              ${designSystem.radius.md} p-4 border ${designSystem.colors.borders.glass}`}>
+                <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
+                  事件详情:
+                </h3>
+                <div className={`space-y-1 ${designSystem.typography.sizes.sm}`}>
+                  <div>来源: {currentEvent.source}</div>
+                  <div>类型: {currentEvent.type}</div>
+                  <div>时间: {new Date(currentEvent.timestamp).toLocaleString()}</div>
                 </div>
               </div>
 
               {Object.keys(currentEvent.payload).length > 0 && (
-                <div className="bg-white/5 rounded-lg p-4">
-                  <h3 className="font-medium mb-2 text-white">Payload:</h3>
-                  <pre className="text-xs text-white/70 overflow-x-auto">
+                <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
+                                ${designSystem.radius.md} p-4 border ${designSystem.colors.borders.glass}`}>
+                  <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
+                    载荷数据:
+                  </h3>
+                  <pre className={`${designSystem.typography.sizes.xs} ${designSystem.colors.text.muted} overflow-x-auto`}>
                     {JSON.stringify(currentEvent.payload, null, 2)}
                   </pre>
                 </div>
               )}
             </div>
 
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-6 relative z-10">
               <button
                 onClick={closeModal}
-                className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg 
-                           transition-colors duration-200"
+                className={getButtonStyle('glass', 'md')}
               >
-                Close
+                关闭
               </button>
             </div>
           </div>
