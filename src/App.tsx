@@ -17,16 +17,8 @@ function App() {
       {/* Spline Event Handler - handles real-time events from Spline */}
       <SplineEventHandler onEventReceived={handleSplineEvent} />
 
-      {/* Muted gray-blue gradient overlay with reduced saturation */}
-      <div className="fixed inset-0 pointer-events-none z-10"
-           style={{
-             background: `linear-gradient(135deg, 
-               rgba(141, 176, 202, 0.15) 0%, 
-               rgba(141, 176, 202, 0.08) 30%, 
-               rgba(141, 176, 202, 0.12) 70%, 
-               rgba(141, 176, 202, 0.20) 100%)`
-           }}>
-      </div>
+      {/* Subtle gradient overlay for depth */}
+      <div className="fixed inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/20 pointer-events-none z-10"></div>
     </div>
   );
 }

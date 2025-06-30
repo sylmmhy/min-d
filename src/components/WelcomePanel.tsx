@@ -115,206 +115,154 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   return (
     <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-80" 
          style={{ left: '75%', transform: 'translateX(-50%) translateY(-50%)' }}>
-      
-      {/* Main physical glass panel with enhanced depth */}
-      <div className="glass-panel-physical relative overflow-hidden">
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 
+                      shadow-2xl shadow-black/20 transition-all duration-500">
         
-        {/* Primary light source - top edge highlight */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-t-3xl"></div>
-        
-        {/* Secondary light source - left edge highlight */}
-        <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/60 via-white/40 to-white/20 rounded-l-3xl"></div>
-        
-        {/* Crisp outline stroke */}
-        <div className="absolute inset-0 rounded-3xl border border-white/30 pointer-events-none"></div>
-        
-        {/* Subtle texture overlay */}
-        <div className="absolute inset-0 opacity-[0.02] pointer-events-none rounded-3xl"
-             style={{
-               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-               backgroundSize: '100px 100px'
-             }}>
-        </div>
-        
-        {/* Inner content with proper layering */}
-        <div className="relative z-10 p-8">
-          {currentStep === 'welcome' && (
-            <div className="space-y-6">
-              {/* Header with physical glass icon container */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className="glass-icon-physical">
-                  {/* Icon container light sources */}
-                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
-                  <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
-                  <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
-                  
-                  <Compass className="w-7 h-7 text-white relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-                </div>
-                <h2 className="text-xl font-playfair font-semibold text-white filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
-                  Welcome aboard!
-                </h2>
+        {currentStep === 'welcome' && (
+          <div className="space-y-6">
+            {/* Header with icon */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-400/30 to-purple-400/30 
+                              rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
+                <Compass className="w-6 h-6 text-white" />
               </div>
-
-              {/* Welcome content */}
-              <div className="space-y-4 text-white/95 font-inter leading-relaxed">
-                <p className="filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
-                  The system uses sensors to check if you're doing something important right now.
-                </p>
-                <p className="filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
-                  When you're working toward your goal, different winds of intention will blow, 
-                  pushing your little boat forward and helping you get where you want to go.
-                </p>
-              </div>
-
-              {/* Physical glass Next button */}
-              <button
-                onClick={handleNext}
-                className="glass-button-physical w-full group"
-              >
-                {/* Button light sources */}
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
-                <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
-                <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
-                
-                <span className="relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Next</span>
-              </button>
+              <h2 className="text-xl font-playfair font-semibold text-white">
+                Welcome aboard!
+              </h2>
             </div>
-          )}
 
-          {currentStep === 'voice' && (
-            <div className="space-y-6">
-              {/* Header */}
-              <div className="text-center mb-8">
-                <div className="glass-icon-physical mx-auto mb-4">
-                  {/* Icon container light sources */}
-                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
-                  <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
-                  <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
-                  
-                  <Mic className="w-7 h-7 text-white relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-                </div>
-                <h2 className="text-lg font-playfair font-semibold text-white mb-2 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
-                  Tell the wind of intention,
-                </h2>
-                <p className="text-white/90 font-inter filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
-                  What important thing do you want to do today?
-                </p>
+            {/* Welcome content */}
+            <div className="space-y-4 text-white/90 font-inter leading-relaxed">
+              <p>
+                The system uses sensors to check if you're doing something important right now.
+              </p>
+              <p>
+                When you're working toward your goal, different winds of intention will blow, 
+                pushing your little boat forward and helping you get where you want to go.
+              </p>
+            </div>
+
+            {/* Next button */}
+            <button
+              onClick={handleNext}
+              className="w-full px-6 py-3 bg-gradient-to-r from-blue-500/80 to-purple-500/80
+                         hover:from-blue-500 hover:to-purple-500 text-white rounded-xl 
+                         transition-all duration-300 font-inter font-medium
+                         shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40
+                         transform hover:scale-105"
+            >
+              Next
+            </button>
+          </div>
+        )}
+
+        {currentStep === 'voice' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="text-center mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-400/30 to-blue-400/30 
+                              rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-white/20">
+                <Mic className="w-6 h-6 text-white" />
               </div>
+              <h2 className="text-lg font-playfair font-semibold text-white mb-2">
+                Tell the wind of intention,
+              </h2>
+              <p className="text-white/80 font-inter">
+                What important thing do you want to do today?
+              </p>
+            </div>
 
-              {/* Recording controls */}
-              <div className="space-y-6">
-                {!audioBlob && (
-                  <div className="text-center">
-                    {/* Physical glass recording button */}
-                    <button
-                      onClick={isRecording ? stopRecording : startRecording}
-                      className={`glass-recording-physical ${isRecording ? 'recording' : ''}`}
-                    >
-                      {/* Recording button light sources */}
-                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-t-3xl"></div>
-                      <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-white/60 via-white/40 to-white/20 rounded-l-3xl"></div>
-                      <div className="absolute inset-0 rounded-3xl border border-white/40 pointer-events-none"></div>
-                      
-                      {isRecording ? (
-                        <Square className="w-8 h-8 text-white relative z-10 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
-                      ) : (
-                        <Mic className="w-8 h-8 text-white relative z-10 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
-                      )}
-                    </button>
-                    
-                    {isRecording && (
-                      <div className="mt-4 text-white/90 font-mono text-lg filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
-                        Recording: {formatTime(recordingTime)}
-                      </div>
+            {/* Recording controls */}
+            <div className="space-y-4">
+              {!audioBlob && (
+                <div className="text-center">
+                  <button
+                    onClick={isRecording ? stopRecording : startRecording}
+                    className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
+                      isRecording 
+                        ? 'bg-red-500/80 hover:bg-red-500 animate-pulse' 
+                        : 'bg-green-500/80 hover:bg-green-500'
+                    }`}
+                  >
+                    {isRecording ? (
+                      <Square className="w-6 h-6 text-white" />
+                    ) : (
+                      <Mic className="w-6 h-6 text-white" />
                     )}
-                    
-                    <p className="mt-4 text-sm text-white/70 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
-                      {isRecording ? 'Click to stop recording' : 'Click to start recording'}
-                    </p>
-                  </div>
-                )}
+                  </button>
+                  
+                  {isRecording && (
+                    <div className="mt-3 text-white/80 font-mono">
+                      Recording: {formatTime(recordingTime)}
+                    </div>
+                  )}
+                  
+                  <p className="mt-3 text-sm text-white/60">
+                    {isRecording ? 'Click to stop recording' : 'Click to start recording'}
+                  </p>
+                </div>
+              )}
 
-                {audioBlob && (
-                  <div className="space-y-4">
-                    {/* Physical glass recording display */}
-                    <div className="glass-panel-secondary-physical">
-                      {/* Secondary panel light sources */}
-                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-t-2xl"></div>
-                      <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/40 via-white/25 to-white/10 rounded-l-2xl"></div>
-                      <div className="absolute inset-0 rounded-2xl border border-white/25 pointer-events-none"></div>
+              {audioBlob && (
+                <div className="space-y-4">
+                  <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-white/80 text-sm">Your recording</span>
+                      <button
+                        onClick={clearRecording}
+                        className="text-white/60 hover:text-white text-sm"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <button
+                        onClick={isPlaying ? pauseRecording : playRecording}
+                        className="w-10 h-10 bg-blue-500/80 hover:bg-blue-500 rounded-full 
+                                   flex items-center justify-center transition-colors"
+                      >
+                        {isPlaying ? (
+                          <Pause className="w-4 h-4 text-white" />
+                        ) : (
+                          <Play className="w-4 h-4 text-white ml-0.5" />
+                        )}
+                      </button>
                       
-                      <div className="flex items-center justify-between mb-4 relative z-10">
-                        <span className="text-white/90 text-sm font-medium filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Your recording</span>
-                        <button
-                          onClick={clearRecording}
-                          className="text-white/70 hover:text-white text-sm px-3 py-1 rounded-lg
-                                     hover:bg-white/10 transition-all duration-200 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
-                        >
-                          Clear
-                        </button>
-                      </div>
-                      
-                      <div className="flex items-center gap-4 relative z-10">
-                        {/* Physical glass play button */}
-                        <button
-                          onClick={isPlaying ? pauseRecording : playRecording}
-                          className="glass-button-small-physical group"
-                        >
-                          {/* Small button light sources */}
-                          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-t-2xl"></div>
-                          <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/40 via-white/25 to-white/10 rounded-l-2xl"></div>
-                          <div className="absolute inset-0 rounded-2xl border border-white/30 pointer-events-none"></div>
-                          
-                          {isPlaying ? (
-                            <Pause className="w-5 h-5 text-white relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-                          ) : (
-                            <Play className="w-5 h-5 text-white ml-0.5 relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
-                          )}
-                        </button>
-                        
-                        {/* Physical glass progress bar */}
-                        <div className="flex-1 h-3 glass-progress-physical">
-                          <div className={`h-full glass-progress-fill-physical ${isPlaying ? 'animate-pulse' : ''}`} 
-                               style={{ width: '100%' }}>
-                          </div>
-                        </div>
+                      <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+                        <div className={`h-full bg-blue-400 transition-all duration-300 ${
+                          isPlaying ? 'animate-pulse' : ''
+                        }`} style={{ width: '100%' }}></div>
                       </div>
                     </div>
-
-                    {/* Physical glass submit button */}
-                    <button
-                      onClick={() => {
-                        console.log('Voice input submitted:', audioBlob);
-                        alert('Voice input recorded successfully!');
-                      }}
-                      className="glass-button-physical w-full group"
-                    >
-                      {/* Button light sources */}
-                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
-                      <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
-                      <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
-                      
-                      <span className="relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Submit Voice Input</span>
-                    </button>
                   </div>
-                )}
-              </div>
 
-              {/* Physical glass back button */}
-              <button
-                onClick={() => setCurrentStep('welcome')}
-                className="glass-button-secondary-physical w-full"
-              >
-                {/* Secondary button light sources */}
-                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-t-xl"></div>
-                <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/30 via-white/20 to-white/10 rounded-l-xl"></div>
-                <div className="absolute inset-0 rounded-xl border border-white/20 pointer-events-none"></div>
-                
-                <span className="relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">Back</span>
-              </button>
+                  <button
+                    onClick={() => {
+                      console.log('Voice input submitted:', audioBlob);
+                      // Here you could process the audio or send it somewhere
+                      alert('Voice input recorded successfully!');
+                    }}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-green-500/80 to-blue-500/80
+                               hover:from-green-500 hover:to-blue-500 text-white rounded-xl 
+                               transition-all duration-300 font-inter font-medium"
+                  >
+                    Submit Voice Input
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+
+            {/* Back button */}
+            <button
+              onClick={() => setCurrentStep('welcome')}
+              className="w-full px-4 py-2 bg-white/10 hover:bg-white/20 text-white/80 
+                         rounded-lg transition-all duration-300 font-inter text-sm"
+            >
+              Back
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -37,8 +37,7 @@ export const SplineScene: React.FC = () => {
 
   if (!sceneUrl) {
     return (
-      <div className="fixed inset-0 z-0 flex items-center justify-center"
-           style={{ backgroundColor: '#8DB0CA' }}>
+      <div className="fixed inset-0 z-0 bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
         <div className="text-white text-lg font-light animate-pulse">Preparing scene...</div>
       </div>
     );
@@ -55,8 +54,7 @@ export const SplineScene: React.FC = () => {
       </button>
 
       <Suspense fallback={
-        <div className="w-full h-full flex items-center justify-center"
-             style={{ backgroundColor: '#8DB0CA' }}>
+        <div className="w-full h-full bg-gradient-to-b from-slate-900 via-blue-900 to-slate-800 flex items-center justify-center">
           <div className="text-white text-lg font-light animate-pulse">Loading the ocean...</div>
         </div>
       }>
