@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Square } from 'lucide-react';
+import { X } from 'lucide-react';
 import { designSystem } from '../styles/designSystem';
 
 interface SeagullPanelProps {
@@ -268,7 +268,7 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
             </p>
           </div>
 
-          {/* Right: Audio visualizer and stop button */}
+          {/* Right: Audio visualizer and close button */}
           <div className="flex-shrink-0 flex items-center gap-3">
             {/* Compact audio level bars - only 4 bars */}
             <div className="flex items-center gap-1">
@@ -284,22 +284,22 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
               ))}
             </div>
 
-            {/* Stop conversation button - solid square style */}
+            {/* Close conversation button - glass style with X icon */}
             <button
               onClick={handleStopConversation}
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 
                          backdrop-blur-md border border-white/25 shadow-lg relative overflow-hidden group
-                         bg-gradient-to-br from-red-400/20 via-red-400/15 to-red-500/20
-                         hover:from-red-400/30 hover:via-red-400/25 hover:to-red-500/30 
-                         hover:border-red-300/40"
-              title="Stop conversation"
+                         bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                         hover:from-white/20 hover:via-white/15 hover:to-white/12 
+                         hover:border-white/35"
+              title="Close conversation"
             >
               {/* Button inner glow */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-red-300/15 to-red-500/15 
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/10 to-white/5 
                               opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
-              {/* Solid square stop icon */}
-              <div className="w-3 h-3 bg-white rounded-sm relative z-10"></div>
+              {/* Close X icon */}
+              <X className="w-4 h-4 text-white/80 hover:text-white relative z-10" />
             </button>
           </div>
         </div>
