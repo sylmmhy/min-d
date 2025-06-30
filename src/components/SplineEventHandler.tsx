@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { X, Sparkles, Compass, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 import { WelcomePanel } from './WelcomePanel'
+import { JourneyPanel } from './JourneyPanel'
 import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem'
 
 interface SplineEvent {
@@ -36,10 +37,11 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
   const [showWelcomePanel, setShowWelcomePanel] = useState(false)
+  const [showJourneyPanel, setShowJourneyPanel] = useState(false)
 
   // 通知父组件模态框状态变化
   useEffect(() => {
-    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel;
+    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel || showJourneyPanel;
     onModalStateChange?.(isAnyModalOpen);
     
     // 也可以通过自定义事件通知
@@ -47,7 +49,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
       detail: { isOpen: isAnyModalOpen } 
     });
     window.dispatchEvent(event);
-  }, [showModal, showLifeGoalsModal, showWelcomePanel, onModalStateChange]);
+  }, [showModal, showLifeGoalsModal, showWelcomePanel, showJourneyPanel, onModalStateChange]);
 
   useEffect(() => {
     console.log('🚀 初始化 Spline 事件处理器...')
@@ -67,6 +69,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         // 先关闭所有模态框，避免冲突
         setShowLifeGoalsModal(false)
         setShowWelcomePanel(false)
+        setShowJourneyPanel(false)
         
         // 简化且明确的决策逻辑
         const apiEndpoint = event.payload.apiEndpoint
@@ -76,30 +79,47 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         
         let shouldShowWelcome = false
         let shouldShowGoals = false
+        let shouldShowJourney = false
         
         // 优先级1: 基于 API 端点和来源的精确匹配
         if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook') {
           shouldShowWelcome = true
         } else if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook') {
           shouldShowGoals = true
+        } else if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook') {
+          shouldShowJourney = true
         }
         // 优先级2: 基于 Modal 类型
         else if (modalType === 'welcome') {
           shouldShowWelcome = true
         } else if (modalType === 'goals') {
           shouldShowGoals = true
+        } else if (modalType === 'journey') {
+          shouldShowJourney = true
         }
         // 优先级3: 基于 UI 动作
         else if (uiAction === 'show_welcome') {
           shouldShowWelcome = true
         } else if (uiAction === 'show_goals') {
           shouldShowGoals = true
+        } else if (uiAction === 'show_journey') {
+          shouldShowJourney = true
         }
         // 优先级4: 基于事件类型
         else if (event.type === 'spline_welcome_trigger') {
           shouldShowWelcome = true
         } else if (event.type === 'spline_goals_trigger') {
           shouldShowGoals = true
+        } else if (event.type === 'spline_journey_trigger') {
+          shouldShowJourney = true
+        }
+        // 优先级5: 基于数字值
+        else if (event.payload.number === 2) {
+          shouldShowWelcome = true
+        } else if (event.payload.number === 1) {
+          shouldShowGoals = true
+        } else if (event.payload.number === 3) {
+          shouldShowJourney = true
         }
         // 默认回退
         else {
@@ -111,9 +131,15 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
           if (shouldShowWelcome) {
             setShowWelcomePanel(true)
             setShowLifeGoalsModal(false)
+            setShowJourneyPanel(false)
           } else if (shouldShowGoals) {
             setShowLifeGoalsModal(true)
             setShowWelcomePanel(false)
+            setShowJourneyPanel(false)
+          } else if (shouldShowJourney) {
+            setShowJourneyPanel(true)
+            setShowWelcomePanel(false)
+            setShowLifeGoalsModal(false)
           }
         }, 100)
         
@@ -150,6 +176,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         modalType === 'goals' || uiAction === 'show_goals') {
       return <Target className="w-6 h-6 text-purple-400" />
     }
+    if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook' || 
+        modalType === 'journey' || uiAction === 'show_journey') {
+      return <Heart className="w-6 h-6 text-green-400" />
+    }
     return <Sparkles className="w-6 h-6 text-white" />
   }
 
@@ -163,6 +193,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
     if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook' || 
         modalType === 'goals' || uiAction === 'show_goals') {
       return "人生目标!"
+    }
+    if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook' || 
+        modalType === 'journey' || uiAction === 'show_journey') {
+      return "旅程面板!"
     }
     if (message) return message
     return "Spline 交互"
@@ -191,6 +225,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
       <WelcomePanel
         isVisible={showWelcomePanel}
         onClose={() => setShowWelcomePanel(false)}
+      />
+
+      {/* 旅程面板 - 全屏横向布局 */}
+      <JourneyPanel
+        isVisible={showJourneyPanel}
+        onClose={() => setShowJourneyPanel(false)}
       />
 
       {/* 事件详情模态框 - 使用透明玻璃设计系统 */}
