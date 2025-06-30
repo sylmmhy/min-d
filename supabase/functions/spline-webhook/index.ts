@@ -9,7 +9,6 @@ and broadcasts the data to connected clients via Supabase Realtime.
 - Validates incoming requests
 - Broadcasts events to Supabase Realtime channel
 - Handles CORS for cross-origin requests
-- Supports multiple API endpoints for different interactions
 */
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -24,7 +23,6 @@ interface SplineWebhookPayload {
   number?: number;
   action?: string;
   buttonId?: string;
-  apiEndpoint?: string;
   [key: string]: any;
 }
 
@@ -49,42 +47,19 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Parse the request body with better error handling
+    // Parse the request body
     let payload: SplineWebhookPayload
-    let rawBody: string
-    
     try {
-      rawBody = await req.text()
-      console.log('Raw request body:', rawBody)
-      
-      if (!rawBody || rawBody.trim() === '') {
-        console.log('Empty request body received')
-        payload = {}
-      } else {
-        payload = JSON.parse(rawBody)
-      }
+      payload = await req.json()
     } catch (error) {
-      console.error('JSON parsing error:', error)
-      console.log('Raw body that failed to parse:', rawBody)
-      
       return new Response(
-        JSON.stringify({ 
-          error: 'Invalid JSON payload',
-          receivedBody: rawBody,
-          parseError: error.message
-        }),
+        JSON.stringify({ error: 'Invalid JSON payload' }),
         {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         }
       )
     }
-
-    // Log the received payload for debugging
-    console.log('=== WEBHOOK RECEIVED ===')
-    console.log('Parsed payload:', JSON.stringify(payload, null, 2))
-    console.log('Payload keys:', Object.keys(payload))
-    console.log('Payload.number:', payload.number, typeof payload.number)
 
     // Initialize Supabase client
     const supabase = createClient(
@@ -95,83 +70,28 @@ Deno.serve(async (req: Request) => {
     // Broadcast the event to all connected clients
     const channel = supabase.channel('spline-events')
     
-    // Determine event type based on payload - be very specific about number comparison
-    let eventType = 'spline_button_click'
-    let modalType = 'unknown'
-    
-    console.log('=== ANALYZING PAYLOAD ===')
-    console.log('- payload.number:', payload.number, typeof payload.number)
-    console.log('- payload.action:', payload.action)
-    console.log('- payload.apiEndpoint:', payload.apiEndpoint)
-    
-    // Check for exact number match with multiple type checks
-    if (payload.number === 2 || payload.number === '2' || String(payload.number) === '2') {
-      eventType = 'spline_welcome_trigger'
-      modalType = 'welcome'
-      console.log('✅ Detected: Welcome modal trigger (number === 2)')
-    } else if (payload.number === 1 || payload.number === '1' || String(payload.number) === '1') {
-      eventType = 'spline_goals_trigger'
-      modalType = 'goals'
-      console.log('✅ Detected: Goals modal trigger (number === 1)')
-    } else if (payload.action === 'second_api' || payload.apiEndpoint === 'welcome') {
-      eventType = 'spline_welcome_trigger'
-      modalType = 'welcome'
-      console.log('✅ Detected: Welcome modal trigger (action/endpoint)')
-    } else if (payload.action === 'first_api' || payload.apiEndpoint === 'goals') {
-      eventType = 'spline_goals_trigger'
-      modalType = 'goals'
-      console.log('✅ Detected: Goals modal trigger (action/endpoint)')
-    } else {
-      // Default to goals modal for unknown events
-      eventType = 'spline_goals_trigger'
-      modalType = 'goals'
-      console.log('⚠️ Detected: Unknown event, defaulting to goals modal')
-    }
-    
     const eventData = {
-      type: eventType,
-      payload: {
-        ...payload,
-        modalType: modalType, // Add explicit modal type
-        timestamp: new Date().toISOString(),
-        // Ensure number is properly set
-        number: payload.number || (modalType === 'welcome' ? 2 : 1)
-      },
+      type: 'spline_button_click',
+      payload: payload,
       timestamp: new Date().toISOString(),
       source: 'spline'
     }
 
-    console.log('=== BROADCASTING EVENT ===')
-    console.log('Event data:', JSON.stringify(eventData, null, 2))
-
     // Send the event to the realtime channel
-    const broadcastResult = await channel.send({
+    await channel.send({
       type: 'broadcast',
       event: 'spline_interaction',
       payload: eventData
     })
 
-    console.log('Broadcast result:', broadcastResult)
-    console.log('✅ Spline webhook processed successfully')
+    console.log('Spline webhook received:', eventData)
 
-    // Return success response with detailed information
-    let responseMessage = 'Event broadcasted successfully'
-    if (eventType === 'spline_welcome_trigger') {
-      responseMessage = 'Welcome journey initiated successfully'
-    } else if (eventType === 'spline_goals_trigger') {
-      responseMessage = 'Life goals modal triggered successfully'
-    }
-
+    // Return success response
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: responseMessage,
-        eventId: crypto.randomUUID(),
-        eventType: eventType,
-        modalType: modalType,
-        receivedPayload: payload,
-        processedPayload: eventData.payload,
-        broadcastResult: broadcastResult
+        message: 'Event broadcasted successfully',
+        eventId: crypto.randomUUID()
       }),
       {
         status: 200,
@@ -180,13 +100,12 @@ Deno.serve(async (req: Request) => {
     )
 
   } catch (error) {
-    console.error('❌ Error in spline-webhook function:', error)
+    console.error('Error in spline-webhook function:', error)
     
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error',
-        message: error.message,
-        stack: error.stack
+        message: error.message 
       }),
       {
         status: 500,
