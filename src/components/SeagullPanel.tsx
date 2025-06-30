@@ -229,7 +229,7 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 
                             shadow-lg relative">
               <img
-                src="/image copy.png"
+                src="/截屏2025-06-30 09.27.12 copy.png"
                 alt="Seagull Captain"
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -284,20 +284,22 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
               ))}
             </div>
 
-            {/* Stop conversation button */}
+            {/* Stop conversation button - solid square style */}
             <button
               onClick={handleStopConversation}
               className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 
                          backdrop-blur-md border border-white/25 shadow-lg relative overflow-hidden group
-                         bg-gradient-to-br from-white/15 via-white/10 to-white/8
-                         hover:from-white/20 hover:via-white/15 hover:to-white/12 hover:border-white/35"
+                         bg-gradient-to-br from-red-400/20 via-red-400/15 to-red-500/20
+                         hover:from-red-400/30 hover:via-red-400/25 hover:to-red-500/30 
+                         hover:border-red-300/40"
               title="Stop conversation"
             >
               {/* Button inner glow */}
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/10 to-white/5 
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-red-300/15 to-red-500/15 
                               opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
-              <Square className="w-4 h-4 text-white relative z-10" />
+              {/* Solid square stop icon */}
+              <div className="w-3 h-3 bg-white rounded-sm relative z-10"></div>
             </button>
           </div>
         </div>
