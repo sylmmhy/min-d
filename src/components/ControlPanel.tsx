@@ -34,9 +34,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      {/* Enhanced glass panel with Apple-inspired depth */}
+      {/* Enhanced glass panel with Apple-inspired depth - made more compact */}
       <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
-                      backdrop-blur-2xl border border-white/25 rounded-3xl px-8 py-6
+                      backdrop-blur-2xl border border-white/25 rounded-3xl px-6 py-4
                       shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
                       before:absolute before:inset-0 before:rounded-3xl 
                       before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
@@ -46,11 +46,11 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
                         rounded-3xl pointer-events-none"></div>
         
-        <div className="relative z-10 flex items-center gap-6">
-          {/* Microphone Control */}
+        <div className="relative z-10 flex items-center gap-4">
+          {/* Microphone Control - smaller size */}
           <button
             onClick={toggleMic}
-            className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
                         backdrop-blur-md border shadow-lg relative overflow-hidden group ${
               micEnabled 
                 ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
@@ -66,16 +66,16 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             }`}></div>
             
             {micEnabled ? (
-              <Mic className="w-7 h-7 text-white relative z-10" />
+              <Mic className="w-5 h-5 text-white relative z-10" />
             ) : (
-              <MicOff className="w-7 h-7 text-white relative z-10" />
+              <MicOff className="w-5 h-5 text-white relative z-10" />
             )}
           </button>
 
-          {/* Video Control */}
+          {/* Video Control - smaller size */}
           <button
             onClick={toggleVideo}
-            className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
                         backdrop-blur-md border shadow-lg relative overflow-hidden group ${
               videoEnabled 
                 ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
@@ -91,16 +91,16 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             }`}></div>
             
             {videoEnabled ? (
-              <Video className="w-7 h-7 text-white relative z-10" />
+              <Video className="w-5 h-5 text-white relative z-10" />
             ) : (
-              <VideoOff className="w-7 h-7 text-white relative z-10" />
+              <VideoOff className="w-5 h-5 text-white relative z-10" />
             )}
           </button>
 
-          {/* Screen Share Control */}
+          {/* Screen Share Control - smaller size */}
           <button
             onClick={toggleScreenShare}
-            className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
                         backdrop-blur-md border shadow-lg relative overflow-hidden group ${
               screenShareEnabled 
                 ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
@@ -116,9 +116,9 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             }`}></div>
             
             {screenShareEnabled ? (
-              <Monitor className="w-7 h-7 text-white relative z-10" />
+              <Monitor className="w-5 h-5 text-white relative z-10" />
             ) : (
-              <MonitorOff className="w-7 h-7 text-white relative z-10" />
+              <MonitorOff className="w-5 h-5 text-white relative z-10" />
             )}
           </button>
         </div>
