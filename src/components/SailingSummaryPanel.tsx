@@ -23,10 +23,7 @@ export const SailingSummaryPanel: React.FC<SailingSummaryPanelProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-3xl">
-      {/* Ultra subtle inner glow overlay across entire screen */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
-      
+    <div className="fixed inset-0 z-50">
       {/* Content container - centered */}
       <div className="flex items-center justify-center min-h-screen p-8">
         <div className="relative max-w-6xl w-full">
