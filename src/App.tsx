@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { SplineScene } from './components/SplineScene';
-import { WebhookButton } from './components/WebhookButton';
 import { SplineEventHandler } from './components/SplineEventHandler';
 
 function App() {
@@ -25,9 +24,6 @@ function App() {
       
       {/* Spline Event Handler - handles real-time events from Spline */}
       <SplineEventHandler onEventReceived={handleSplineEvent} />
-      
-      {/* Webhook Button - for manual testing */}
-      <WebhookButton />
       
       {/* Invisible content sections to enable scrolling - with pointer-events-none */}
       <div className="relative z-20 pointer-events-none">
