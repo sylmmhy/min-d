@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Compass, CheckCircle, Circle, Sail, Mountain, BookOpen, Palette } from 'lucide-react';
+import { Compass, CheckCircle, Circle, Mail as Sail, Mountain, BookOpen, Palette } from 'lucide-react';
 import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
 
 interface Task {
