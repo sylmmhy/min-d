@@ -225,8 +225,8 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                           className={`w-full text-left p-4 rounded-xl transition-all duration-300 
                                       border backdrop-blur-md font-inter text-sm
                                       ${selectedTask.id === task.id 
-                                        ? 'bg-white/15 border-white/30 text-white shadow-md' 
-                                        : 'bg-white/8 border-white/20 text-white/80 hover:bg-white/12 hover:border-white/25'
+                                        ? 'bg-white/25 border-white/30 text-white shadow-md' 
+                                        : 'bg-white/15 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30'
                                       }`}
                         >
                           <div className="flex items-center gap-2 mb-1">
