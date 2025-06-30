@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Square } from 'lucide-react';
 import { designSystem } from '../styles/designSystem';
 
 interface SeagullPanelProps {
@@ -129,6 +130,14 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
     setConnectionStatus('connecting');
   };
 
+  const handleStopConversation = () => {
+    // Stop voice interaction first
+    stopVoiceInteraction();
+    
+    // Then close the panel
+    onClose?.();
+  };
+
   const monitorAudioLevel = () => {
     if (!analyserRef.current) return;
 
@@ -220,7 +229,7 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 
                             shadow-lg relative">
               <img
-                src="https://images.pexels.com/photos/1661179/pexels-photo-1661179.jpeg?auto=compress&cs=tinysrgb&w=80"
+                src="/image copy.png"
                 alt="Seagull Captain"
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -259,19 +268,37 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
             </p>
           </div>
 
-          {/* Right: Audio visualizer */}
-          <div className="flex-shrink-0 flex items-center gap-1">
+          {/* Right: Audio visualizer and stop button */}
+          <div className="flex-shrink-0 flex items-center gap-3">
             {/* Compact audio level bars - only 4 bars */}
-            {[...Array(4)].map((_, i) => (
-              <div
-                key={i}
-                className={`w-1 rounded-full transition-all duration-150 ${
-                  audioLevel * 4 > i 
-                    ? 'bg-green-400 h-4' 
-                    : 'bg-white/20 h-1'
-                }`}
-              />
-            ))}
+            <div className="flex items-center gap-1">
+              {[...Array(4)].map((_, i) => (
+                <div
+                  key={i}
+                  className={`w-1 rounded-full transition-all duration-150 ${
+                    audioLevel * 4 > i 
+                      ? 'bg-green-400 h-4' 
+                      : 'bg-white/20 h-1'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Stop conversation button */}
+            <button
+              onClick={handleStopConversation}
+              className="w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 
+                         backdrop-blur-md border border-white/25 shadow-lg relative overflow-hidden group
+                         bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                         hover:from-white/20 hover:via-white/15 hover:to-white/12 hover:border-white/35"
+              title="Stop conversation"
+            >
+              {/* Button inner glow */}
+              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/10 to-white/5 
+                              opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <Square className="w-4 h-4 text-white relative z-10" />
+            </button>
           </div>
         </div>
       </div>
