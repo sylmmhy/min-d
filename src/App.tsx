@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { SplineScene } from './components/SplineScene';
 import { SplineEventHandler } from './components/SplineEventHandler';
+import { ApiCaller } from './components/ApiCaller';
 
 function App() {
   const [scrollY, setScrollY] = useState(0);
@@ -24,6 +25,9 @@ function App() {
       
       {/* Spline Event Handler - handles real-time events from Spline */}
       <SplineEventHandler onEventReceived={handleSplineEvent} />
+      
+      {/* API Caller - for testing external API calls */}
+      <ApiCaller />
       
       {/* Invisible content sections to enable scrolling - with pointer-events-none */}
       <div className="relative z-20 pointer-events-none">
