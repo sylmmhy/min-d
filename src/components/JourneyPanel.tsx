@@ -94,10 +94,9 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
 
   return (
     <div className="fixed inset-0 z-40 flex">
-      {/* Left side - Ocean scene (transparent overlay to allow Spline to show through) */}
+      {/* Left side - Ocean scene (completely transparent to allow Spline to show through) */}
       <div className="flex-1 relative">
-        {/* Very subtle overlay to create depth separation */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/5 pointer-events-none"></div>
+        {/* No overlay - let the 3D scene show through seamlessly */}
       </div>
 
       {/* Right side - Task Panel */}
