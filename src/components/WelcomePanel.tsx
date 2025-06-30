@@ -114,7 +114,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
   return (
     <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-[480px]" 
-         style={{ left: '75%', transform: 'translateX(-50%) translateY(-50%)' }}>
+         style={{ left: '65%', transform: 'translateX(-50%) translateY(-50%)' }}>
       {/* iOS-style glass panel with blue tint - wider */}
       <div className="bg-gradient-to-br from-blue-400/20 via-blue-300/15 to-blue-500/25 
                       backdrop-blur-xl border border-white/30 rounded-3xl p-10 
