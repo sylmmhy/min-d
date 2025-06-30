@@ -145,18 +145,18 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 </p>
               </div>
 
-              {/* Apple-style Next button - optimized size */}
+              {/* Apple-style Next button - using Back button size (smaller) */}
               <div className="flex justify-center pt-4">
                 <button
                   onClick={handleNext}
-                  className="px-10 py-2.5 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                  className="px-8 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                              hover:from-white/20 hover:via-white/15 hover:to-white/12
                              text-white rounded-xl transition-all duration-300
                              border border-white/25 hover:border-white/35
                              font-inter font-medium text-base backdrop-blur-md
                              shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
                              hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
-                             transform hover:scale-[1.02] active:scale-[0.98] min-w-[100px]"
+                             transform hover:scale-[1.02] active:scale-[0.98] min-w-[80px]"
                 >
                   Next
                 </button>
@@ -166,7 +166,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
           {currentStep === 'voice' && (
             <div className="space-y-6">
-              {/* Header */}
+              {/* Header - title changed to 32px */}
               <div className="text-center mb-8">
                 <div className={`w-14 h-14 ${designSystem.patterns.iconContainer} mx-auto mb-4 
                                 ${designSystem.effects.shadows.glass}
@@ -174,8 +174,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                   <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
                   <Mic className="w-7 h-7 text-white relative z-10" />
                 </div>
-                <h2 className={`${designSystem.typography.sizes.lg} ${designSystem.typography.fonts.heading} 
-                               ${designSystem.typography.weights.semibold} ${designSystem.colors.text.primary} mb-2`}>
+                <h2 className="text-[32px] font-playfair font-normal text-white mb-4 leading-tight">
                   Tell the wind of intention,
                 </h2>
                 <p className={`${designSystem.colors.text.secondary} ${designSystem.typography.fonts.body}`}>
@@ -274,14 +273,14 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </div>
                     </div>
 
-                    {/* Apple-style Submit button - optimized size */}
+                    {/* Apple-style Submit button - using Back button size (smaller) */}
                     <div className="flex justify-center">
                       <button
                         onClick={() => {
                           console.log('Voice input submitted:', audioBlob);
                           alert('Voice input recorded successfully!');
                         }}
-                        className="px-10 py-2.5 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                        className="px-8 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                                    hover:from-white/20 hover:via-white/15 hover:to-white/12
                                    text-white rounded-xl transition-all duration-300
                                    border border-white/25 hover:border-white/35

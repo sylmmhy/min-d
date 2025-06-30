@@ -89,13 +89,13 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                 </div>
               </div>
 
-              {/* Apple-style Next button - optimized size */}
+              {/* Apple-style Next button - using Back button size (smaller) */}
               <div className="flex justify-center pt-4">
                 <button
                   type="button"
                   onClick={handleNext}
                   disabled={!goal.trim() || isSubmitting}
-                  className="px-12 py-2.5 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                  className="px-8 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                              hover:from-white/20 hover:via-white/15 hover:to-white/12
                              text-white rounded-xl transition-all duration-300
                              border border-white/25 hover:border-white/35
@@ -104,7 +104,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                              hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
                              disabled:opacity-50 disabled:cursor-not-allowed
                              transform hover:scale-[1.02] active:scale-[0.98]
-                             flex items-center justify-center gap-2.5 min-w-[120px]"
+                             flex items-center justify-center gap-2.5 min-w-[100px]"
                 >
                   {isSubmitting ? (
                     <>
