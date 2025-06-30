@@ -81,7 +81,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
   const handleSubmit = () => {
     console.log('Voice input submitted');
-    alert('Voice input recorded successfully!');
+    // Alert dialog removed - submission continues silently
     // Reset state after submission
     setHasRecorded(false);
     setRecordingTime(0);
