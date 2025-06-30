@@ -45,7 +45,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                       shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
                       before:absolute before:inset-0 before:rounded-3xl 
                       before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
-                      before:pointer-events-none overflow-hidden">
+                      before:pointer-events-none overflow-visible">
         
         {/* Inner glow overlay */}
         <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
@@ -128,21 +128,31 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             )}
           </button>
 
-          {/* End Voyage Button - now matches the size and style of other buttons */}
+          {/* End Voyage Button with custom hover tooltip */}
           <button
             onClick={handleEndVoyage}
             className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                       backdrop-blur-md border border-white/25 shadow-lg relative overflow-hidden group
+                       backdrop-blur-md border border-white/25 shadow-lg relative overflow-visible group
                        bg-gradient-to-br from-white/15 via-white/10 to-white/8
                        hover:from-white/20 hover:via-white/15 hover:to-white/12 hover:border-white/35
                        shadow-white/10 hover:shadow-white/15"
-            title="End the voyage and return to journey selection"
           >
             {/* Button inner glow */}
             <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 
                             opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <Anchor className="w-5 h-5 text-white relative z-10" />
+            
+            {/* Custom hover tooltip */}
+            <span className="absolute top-full left-0 mt-2 px-3 py-1.5 
+                           bg-gradient-to-br from-white/15 via-white/10 to-white/8 
+                           backdrop-blur-md border border-white/25 rounded-md 
+                           text-sm text-white/90 whitespace-nowrap 
+                           opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+                           transition-all duration-300 z-20
+                           shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]">
+              End the voyage
+            </span>
           </button>
         </div>
 
