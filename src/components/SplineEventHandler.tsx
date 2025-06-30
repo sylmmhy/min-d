@@ -43,22 +43,6 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   useEffect(() => {
     addDebugInfo('🚀 初始化 Spline 事件处理器...')
-    
-    // Test Supabase connection
-    const testConnection = async () => {
-      try {
-        const { data, error } = await supabase.from('_test').select('*').limit(1)
-        if (error && error.code !== 'PGRST116') {
-          addDebugInfo(`❌ Supabase 错误: ${error.message}`)
-        } else {
-          addDebugInfo('✅ Supabase 连接成功')
-        }
-      } catch (err) {
-        addDebugInfo(`❌ 连接测试失败: ${err}`)
-      }
-    }
-    
-    testConnection()
 
     // Subscribe to Spline events via Supabase Realtime
     const channel = supabase.channel('spline-events')
