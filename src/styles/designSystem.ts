@@ -1,21 +1,21 @@
 // Design System Guide - The Mindboat
-// Based on transparent glass morphism and ocean theme
+// Based on transparent glass morphism and ocean theme with Apple-inspired depth
 
 export const designSystem = {
   // Color Palette
   colors: {
-    // Transparent glass morphism backgrounds
+    // Enhanced transparent glass morphism backgrounds with subtle tinting
     glass: {
-      primary: 'bg-white/10 backdrop-blur-xl',
-      secondary: 'bg-white/5 backdrop-blur-lg',
+      primary: 'bg-gradient-to-br from-white/12 via-white/8 to-white/6 backdrop-blur-2xl',
+      secondary: 'bg-gradient-to-br from-white/10 via-white/6 to-white/4 backdrop-blur-xl',
       overlay: 'bg-gradient-to-br from-white/15 via-white/8 to-white/5',
-      subtle: 'bg-white/8 backdrop-blur-md',
+      subtle: 'bg-gradient-to-br from-white/8 via-white/5 to-white/3 backdrop-blur-lg',
     },
     
-    // Button styles
+    // Button styles with enhanced depth
     buttons: {
-      // Transparent glass button (primary style)
-      glass: 'bg-white/10 hover:bg-white/15 border border-white/20 hover:border-white/30 text-white/90 hover:text-white backdrop-blur-md',
+      // Enhanced glass button with subtle background tint
+      glass: 'bg-gradient-to-br from-white/15 via-white/10 to-white/8 hover:from-white/20 hover:via-white/15 hover:to-white/12 border border-white/25 hover:border-white/35 text-white/90 hover:text-white backdrop-blur-md',
       // Accent button for important actions
       accent: 'bg-gradient-to-r from-blue-400/30 to-purple-400/30 hover:from-blue-400/40 hover:to-purple-400/40 text-white border border-white/25 backdrop-blur-md',
       // Danger/warning button
@@ -32,9 +32,9 @@ export const designSystem = {
     
     // Border colors
     borders: {
-      glass: 'border-white/20',
-      glassHover: 'border-white/30',
-      accent: 'border-white/25',
+      glass: 'border-white/25',
+      glassHover: 'border-white/35',
+      accent: 'border-white/30',
     }
   },
 
@@ -88,20 +88,24 @@ export const designSystem = {
 
   // Effects & Animations
   effects: {
-    // Backdrop blur for glass morphism
+    // Enhanced backdrop blur for better glass morphism
     blur: {
       sm: 'backdrop-blur-sm',
       md: 'backdrop-blur-md',
       lg: 'backdrop-blur-lg',
       xl: 'backdrop-blur-xl',
+      '2xl': 'backdrop-blur-2xl',
+      '3xl': 'backdrop-blur-3xl',
     },
     
-    // Shadows - lighter and more subtle
+    // Apple-inspired shadow system with multiple layers
     shadows: {
-      glass: 'shadow-lg shadow-white/5',
-      button: 'shadow-md shadow-white/10',
-      accent: 'shadow-lg shadow-blue-400/10',
-      strong: 'shadow-xl shadow-white/10',
+      glass: 'shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]',
+      button: 'shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]',
+      buttonHover: 'shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]',
+      accent: 'shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)]',
+      strong: 'shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]',
+      input: 'shadow-[inset_0_2px_8px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]',
     },
     
     // Transitions
@@ -129,47 +133,56 @@ export const designSystem = {
 
   // Component Patterns
   patterns: {
-    // Transparent glass panel (main container style)
+    // Enhanced glass panel with Apple-inspired depth
     glassPanel: `
-      bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl 
-      shadow-xl shadow-white/10 relative overflow-hidden
+      bg-gradient-to-br from-white/12 via-white/8 to-white/6 backdrop-blur-2xl 
+      border border-white/25 rounded-3xl 
+      shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
+      relative overflow-hidden
+      before:absolute before:inset-0 before:rounded-3xl 
+      before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
+      before:pointer-events-none
     `,
     
-    // Transparent glass button (primary button style)
+    // Enhanced glass button with depth
     glassButton: `
-      bg-white/10 backdrop-blur-md border border-white/20
-      hover:bg-white/15 hover:border-white/30 text-white/90 hover:text-white
+      bg-gradient-to-br from-white/15 via-white/10 to-white/8 backdrop-blur-md 
+      border border-white/25 hover:from-white/20 hover:via-white/15 hover:to-white/12 
+      hover:border-white/35 text-white/90 hover:text-white
       rounded-xl transition-all duration-300 font-inter
-      shadow-md shadow-white/10
+      shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
+      hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
     `,
     
-    // Accent button (for important actions) - more transparent
+    // Accent button with enhanced styling
     accentButton: `
       bg-gradient-to-r from-blue-400/30 to-purple-400/30
       hover:from-blue-400/40 hover:to-purple-400/40 text-white rounded-xl 
       transition-all duration-300 font-inter font-medium
-      shadow-lg shadow-blue-400/10 backdrop-blur-md
+      shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-md
       border border-white/25
     `,
     
-    // Icon container - more transparent
+    // Icon container with subtle enhancement
     iconContainer: `
-      bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center
-      border border-white/25 shadow-lg shadow-white/10
+      bg-gradient-to-br from-white/15 via-white/10 to-white/8 backdrop-blur-md 
+      rounded-2xl flex items-center justify-center
+      border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]
       relative overflow-hidden
     `,
     
-    // Inner glow overlay for containers - very subtle
+    // Inner glow overlay - more subtle
     innerGlow: `
-      absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent 
+      absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
       rounded-3xl pointer-events-none
     `,
     
-    // Input field - transparent
+    // Enhanced input field with depth
     inputField: `
-      bg-white/8 backdrop-blur-md border border-white/20 rounded-xl 
+      bg-black/15 backdrop-blur-md border border-white/25 rounded-xl 
       text-white placeholder-white/60 focus:outline-none focus:ring-2 
       focus:ring-white/30 focus:border-white/40 transition-all duration-300
+      shadow-[inset_0_2px_8px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]
     `,
   }
 };
@@ -185,6 +198,6 @@ export const getButtonStyle = (variant: 'glass' | 'accent' | 'danger' = 'glass',
   return `${baseStyle} ${sizeStyle} ${variantStyle}`;
 };
 
-export const getPanelStyle = (blur: 'sm' | 'md' | 'lg' | 'xl' = 'xl') => {
-  return designSystem.patterns.glassPanel.replace('backdrop-blur-xl', designSystem.effects.blur[blur]);
+export const getPanelStyle = (blur: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' = '2xl') => {
+  return designSystem.patterns.glassPanel.replace('backdrop-blur-2xl', designSystem.effects.blur[blur]);
 };

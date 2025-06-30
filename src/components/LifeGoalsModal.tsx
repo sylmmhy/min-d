@@ -39,87 +39,98 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-white/5 backdrop-blur-2xl">
+    <div className="fixed inset-0 z-50 bg-black/20 backdrop-blur-3xl">
       {/* Ultra subtle inner glow overlay across entire screen */}
-      <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent pointer-events-none"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-white/5 via-transparent to-transparent pointer-events-none"></div>
       
       {/* Content container - centered but text position unchanged */}
       <div className="flex items-center justify-center min-h-screen p-8">
         <div className="relative max-w-2xl w-full">
           
-          {/* Header without icon */}
-          <div className="text-center mb-10 relative z-10">
-            <h2 className="text-[42px] font-playfair font-normal text-white mb-6 leading-tight">
-              What kind of person do you want to become?
-            </h2>
+          {/* Main glass panel with Apple-inspired styling */}
+          <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
+                          backdrop-blur-2xl border border-white/20 rounded-3xl p-10
+                          shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
+                          before:absolute before:inset-0 before:rounded-3xl 
+                          before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
+                          before:pointer-events-none overflow-hidden">
             
-            <p className="text-white/85 text-base font-inter leading-relaxed max-w-lg mx-auto">
-              The Mind Boat gently filters out distractions, helping you focus on what truly matters and guiding you toward self-awareness and personal growth.
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-            <div className="relative">
-              <textarea
-                value={goal}
-                onChange={(e) => setGoal(e.target.value)}
-                placeholder="Share your thoughts on who you want to become..."
-                className="w-full h-40 px-6 py-4 bg-black/20 backdrop-blur-md 
-                           border border-white/25 rounded-2xl text-white placeholder-white/60
-                           focus:outline-none focus:ring-2 focus:ring-white/30 
-                           focus:border-white/40 transition-all duration-300
-                           resize-none font-inter text-base leading-relaxed
-                           shadow-inner shadow-black/20"
-                maxLength={500}
-                required
-              />
+            {/* Header */}
+            <div className="text-center mb-10 relative z-10">
+              <h2 className="text-[42px] font-playfair font-normal text-white mb-6 leading-tight">
+                What kind of person do you want to become?
+              </h2>
               
-              {/* Character count */}
-              <div className="absolute bottom-3 right-4 text-xs text-white/50 font-inter">
-                {goal.length}/500
+              <p className="text-white/90 text-base font-inter leading-relaxed max-w-lg mx-auto">
+                The Mind Boat gently filters out distractions, helping you focus on what truly matters and guiding you toward self-awareness and personal growth.
+              </p>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
+              <div className="relative">
+                <textarea
+                  value={goal}
+                  onChange={(e) => setGoal(e.target.value)}
+                  placeholder="Share your thoughts on who you want to become..."
+                  className="w-full h-40 px-6 py-4 bg-black/15 backdrop-blur-md 
+                             border border-white/25 rounded-2xl text-white placeholder-white/60
+                             focus:outline-none focus:ring-2 focus:ring-white/30 
+                             focus:border-white/40 transition-all duration-300
+                             resize-none font-inter text-base leading-relaxed
+                             shadow-[inset_0_2px_8px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)]"
+                  maxLength={500}
+                  required
+                />
+                
+                {/* Character count */}
+                <div className="absolute bottom-3 right-4 text-xs text-white/50 font-inter">
+                  {goal.length}/500
+                </div>
               </div>
-            </div>
 
-            {/* Single Next button */}
-            <div className="flex justify-center pt-4">
-              <button
-                type="button"
-                onClick={handleNext}
-                disabled={!goal.trim() || isSubmitting}
-                className="px-16 py-4 bg-white/10 hover:bg-white/15 
-                           text-white rounded-2xl transition-all duration-300
-                           border border-white/20 hover:border-white/30
-                           font-inter font-medium text-lg backdrop-blur-md
-                           shadow-lg shadow-white/5 hover:shadow-white/10
-                           disabled:opacity-50 disabled:cursor-not-allowed
-                           transform hover:scale-[1.02] active:scale-[0.98]
-                           flex items-center justify-center gap-3"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white 
-                                    rounded-full animate-spin"></div>
-                    Submitting...
-                  </>
-                ) : (
-                  <>
-                    <Heart className="w-5 h-5" />
-                    Next
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
+              {/* Single Next button */}
+              <div className="flex justify-center pt-4">
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  disabled={!goal.trim() || isSubmitting}
+                  className="px-16 py-4 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                             hover:from-white/20 hover:via-white/15 hover:to-white/12
+                             text-white rounded-2xl transition-all duration-300
+                             border border-white/25 hover:border-white/35
+                             font-inter font-medium text-lg backdrop-blur-md
+                             shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
+                             hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
+                             disabled:opacity-50 disabled:cursor-not-allowed
+                             transform hover:scale-[1.02] active:scale-[0.98]
+                             flex items-center justify-center gap-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white 
+                                      rounded-full animate-spin"></div>
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Heart className="w-5 h-5" />
+                      Next
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
 
-          {/* Ultra subtle decorative elements */}
-          <div className="absolute -top-3 -left-3 w-6 h-6 bg-white/15 rounded-full blur-sm animate-pulse"></div>
-          <div className="absolute -bottom-3 -right-3 w-8 h-8 bg-white/10 rounded-full blur-sm animate-pulse" 
-               style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-1/3 -right-3 w-3 h-3 bg-white/20 rounded-full blur-sm animate-pulse"
-               style={{animationDelay: '2s'}}></div>
-          <div className="absolute bottom-1/3 -left-3 w-4 h-4 bg-white/12 rounded-full blur-sm animate-pulse"
-               style={{animationDelay: '0.5s'}}></div>
+            {/* Ultra subtle decorative elements */}
+            <div className="absolute -top-3 -left-3 w-6 h-6 bg-white/10 rounded-full blur-sm animate-pulse"></div>
+            <div className="absolute -bottom-3 -right-3 w-8 h-8 bg-white/8 rounded-full blur-sm animate-pulse" 
+                 style={{animationDelay: '1s'}}></div>
+            <div className="absolute top-1/3 -right-3 w-3 h-3 bg-white/12 rounded-full blur-sm animate-pulse"
+                 style={{animationDelay: '2s'}}></div>
+            <div className="absolute bottom-1/3 -left-3 w-4 h-4 bg-white/10 rounded-full blur-sm animate-pulse"
+                 style={{animationDelay: '0.5s'}}></div>
+          </div>
         </div>
       </div>
     </div>
