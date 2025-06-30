@@ -65,18 +65,18 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                 value={goal}
                 onChange={(e) => setGoal(e.target.value)}
                 placeholder="Share your thoughts on who you want to become..."
-                className="w-full h-40 px-6 py-4 bg-white/8 backdrop-blur-md 
-                           border border-white/15 rounded-2xl text-white placeholder-white/50
-                           focus:outline-none focus:ring-2 focus:ring-white/20 
-                           focus:border-white/25 transition-all duration-300
+                className="w-full h-40 px-6 py-4 bg-black/20 backdrop-blur-md 
+                           border border-white/25 rounded-2xl text-white placeholder-white/60
+                           focus:outline-none focus:ring-2 focus:ring-white/30 
+                           focus:border-white/40 transition-all duration-300
                            resize-none font-inter text-base leading-relaxed
-                           shadow-inner shadow-black/10"
+                           shadow-inner shadow-black/20"
                 maxLength={500}
                 required
               />
               
               {/* Character count */}
-              <div className="absolute bottom-3 right-4 text-xs text-white/40 font-inter">
+              <div className="absolute bottom-3 right-4 text-xs text-white/50 font-inter">
                 {goal.length}/500
               </div>
             </div>
