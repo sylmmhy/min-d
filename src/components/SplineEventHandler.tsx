@@ -165,6 +165,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
     // Here you could save to Supabase database if needed
   }
 
+  const handleVoiceSubmitSuccess = () => {
+    // Close welcome panel and show journey panel
+    setShowWelcomePanel(false)
+    setShowJourneyPanel(true)
+  }
+
   const getEventIcon = (event: SplineEvent) => {
     const { apiEndpoint, modalType, uiAction, source } = event.payload
     
@@ -225,6 +231,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
       <WelcomePanel
         isVisible={showWelcomePanel}
         onClose={() => setShowWelcomePanel(false)}
+        onVoiceSubmitSuccess={handleVoiceSubmitSuccess}
       />
 
       {/* 旅程面板 - 全屏横向布局 */}

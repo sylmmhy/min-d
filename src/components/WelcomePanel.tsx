@@ -5,11 +5,13 @@ import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSys
 interface WelcomePanelProps {
   isVisible: boolean;
   onClose?: () => void;
+  onVoiceSubmitSuccess?: () => void;
 }
 
 export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   isVisible,
-  onClose
+  onClose,
+  onVoiceSubmitSuccess
 }) => {
   const [currentStep, setCurrentStep] = useState<'welcome' | 'voice'>('welcome');
   const [isRecording, setIsRecording] = useState(false);
@@ -81,10 +83,12 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
   const handleSubmit = () => {
     console.log('Voice input submitted');
-    // Alert dialog removed - submission continues silently
     // Reset state after submission
     setHasRecorded(false);
     setRecordingTime(0);
+    
+    // Call the success callback to trigger JourneyPanel
+    onVoiceSubmitSuccess?.();
   };
 
   const handleReRecord = () => {
