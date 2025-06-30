@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Compass, CheckCircle, Circle, Mail as Sail, Mountain, BookOpen, Palette } from 'lucide-react';
 import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
 import { ControlPanel } from './ControlPanel';
+import { SailingSummaryPanel } from './SailingSummaryPanel';
 
 interface Task {
   id: string;
@@ -11,6 +12,11 @@ interface Task {
   category: 'writing' | 'design' | 'learning' | 'personal';
   imageUrl: string;
   details: string;
+}
+
+interface SailingSummaryData {
+  imageUrl: string;
+  summaryText: string;
 }
 
 interface JourneyPanelProps {
@@ -79,6 +85,9 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
   const [selectedTask, setSelectedTask] = useState<Task>(mockTasks[0]);
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
   const [showControlPanel, setShowControlPanel] = useState(false);
+  const [showSummaryPanel, setShowSummaryPanel] = useState(false);
+  const [summaryData, setSummaryData] = useState<SailingSummaryData | null>(null);
+  const [isLoadingSummary, setIsLoadingSummary] = useState(false);
 
   const toggleTaskCompletion = (taskId: string) => {
     setTasks(prev => prev.map(task => 
@@ -93,12 +102,74 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
     onClose?.();
   };
 
-  if (!isVisible && !showControlPanel) return null;
+  const handleEndVoyage = async () => {
+    console.log('Ending voyage...');
+    
+    // Hide control panel and show loading state
+    setShowControlPanel(false);
+    setShowSummaryPanel(true);
+    setIsLoadingSummary(true);
+    
+    try {
+      // Simulate API call to backend for summary data
+      // Replace this with actual API call
+      const response = await fetch('/api/sailing-summary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          taskId: selectedTask.id,
+          sessionData: {
+            // Include any session data needed for summary generation
+            startTime: new Date().toISOString(),
+            taskTitle: selectedTask.title,
+            taskCategory: selectedTask.category
+          }
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setSummaryData({
+          imageUrl: data.imageUrl,
+          summaryText: data.summaryText
+        });
+      } else {
+        // Fallback to mock data if API fails
+        setSummaryData({
+          imageUrl: 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
+          summaryText: "Today, you sailed 2.5 hours toward the continent of your thesis. Along the way, you were easily drawn to social media notifications, spending 45 minutes on it. If you'd like to dive deeper into your reflections, check out the Seagull's Human Observation Log. Keep it up—the journey itself is the reward!"
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch summary data:', error);
+      // Fallback to mock data
+      setSummaryData({
+        imageUrl: 'https://images.pexels.com/photos/1001682/pexels-photo-1001682.jpeg?auto=compress&cs=tinysrgb&w=800',
+        summaryText: "Today, you sailed 2.5 hours toward the continent of your thesis. Along the way, you were easily drawn to social media notifications, spending 45 minutes on it. If you'd like to dive deeper into your reflections, check out the Seagull's Human Observation Log. Keep it up—the journey itself is the reward!"
+      });
+    } finally {
+      setIsLoadingSummary(false);
+    }
+  };
+
+  const handleCloseSummary = () => {
+    setShowSummaryPanel(false);
+    setSummaryData(null);
+    // Optionally return to journey panel or close entirely
+    onClose?.();
+  };
+
+  // Show journey panel only if it's visible and no other panels are showing
+  const shouldShowJourneyPanel = isVisible && !showControlPanel && !showSummaryPanel;
+
+  if (!shouldShowJourneyPanel && !showControlPanel && !showSummaryPanel) return null;
 
   return (
     <>
-      {/* Journey Panel - only show if not in control mode */}
-      {isVisible && !showControlPanel && (
+      {/* Journey Panel - only show if not in control or summary mode */}
+      {shouldShowJourneyPanel && (
         <div className="fixed inset-0 z-40 flex">
           {/* Left side - Ocean scene (completely transparent to allow Spline to show through) */}
           <div className="flex-1 relative">
@@ -242,6 +313,15 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
       <ControlPanel 
         isVisible={showControlPanel}
         onClose={() => setShowControlPanel(false)}
+        onEndVoyage={handleEndVoyage}
+      />
+
+      {/* Sailing Summary Panel - full screen modal */}
+      <SailingSummaryPanel
+        isVisible={showSummaryPanel}
+        onClose={handleCloseSummary}
+        summaryData={summaryData}
+        isLoading={isLoadingSummary}
       />
     </>
   );

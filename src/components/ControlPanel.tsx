@@ -5,11 +5,13 @@ import { designSystem } from '../styles/designSystem';
 interface ControlPanelProps {
   isVisible: boolean;
   onClose?: () => void;
+  onEndVoyage?: () => void;
 }
 
 export const ControlPanel: React.FC<ControlPanelProps> = ({
   isVisible,
-  onClose
+  onClose,
+  onEndVoyage
 }) => {
   const [micEnabled, setMicEnabled] = useState(false);
   const [videoEnabled, setVideoEnabled] = useState(false);
@@ -34,7 +36,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   const handleEndVoyage = () => {
     console.log('Ending voyage...');
-    onClose?.();
+    onEndVoyage?.();
   };
 
   return (
