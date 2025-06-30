@@ -52,16 +52,6 @@ export const SailingSummaryPanel: React.FC<SailingSummaryPanelProps> = ({
               <X className="w-5 h-5 text-white/80 hover:text-white" />
             </button>
 
-            {/* Header */}
-            <div className="text-center mb-8 relative z-10">
-              <h2 className="text-[32px] font-playfair font-normal text-white mb-4 leading-tight">
-                Sailing Summary
-              </h2>
-              <p className="text-white/80 text-base font-inter">
-                Your journey reflection and insights
-              </p>
-            </div>
-
             {/* Loading state */}
             {isLoading && (
               <div className="flex items-center justify-center py-20 relative z-10">
@@ -73,10 +63,10 @@ export const SailingSummaryPanel: React.FC<SailingSummaryPanelProps> = ({
               </div>
             )}
 
-            {/* Content - Two column layout */}
+            {/* Content - Two column layout with title in right column */}
             {!isLoading && (
               <div className="flex gap-10 relative z-10">
-                {/* Left column - Image */}
+                {/* Left column - Image only */}
                 <div className="flex-1">
                   <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
                                   border border-white/20 shadow-lg aspect-[4/3]">
@@ -103,8 +93,18 @@ export const SailingSummaryPanel: React.FC<SailingSummaryPanelProps> = ({
                   </div>
                 </div>
 
-                {/* Right column - Summary text and button */}
+                {/* Right column - Title, subtitle, summary text and button */}
                 <div className="flex-1 flex flex-col">
+                  {/* Header - now part of right column */}
+                  <div className="mb-8">
+                    <h2 className="text-[32px] font-playfair font-normal text-white mb-4 leading-tight">
+                      Sailing Summary
+                    </h2>
+                    <p className="text-white/80 text-base font-inter">
+                      Your journey reflection and insights
+                    </p>
+                  </div>
+
                   {/* Summary text */}
                   <div className="flex-1">
                     <div className="bg-gradient-to-br from-white/8 via-white/5 to-white/3 
