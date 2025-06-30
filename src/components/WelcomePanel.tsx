@@ -122,7 +122,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
           <div className="space-y-6">
             {/* Header with icon */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-400/30 to-purple-400/30 
+              <div className="w-12 h-12 bg-gradient-to-br from-sky-400/30 to-blue-500/30 
                               rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20">
                 <Compass className="w-6 h-6 text-white" />
               </div>
@@ -142,11 +142,11 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
               </p>
             </div>
 
-            {/* Next button */}
+            {/* Next button - Pure blue gradient */}
             <button
               onClick={handleNext}
-              className="w-full px-6 py-3 bg-gradient-to-r from-blue-500/80 to-purple-500/80
-                         hover:from-blue-500 hover:to-purple-500 text-white rounded-xl 
+              className="w-full px-6 py-3 bg-gradient-to-r from-sky-400 to-blue-600
+                         hover:from-sky-500 hover:to-blue-700 text-white rounded-xl 
                          transition-all duration-300 font-inter font-medium
                          shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40
                          transform hover:scale-105"
@@ -160,7 +160,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
           <div className="space-y-6">
             {/* Header */}
             <div className="text-center mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-400/30 to-blue-400/30 
+              <div className="w-12 h-12 bg-gradient-to-br from-cyan-400/30 to-blue-500/30 
                               rounded-full flex items-center justify-center mx-auto mb-4 backdrop-blur-sm border border-white/20">
                 <Mic className="w-6 h-6 text-white" />
               </div>
@@ -181,7 +181,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                     className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-300 ${
                       isRecording 
                         ? 'bg-red-500/80 hover:bg-red-500 animate-pulse' 
-                        : 'bg-green-500/80 hover:bg-green-500'
+                        : 'bg-gradient-to-br from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600'
                     }`}
                   >
                     {isRecording ? (
@@ -219,8 +219,9 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                     <div className="flex items-center gap-3">
                       <button
                         onClick={isPlaying ? pauseRecording : playRecording}
-                        className="w-10 h-10 bg-blue-500/80 hover:bg-blue-500 rounded-full 
-                                   flex items-center justify-center transition-colors"
+                        className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-500 
+                                   hover:from-sky-500 hover:to-blue-600 rounded-full 
+                                   flex items-center justify-center transition-all duration-300"
                       >
                         {isPlaying ? (
                           <Pause className="w-4 h-4 text-white" />
@@ -230,7 +231,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </button>
                       
                       <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
-                        <div className={`h-full bg-blue-400 transition-all duration-300 ${
+                        <div className={`h-full bg-gradient-to-r from-cyan-400 to-blue-500 transition-all duration-300 ${
                           isPlaying ? 'animate-pulse' : ''
                         }`} style={{ width: '100%' }}></div>
                       </div>
@@ -243,9 +244,10 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       // Here you could process the audio or send it somewhere
                       alert('Voice input recorded successfully!');
                     }}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-green-500/80 to-blue-500/80
-                               hover:from-green-500 hover:to-blue-500 text-white rounded-xl 
-                               transition-all duration-300 font-inter font-medium"
+                    className="w-full px-6 py-3 bg-gradient-to-r from-cyan-400 to-blue-600
+                               hover:from-cyan-500 hover:to-blue-700 text-white rounded-xl 
+                               transition-all duration-300 font-inter font-medium
+                               shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40"
                   >
                     Submit Voice Input
                   </button>
