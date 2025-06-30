@@ -99,7 +99,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
         {/* No overlay - let the 3D scene show through seamlessly */}
       </div>
 
-      {/* Right side - Task Panel - Increased width from 600px to 900px (1.5x) */}
+      {/* Right side - Task Panel - 宽度从 600px 增加到 900px (1.5倍) */}
       <div className="w-[900px] p-8 flex items-center justify-center">
         <div className="relative w-full max-w-[820px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
                         backdrop-blur-2xl border border-white/25 rounded-3xl p-10
