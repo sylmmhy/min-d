@@ -36,20 +36,38 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       .on('broadcast', { event: 'spline_interaction' }, (payload) => {
         const event = payload.payload as SplineEvent
         console.log('Received Spline event:', event)
+        console.log('Event payload:', event.payload)
         
         setEvents(prev => [event, ...prev.slice(0, 9)]) // Keep last 10 events
         setCurrentEvent(event)
         
-        // Handle different API endpoints or event types
-        if (event.payload.number === 1 || event.payload.action === 'first_api') {
-          // First API call - show life goals modal
-          setShowLifeGoalsModal(true)
-        } else if (event.payload.number === 2 || event.payload.action === 'second_api' || event.payload.apiEndpoint === 'welcome') {
-          // Second API call - show welcome modal
+        // Handle different API endpoints or event types based on payload
+        console.log('Checking event conditions:')
+        console.log('- number:', event.payload.number)
+        console.log('- action:', event.payload.action)
+        console.log('- apiEndpoint:', event.payload.apiEndpoint)
+        
+        // Check for second API call (welcome modal)
+        if (event.payload.number === 2 || 
+            event.payload.action === 'second_api' || 
+            event.payload.apiEndpoint === 'welcome') {
+          console.log('Triggering welcome modal')
           setShowWelcomeModal(true)
-        } else {
-          // Default behavior for other events
+          setShowLifeGoalsModal(false) // Ensure life goals modal is closed
+        } 
+        // Check for first API call (life goals modal)
+        else if (event.payload.number === 1 || 
+                 event.payload.action === 'first_api' || 
+                 event.payload.apiEndpoint === 'goals') {
+          console.log('Triggering life goals modal')
           setShowLifeGoalsModal(true)
+          setShowWelcomeModal(false) // Ensure welcome modal is closed
+        } 
+        // Default behavior for unknown events
+        else {
+          console.log('Unknown event, showing life goals modal as default')
+          setShowLifeGoalsModal(true)
+          setShowWelcomeModal(false)
         }
         
         // Call the optional callback
@@ -133,6 +151,9 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
                 <div className="font-medium">{getEventTitle(event)}</div>
                 <div className="text-white/60">
                   {new Date(event.timestamp).toLocaleTimeString()}
+                </div>
+                <div className="text-white/50 text-xs mt-1">
+                  {getEventDescription(event)}
                 </div>
               </div>
             ))}
