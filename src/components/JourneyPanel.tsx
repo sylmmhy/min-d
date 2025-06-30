@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Compass, CheckCircle, Circle, Mail as Sail, Mountain, BookOpen, Palette } from 'lucide-react';
 import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
+import { ControlPanel } from './ControlPanel';
 
 interface Task {
   id: string;
@@ -77,6 +78,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
 }) => {
   const [selectedTask, setSelectedTask] = useState<Task>(mockTasks[0]);
   const [tasks, setTasks] = useState<Task[]>(mockTasks);
+  const [showControlPanel, setShowControlPanel] = useState(false);
 
   const toggleTaskCompletion = (taskId: string) => {
     setTasks(prev => prev.map(task => 
@@ -86,149 +88,161 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
 
   const handleStartJourney = () => {
     console.log('Starting journey with task:', selectedTask.title);
-    // Here you could trigger navigation or other actions
+    // Hide the journey panel and show control panel
+    setShowControlPanel(true);
     onClose?.();
   };
 
-  if (!isVisible) return null;
+  if (!isVisible && !showControlPanel) return null;
 
   return (
-    <div className="fixed inset-0 z-40 flex">
-      {/* Left side - Ocean scene (completely transparent to allow Spline to show through) */}
-      <div className="flex-1 relative">
-        {/* No overlay - let the 3D scene show through seamlessly */}
-      </div>
-
-      {/* Right side - Task Panel - 宽度从 600px 增加到 900px (1.5倍) */}
-      <div className="w-[900px] p-8 flex items-center justify-center">
-        <div className="relative w-full max-w-[820px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
-                        backdrop-blur-2xl border border-white/25 rounded-3xl p-10
-                        shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
-                        before:absolute before:inset-0 before:rounded-3xl 
-                        before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
-                        before:pointer-events-none overflow-hidden">
-          
-          {/* Inner glow overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
-                          rounded-3xl pointer-events-none"></div>
-          
-          <div className="relative z-10 h-full flex flex-col">
-            {/* Header */}
-            <div className="flex items-center gap-3 mb-8">
-              <div className="bg-gradient-to-br from-white/15 via-white/10 to-white/8 backdrop-blur-md 
-                              rounded-2xl flex items-center justify-center w-12 h-12
-                              border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]
-                              relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl"></div>
-                <Sail className="w-6 h-6 text-white relative z-10" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-playfair font-normal text-white leading-tight">
-                  Journey Dashboard
-                </h2>
-                <p className="text-white/70 text-sm font-inter">
-                  Navigate your goals with intention
-                </p>
-              </div>
-            </div>
-
-            {/* Main content area - Increased spacing and column widths */}
-            <div className="flex-1 flex gap-8">
-              {/* Left column - To Do List - Increased width from w-48 to w-64 */}
-              <div className="w-64 space-y-3">
-                <h3 className="text-lg font-playfair font-medium text-white mb-4">
-                  to do list
-                </h3>
-                
-                <div className="space-y-2">
-                  {tasks.map((task) => (
-                    <button
-                      key={task.id}
-                      onClick={() => setSelectedTask(task)}
-                      className={`w-full text-left p-4 rounded-xl transition-all duration-300 
-                                  border backdrop-blur-md font-inter text-sm
-                                  ${selectedTask.id === task.id 
-                                    ? 'bg-white/15 border-white/30 text-white shadow-md' 
-                                    : 'bg-white/8 border-white/20 text-white/80 hover:bg-white/12 hover:border-white/25'
-                                  }`}
-                    >
-                      <div className="flex items-center gap-2 mb-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            toggleTaskCompletion(task.id);
-                          }}
-                          className="text-white/60 hover:text-white transition-colors"
-                        >
-                          {task.completed ? (
-                            <CheckCircle className="w-4 h-4 text-green-400" />
-                          ) : (
-                            <Circle className="w-4 h-4" />
-                          )}
-                        </button>
-                        {getCategoryIcon(task.category)}
-                      </div>
-                      <div className={task.completed ? 'line-through opacity-60' : ''}>
-                        <div className="font-medium">{task.title}</div>
-                        <div className="text-xs text-white/60 mt-1">{task.description}</div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right column - Task Details - Now has more space */}
-              <div className="flex-1 space-y-6">
-                <div>
-                  <h3 className="text-xl font-playfair font-medium text-white mb-3">
-                    {selectedTask.title} - {selectedTask.description}：
-                  </h3>
-                  <p className="text-white/80 font-inter text-base leading-relaxed">
-                    {selectedTask.details}
-                  </p>
-                </div>
-
-                {/* Task illustration - Increased height for better proportion */}
-                <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
-                                border border-white/20 shadow-lg">
-                  <img
-                    src={selectedTask.imageUrl}
-                    alt={selectedTask.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-                </div>
-
-                {/* Start Journey Button */}
-                <div className="pt-4">
-                  <button
-                    onClick={handleStartJourney}
-                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-400/30 to-purple-400/30
-                               hover:from-blue-400/40 hover:to-purple-400/40 text-white rounded-xl 
-                               transition-all duration-300 font-inter font-medium text-base
-                               shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-md
-                               border border-white/25 hover:border-white/35
-                               transform hover:scale-[1.02] active:scale-[0.98]
-                               flex items-center justify-center gap-2"
-                  >
-                    <Sail className="w-5 h-5" />
-                    开始航行
-                  </button>
-                </div>
-              </div>
-            </div>
+    <>
+      {/* Journey Panel - only show if not in control mode */}
+      {isVisible && !showControlPanel && (
+        <div className="fixed inset-0 z-40 flex">
+          {/* Left side - Ocean scene (completely transparent to allow Spline to show through) */}
+          <div className="flex-1 relative">
+            {/* No overlay - let the 3D scene show through seamlessly */}
           </div>
 
-          {/* Decorative elements */}
-          <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/20 rounded-full blur-sm animate-pulse"></div>
-          <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-white/15 rounded-full blur-sm animate-pulse" 
-               style={{animationDelay: '1s'}}></div>
-          <div className="absolute top-1/4 -right-2 w-2 h-2 bg-white/25 rounded-full blur-sm animate-pulse"
-               style={{animationDelay: '2s'}}></div>
-          <div className="absolute bottom-1/3 -left-2 w-3 h-3 bg-white/20 rounded-full blur-sm animate-pulse"
-               style={{animationDelay: '0.5s'}}></div>
+          {/* Right side - Task Panel - 宽度从 600px 增加到 900px (1.5倍) */}
+          <div className="w-[900px] p-8 flex items-center justify-center">
+            <div className="relative w-full max-w-[820px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
+                            backdrop-blur-2xl border border-white/25 rounded-3xl p-10
+                            shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
+                            before:absolute before:inset-0 before:rounded-3xl 
+                            before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
+                            before:pointer-events-none overflow-hidden">
+              
+              {/* Inner glow overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
+                              rounded-3xl pointer-events-none"></div>
+              
+              <div className="relative z-10 h-full flex flex-col">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="bg-gradient-to-br from-white/15 via-white/10 to-white/8 backdrop-blur-md 
+                                  rounded-2xl flex items-center justify-center w-12 h-12
+                                  border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]
+                                  relative overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl"></div>
+                    <Sail className="w-6 h-6 text-white relative z-10" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-playfair font-normal text-white leading-tight">
+                      Journey Dashboard
+                    </h2>
+                    <p className="text-white/70 text-sm font-inter">
+                      Navigate your goals with intention
+                    </p>
+                  </div>
+                </div>
+
+                {/* Main content area - Increased spacing and column widths */}
+                <div className="flex-1 flex gap-8">
+                  {/* Left column - To Do List - Increased width from w-48 to w-64 */}
+                  <div className="w-64 space-y-3">
+                    <h3 className="text-lg font-playfair font-medium text-white mb-4">
+                      to do list
+                    </h3>
+                    
+                    <div className="space-y-2">
+                      {tasks.map((task) => (
+                        <button
+                          key={task.id}
+                          onClick={() => setSelectedTask(task)}
+                          className={`w-full text-left p-4 rounded-xl transition-all duration-300 
+                                      border backdrop-blur-md font-inter text-sm
+                                      ${selectedTask.id === task.id 
+                                        ? 'bg-white/15 border-white/30 text-white shadow-md' 
+                                        : 'bg-white/8 border-white/20 text-white/80 hover:bg-white/12 hover:border-white/25'
+                                      }`}
+                        >
+                          <div className="flex items-center gap-2 mb-1">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleTaskCompletion(task.id);
+                              }}
+                              className="text-white/60 hover:text-white transition-colors"
+                            >
+                              {task.completed ? (
+                                <CheckCircle className="w-4 h-4 text-green-400" />
+                              ) : (
+                                <Circle className="w-4 h-4" />
+                              )}
+                            </button>
+                            {getCategoryIcon(task.category)}
+                          </div>
+                          <div className={task.completed ? 'line-through opacity-60' : ''}>
+                            <div className="font-medium">{task.title}</div>
+                            <div className="text-xs text-white/60 mt-1">{task.description}</div>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Right column - Task Details - Now has more space */}
+                  <div className="flex-1 space-y-6">
+                    <div>
+                      <h3 className="text-xl font-playfair font-medium text-white mb-3">
+                        {selectedTask.title} - {selectedTask.description}：
+                      </h3>
+                      <p className="text-white/80 font-inter text-base leading-relaxed">
+                        {selectedTask.details}
+                      </p>
+                    </div>
+
+                    {/* Task illustration - Increased height for better proportion */}
+                    <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
+                                    border border-white/20 shadow-lg">
+                      <img
+                        src={selectedTask.imageUrl}
+                        alt={selectedTask.title}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    </div>
+
+                    {/* Start Journey Button */}
+                    <div className="pt-4">
+                      <button
+                        onClick={handleStartJourney}
+                        className="w-full px-6 py-3 bg-gradient-to-r from-blue-400/30 to-purple-400/30
+                                   hover:from-blue-400/40 hover:to-purple-400/40 text-white rounded-xl 
+                                   transition-all duration-300 font-inter font-medium text-base
+                                   shadow-[0_8px_24px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.08)] backdrop-blur-md
+                                   border border-white/25 hover:border-white/35
+                                   transform hover:scale-[1.02] active:scale-[0.98]
+                                   flex items-center justify-center gap-2"
+                      >
+                        <Sail className="w-5 h-5" />
+                        开始航行
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Decorative elements */}
+              <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/20 rounded-full blur-sm animate-pulse"></div>
+              <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-white/15 rounded-full blur-sm animate-pulse" 
+                   style={{animationDelay: '1s'}}></div>
+              <div className="absolute top-1/4 -right-2 w-2 h-2 bg-white/25 rounded-full blur-sm animate-pulse"
+                   style={{animationDelay: '2s'}}></div>
+              <div className="absolute bottom-1/3 -left-2 w-3 h-3 bg-white/20 rounded-full blur-sm animate-pulse"
+                   style={{animationDelay: '0.5s'}}></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      )}
+
+      {/* Control Panel - floating at bottom center */}
+      <ControlPanel 
+        isVisible={showControlPanel}
+        onClose={() => setShowControlPanel(false)}
+      />
+    </>
   );
 };
