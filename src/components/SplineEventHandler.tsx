@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { X, Sparkles, Compass, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
-import { WelcomeModal } from './WelcomeModal'
+import { WelcomePanel } from './WelcomePanel'
 
 interface SplineEvent {
   type: string
@@ -30,7 +30,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
+  const [showWelcomePanel, setShowWelcomePanel] = useState(false)
 
   useEffect(() => {
     console.log('🚀 初始化 Spline 事件处理器...')
@@ -49,7 +49,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         
         // 先关闭所有模态框，避免冲突
         setShowLifeGoalsModal(false)
-        setShowWelcomeModal(false)
+        setShowWelcomePanel(false)
         
         // 简化且明确的决策逻辑
         const apiEndpoint = event.payload.apiEndpoint
@@ -92,11 +92,11 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         // 执行决策 - 使用延迟确保状态更新
         setTimeout(() => {
           if (shouldShowWelcome) {
-            setShowWelcomeModal(true)
+            setShowWelcomePanel(true)
             setShowLifeGoalsModal(false)
           } else if (shouldShowGoals) {
             setShowLifeGoalsModal(true)
-            setShowWelcomeModal(false)
+            setShowWelcomePanel(false)
           }
         }, 100)
         
@@ -170,10 +170,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         onSubmit={handleLifeGoalSubmit}
       />
 
-      {/* 欢迎启航模态框 */}
-      <WelcomeModal
-        isOpen={showWelcomeModal}
-        onClose={() => setShowWelcomeModal(false)}
+      {/* 欢迎面板 - 左侧固定位置 */}
+      <WelcomePanel
+        isVisible={showWelcomePanel}
+        onClose={() => setShowWelcomePanel(false)}
       />
 
       {/* 事件详情模态框 */}
