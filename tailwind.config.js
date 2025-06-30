@@ -10,7 +10,6 @@ export default {
       animation: {
         'float': 'float 6s ease-in-out infinite',
         'glow': 'glow 2s ease-in-out infinite alternate',
-        'shrink': 'shrink 8s linear forwards',
       },
       keyframes: {
         float: {
@@ -20,10 +19,6 @@ export default {
         glow: {
           'from': { textShadow: '0 0 5px rgba(255,255,255,0.3)' },
           'to': { textShadow: '0 0 20px rgba(255,255,255,0.6), 0 0 30px rgba(255,255,255,0.4)' },
-        },
-        shrink: {
-          'from': { transform: 'scaleX(1)' },
-          'to': { transform: 'scaleX(0)' },
         },
       },
     },
