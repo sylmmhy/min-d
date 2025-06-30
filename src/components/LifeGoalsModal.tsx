@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Target, Sparkles, Heart } from 'lucide-react';
+import { X, Target, Heart } from 'lucide-react';
+import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
 
 interface LifeGoalsModalProps {
   isOpen: boolean;
@@ -39,54 +40,55 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md 
-                      border border-white/20 rounded-3xl p-8 max-w-lg w-full mx-4 
-                      transform transition-all duration-500 scale-100 animate-in">
+      <div className={`relative ${getPanelStyle()} p-10 max-w-lg w-full mx-4 
+                      transform transition-all duration-500 scale-100 animate-in`}>
+        
+        {/* Inner glow overlay */}
+        <div className={designSystem.patterns.innerGlow}></div>
         
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-white/60 hover:text-white 
-                     transition-colors p-2 rounded-full hover:bg-white/10"
+          className={`absolute top-4 right-4 ${designSystem.colors.text.subtle} hover:${designSystem.colors.text.primary} 
+                     ${designSystem.effects.transitions.default} p-2 rounded-full hover:bg-white/10`}
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Header with icon */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 
-                          bg-gradient-to-br from-blue-400/20 to-purple-400/20 
-                          rounded-full mb-4 backdrop-blur-sm border border-white/20">
-            <Target className="w-8 h-8 text-white" />
+        <div className="text-center mb-8 relative z-10">
+          <div className={`inline-flex items-center justify-center w-16 h-16 
+                          ${designSystem.patterns.iconContainer} mb-4`}>
+            {/* Inner highlight for icon container */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+            <Target className="w-8 h-8 text-white relative z-10" />
           </div>
           
-          <h2 className="text-3xl font-playfair font-semibold text-white mb-2">
+          <h2 className={`${designSystem.typography.sizes['3xl']} ${designSystem.typography.fonts.heading} 
+                         ${designSystem.typography.weights.semibold} ${designSystem.colors.text.primary} mb-2`}>
             你的人生目标是什么？
           </h2>
           
-          <p className="text-white/70 text-lg font-inter">
+          <p className={`${designSystem.colors.text.muted} ${designSystem.typography.sizes.lg} ${designSystem.typography.fonts.body}`}>
             分享你内心深处的梦想与追求
           </p>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
           <div className="relative">
             <textarea
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
               placeholder="在这里写下你的人生目标..."
-              className="w-full h-32 px-4 py-3 bg-white/10 backdrop-blur-sm 
-                         border border-white/20 rounded-xl text-white placeholder-white/50
-                         focus:outline-none focus:ring-2 focus:ring-blue-400/50 
-                         focus:border-blue-400/50 transition-all duration-300
-                         resize-none font-inter"
+              className={`w-full h-32 px-4 py-3 ${designSystem.patterns.inputField}
+                         resize-none ${designSystem.typography.fonts.body}`}
               maxLength={500}
               required
             />
             
             {/* Character count */}
-            <div className="absolute bottom-2 right-3 text-xs text-white/40">
+            <div className={`absolute bottom-2 right-3 ${designSystem.typography.sizes.xs} ${designSystem.colors.text.subtle}`}>
               {goal.length}/500
             </div>
           </div>
@@ -96,10 +98,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 
-                         text-white rounded-xl transition-all duration-300
-                         border border-white/20 hover:border-white/30
-                         font-inter font-medium"
+              className={`flex-1 ${getButtonStyle('glass', 'lg')}`}
             >
               取消
             </button>
@@ -107,11 +106,9 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
             <button
               type="submit"
               disabled={!goal.trim() || isSubmitting}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-blue-500/80 to-purple-500/80
-                         hover:from-blue-500 hover:to-purple-500 text-white rounded-xl 
-                         transition-all duration-300 disabled:opacity-50 
-                         disabled:cursor-not-allowed font-inter font-medium
-                         flex items-center justify-center gap-2"
+              className={`flex-1 ${getButtonStyle('accent', 'lg')} 
+                         disabled:opacity-50 disabled:cursor-not-allowed
+                         flex items-center justify-center gap-2`}
             >
               {isSubmitting ? (
                 <>

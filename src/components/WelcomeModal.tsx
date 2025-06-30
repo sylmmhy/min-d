@@ -1,5 +1,6 @@
 import React from 'react';
 import { Compass, Wind, Target } from 'lucide-react';
+import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
 
 interface WelcomeModalProps {
   isOpen: boolean;
@@ -14,54 +15,56 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="relative bg-gradient-to-br from-blue-900/20 to-purple-900/20 backdrop-blur-md 
-                      border border-white/30 rounded-3xl p-10 max-w-2xl w-full mx-4 
-                      transform transition-all duration-700 scale-100 animate-in">
+      <div className={`relative ${getPanelStyle()} p-10 max-w-2xl w-full mx-4 
+                      transform transition-all duration-700 scale-100 animate-in`}>
         
-        {/* Decorative elements */}
+        {/* Inner glow overlay */}
+        <div className={designSystem.patterns.innerGlow}></div>
+        
+        {/* Decorative top element */}
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
           <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full 
                           animate-pulse shadow-lg shadow-blue-400/50"></div>
         </div>
 
         {/* Header with sailing icon */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 
-                          bg-gradient-to-br from-blue-400/30 to-purple-400/30 
-                          rounded-full mb-6 backdrop-blur-sm border border-white/30
-                          animate-float">
-            <Compass className="w-10 h-10 text-white animate-spin" style={{animationDuration: '8s'}} />
+        <div className="text-center mb-8 relative z-10">
+          <div className={`inline-flex items-center justify-center w-20 h-20 
+                          ${designSystem.patterns.iconContainer} mb-6 animate-float`}>
+            {/* Inner highlight for icon container */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+            <Compass className="w-10 h-10 text-white animate-spin relative z-10" style={{animationDuration: '8s'}} />
           </div>
           
-          <h1 className="text-4xl font-playfair font-bold text-white mb-4 animate-glow">
+          <h1 className={`${designSystem.typography.sizes['4xl']} ${designSystem.typography.fonts.heading} 
+                         ${designSystem.typography.weights.bold} ${designSystem.colors.text.primary} mb-4 animate-glow`}>
             欢迎启航
           </h1>
         </div>
 
         {/* Main content */}
-        <div className="space-y-6 text-center">
+        <div className="space-y-6 text-center relative z-10">
           <div className="flex items-center justify-center gap-3 mb-6">
             <Wind className="w-6 h-6 text-blue-300 animate-pulse" />
             <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent flex-1"></div>
             <Target className="w-6 h-6 text-purple-300 animate-pulse" />
           </div>
 
-          <p className="text-xl text-white/90 font-inter leading-relaxed mb-6">
+          <p className={`${designSystem.typography.sizes.xl} ${designSystem.colors.text.secondary} 
+                        ${designSystem.typography.fonts.body} leading-relaxed mb-6`}>
             系统会调用传感器来监测你是否当下在做重要的事情。
           </p>
           
-          <p className="text-lg text-white/80 font-inter leading-relaxed mb-8">
+          <p className={`${designSystem.typography.sizes.lg} ${designSystem.colors.text.muted} 
+                        ${designSystem.typography.fonts.body} leading-relaxed mb-8`}>
             当你做和目标有关的事情的时候，会吹起不同的意念之风，推进你的小船帮你到达目的地。
           </p>
 
           {/* Action button */}
           <button
             onClick={onClose}
-            className="px-8 py-4 bg-gradient-to-r from-blue-500/80 to-purple-500/80
-                       hover:from-blue-500 hover:to-purple-500 text-white rounded-2xl 
-                       transition-all duration-300 font-inter font-medium text-lg
-                       shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40
-                       transform hover:scale-105"
+            className={`${getButtonStyle('accent', 'lg')} ${designSystem.typography.sizes.lg}
+                       ${designSystem.effects.hover.subtle}`}
           >
             开始旅程
           </button>

@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase'
 import { X, Sparkles, Compass, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 import { WelcomePanel } from './WelcomePanel'
+import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem'
 
 interface SplineEvent {
   type: string
@@ -176,30 +177,40 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         onClose={() => setShowWelcomePanel(false)}
       />
 
-      {/* 事件详情模态框 */}
+      {/* 事件详情模态框 - 使用设计系统 */}
       {showModal && currentEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 
-                          max-w-md w-full mx-4 transform transition-all duration-300 scale-100">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3 text-white">
+          <div className={`${getPanelStyle()} p-8 max-w-md w-full mx-4 
+                          transform transition-all duration-300 scale-100`}>
+            
+            {/* Inner glow overlay */}
+            <div className={designSystem.patterns.innerGlow}></div>
+            
+            <div className="flex items-center justify-between mb-6 relative z-10">
+              <div className={`flex items-center gap-3 ${designSystem.colors.text.primary}`}>
                 {getEventIcon(currentEvent)}
-                <h2 className="text-xl font-semibold">{getEventTitle(currentEvent)}</h2>
+                <h2 className={`${designSystem.typography.sizes.xl} ${designSystem.typography.weights.semibold}`}>
+                  {getEventTitle(currentEvent)}
+                </h2>
               </div>
               <button
                 onClick={closeModal}
-                className="text-white/60 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
+                className={`${designSystem.colors.text.subtle} hover:${designSystem.colors.text.primary} 
+                           ${designSystem.effects.transitions.default} p-1 rounded-full hover:bg-white/10`}
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-4 text-white/80">
-              <p className="text-lg">{getEventDescription(currentEvent)}</p>
+            <div className={`space-y-4 ${designSystem.colors.text.muted} relative z-10`}>
+              <p className={designSystem.typography.sizes.lg}>{getEventDescription(currentEvent)}</p>
               
-              <div className="bg-white/5 rounded-lg p-4">
-                <h3 className="font-medium mb-2 text-white">事件详情:</h3>
-                <div className="space-y-1 text-sm">
+              <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
+                              ${designSystem.radius.md} p-4`}>
+                <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
+                  事件详情:
+                </h3>
+                <div className={`space-y-1 ${designSystem.typography.sizes.sm}`}>
                   <div>来源: {currentEvent.source}</div>
                   <div>类型: {currentEvent.type}</div>
                   <div>时间: {new Date(currentEvent.timestamp).toLocaleString()}</div>
@@ -207,20 +218,22 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
               </div>
 
               {Object.keys(currentEvent.payload).length > 0 && (
-                <div className="bg-white/5 rounded-lg p-4">
-                  <h3 className="font-medium mb-2 text-white">载荷数据:</h3>
-                  <pre className="text-xs text-white/70 overflow-x-auto">
+                <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
+                                ${designSystem.radius.md} p-4`}>
+                  <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
+                    载荷数据:
+                  </h3>
+                  <pre className={`${designSystem.typography.sizes.xs} ${designSystem.colors.text.muted} overflow-x-auto`}>
                     {JSON.stringify(currentEvent.payload, null, 2)}
                   </pre>
                 </div>
               )}
             </div>
 
-            <div className="flex justify-end mt-6">
+            <div className="flex justify-end mt-6 relative z-10">
               <button
                 onClick={closeModal}
-                className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg 
-                           transition-colors duration-200"
+                className={getButtonStyle('glass', 'md')}
               >
                 关闭
               </button>
