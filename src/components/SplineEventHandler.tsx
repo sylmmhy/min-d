@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Play, Zap } from 'lucide-react'
+import { X, Sparkles, Play, Zap, Compass } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
+import { WelcomeModal } from './WelcomeModal'
 
 interface SplineEvent {
   type: string
@@ -9,6 +10,7 @@ interface SplineEvent {
     number?: number
     action?: string
     buttonId?: string
+    apiEndpoint?: string
     [key: string]: any
   }
   timestamp: string
@@ -24,6 +26,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false)
 
   useEffect(() => {
     // Subscribe to Spline events via Supabase Realtime
@@ -37,8 +40,17 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         setEvents(prev => [event, ...prev.slice(0, 9)]) // Keep last 10 events
         setCurrentEvent(event)
         
-        // Show life goals modal when receiving Spline event
-        setShowLifeGoalsModal(true)
+        // Handle different API endpoints or event types
+        if (event.payload.number === 1 || event.payload.action === 'first_api') {
+          // First API call - show life goals modal
+          setShowLifeGoalsModal(true)
+        } else if (event.payload.number === 2 || event.payload.action === 'second_api' || event.payload.apiEndpoint === 'welcome') {
+          // Second API call - show welcome modal
+          setShowWelcomeModal(true)
+        } else {
+          // Default behavior for other events
+          setShowLifeGoalsModal(true)
+        }
         
         // Call the optional callback
         onEventReceived?.(event)
@@ -68,21 +80,26 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   const getEventIcon = (event: SplineEvent) => {
     if (event.payload.number === 1) return <Play className="w-6 h-6" />
+    if (event.payload.number === 2) return <Compass className="w-6 h-6" />
     if (event.payload.action) return <Zap className="w-6 h-6" />
     return <Sparkles className="w-6 h-6" />
   }
 
   const getEventTitle = (event: SplineEvent) => {
-    if (event.payload.number === 1) return "Animation Triggered!"
+    if (event.payload.number === 1) return "Life Goals Triggered!"
+    if (event.payload.number === 2) return "Welcome Journey Started!"
+    if (event.payload.action === 'first_api') return "Life Goals Modal"
+    if (event.payload.action === 'second_api') return "Welcome Message"
     if (event.payload.action) return `Action: ${event.payload.action}`
     return "Spline Interaction"
   }
 
   const getEventDescription = (event: SplineEvent) => {
     const parts = []
-    if (event.payload.number) parts.push(`Number: ${event.payload.number}`)
+    if (event.payload.number) parts.push(`API Call: ${event.payload.number}`)
     if (event.payload.buttonId) parts.push(`Button: ${event.payload.buttonId}`)
     if (event.payload.action) parts.push(`Action: ${event.payload.action}`)
+    if (event.payload.apiEndpoint) parts.push(`Endpoint: ${event.payload.apiEndpoint}`)
     
     return parts.length > 0 ? parts.join(' • ') : 'Interactive element activated'
   }
@@ -94,6 +111,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         isOpen={showLifeGoalsModal}
         onClose={() => setShowLifeGoalsModal(false)}
         onSubmit={handleLifeGoalSubmit}
+      />
+
+      {/* Welcome Modal */}
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
       />
 
       {/* Event History Panel */}

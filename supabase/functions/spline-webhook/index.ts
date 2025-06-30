@@ -9,6 +9,7 @@ and broadcasts the data to connected clients via Supabase Realtime.
 - Validates incoming requests
 - Broadcasts events to Supabase Realtime channel
 - Handles CORS for cross-origin requests
+- Supports multiple API endpoints for different interactions
 */
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -23,6 +24,7 @@ interface SplineWebhookPayload {
   number?: number;
   action?: string;
   buttonId?: string;
+  apiEndpoint?: string;
   [key: string]: any;
 }
 
@@ -70,8 +72,16 @@ Deno.serve(async (req: Request) => {
     // Broadcast the event to all connected clients
     const channel = supabase.channel('spline-events')
     
+    // Determine event type based on payload
+    let eventType = 'spline_button_click'
+    if (payload.number === 2 || payload.action === 'second_api' || payload.apiEndpoint === 'welcome') {
+      eventType = 'spline_welcome_trigger'
+    } else if (payload.number === 1 || payload.action === 'first_api') {
+      eventType = 'spline_goals_trigger'
+    }
+    
     const eventData = {
-      type: 'spline_button_click',
+      type: eventType,
       payload: payload,
       timestamp: new Date().toISOString(),
       source: 'spline'
@@ -86,12 +96,20 @@ Deno.serve(async (req: Request) => {
 
     console.log('Spline webhook received:', eventData)
 
-    // Return success response
+    // Return success response with appropriate message
+    let responseMessage = 'Event broadcasted successfully'
+    if (eventType === 'spline_welcome_trigger') {
+      responseMessage = 'Welcome journey initiated successfully'
+    } else if (eventType === 'spline_goals_trigger') {
+      responseMessage = 'Life goals modal triggered successfully'
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
-        message: 'Event broadcasted successfully',
-        eventId: crypto.randomUUID()
+        message: responseMessage,
+        eventId: crypto.randomUUID(),
+        eventType: eventType
       }),
       {
         status: 200,
