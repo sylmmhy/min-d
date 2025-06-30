@@ -87,6 +87,15 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
     setRecordingTime(0);
   };
 
+  const handleReRecord = () => {
+    setHasRecorded(false);
+    setRecordingTime(0);
+    setIsRecording(false);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+    }
+  };
+
   if (!isVisible) return null;
 
   return (
@@ -142,9 +151,9 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
           {currentStep === 'voice' && (
             <div className="space-y-6">
-              {/* Header - title changed to 32px */}
+              {/* Header - smaller title text */}
               <div className="text-center mb-8">
-                <h2 className="text-[32px] font-playfair font-normal text-white mb-4 leading-tight">
+                <h2 className="text-2xl font-playfair font-normal text-white mb-4 leading-tight">
                   Tell the wind of intention,
                 </h2>
                 <p className={`${designSystem.colors.text.secondary} ${designSystem.typography.fonts.body}`}>
@@ -178,9 +187,9 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                   )}
                 </button>
                 
-                {/* Recording status */}
+                {/* Recording status - smaller text */}
                 {isRecording && (
-                  <div className={`${designSystem.colors.text.secondary} font-mono ${designSystem.typography.sizes.lg}`}>
+                  <div className={`${designSystem.colors.text.secondary} font-mono text-base`}>
                     Recording: {formatTime(recordingTime)}
                   </div>
                 )}
@@ -190,9 +199,20 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                   {isRecording ? 'Click to stop recording' : 'Click to start recording'}
                 </p>
 
-                {/* Submit button - only show after recording */}
+                {/* Submit and Re-record buttons - only show after recording */}
                 {hasRecorded && !isRecording && (
-                  <div className="pt-4">
+                  <div className="pt-4 space-y-3">
+                    {/* Re-record link - smaller text above submit */}
+                    <div className="text-center">
+                      <button
+                        onClick={handleReRecord}
+                        className="text-white/70 hover:text-white text-sm font-inter underline transition-colors duration-200"
+                      >
+                        Re-record
+                      </button>
+                    </div>
+                    
+                    {/* Submit button */}
                     <button
                       onClick={handleSubmit}
                       className="px-10 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
@@ -204,26 +224,10 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                                  hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
                                  transform hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      Submit Voice Input
+                      Submit
                     </button>
                   </div>
                 )}
-              </div>
-
-              {/* Apple-style Back button - smaller size */}
-              <div className="flex justify-center pt-4">
-                <button
-                  onClick={() => setCurrentStep('welcome')}
-                  className="px-8 py-2 bg-gradient-to-br from-white/10 via-white/8 to-white/6
-                             hover:from-white/15 hover:via-white/12 hover:to-white/10
-                             text-white rounded-lg transition-all duration-300
-                             border border-white/20 hover:border-white/30
-                             font-inter font-medium text-sm backdrop-blur-md
-                             shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.08)]
-                             transform hover:scale-[1.02] active:scale-[0.98] min-w-[80px]"
-                >
-                  Back
-                </button>
               </div>
             </div>
           )}
