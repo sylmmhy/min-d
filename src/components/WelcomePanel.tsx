@@ -116,65 +116,67 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
     <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-80" 
          style={{ left: '75%', transform: 'translateX(-50%) translateY(-50%)' }}>
       
-      {/* Main visionOS-style glass panel */}
-      <div className="glass-panel-visionos relative overflow-hidden">
+      {/* Main physical glass panel with enhanced depth */}
+      <div className="glass-panel-physical relative overflow-hidden">
         
-        {/* Subtle noise texture overlay */}
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        {/* Primary light source - top edge highlight */}
+        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-t-3xl"></div>
+        
+        {/* Secondary light source - left edge highlight */}
+        <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/60 via-white/40 to-white/20 rounded-l-3xl"></div>
+        
+        {/* Crisp outline stroke */}
+        <div className="absolute inset-0 rounded-3xl border border-white/30 pointer-events-none"></div>
+        
+        {/* Subtle texture overlay */}
+        <div className="absolute inset-0 opacity-[0.02] pointer-events-none rounded-3xl"
              style={{
-               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-               backgroundSize: '128px 128px'
+               backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+               backgroundSize: '100px 100px'
              }}>
         </div>
         
-        {/* Specular highlight - top edge */}
-        <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent"></div>
-        
-        {/* Specular highlight - left edge */}
-        <div className="absolute top-4 bottom-4 left-0 w-px bg-gradient-to-b from-transparent via-white/40 to-transparent"></div>
-        
-        {/* Inner content with proper z-index */}
+        {/* Inner content with proper layering */}
         <div className="relative z-10 p-8">
           {currentStep === 'welcome' && (
             <div className="space-y-6">
-              {/* Header with enhanced glass icon container */}
+              {/* Header with physical glass icon container */}
               <div className="flex items-center gap-4 mb-8">
-                <div className="glass-icon-container">
-                  {/* Inner specular highlights */}
-                  <div className="absolute top-0.5 left-1 right-1 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full"></div>
-                  <div className="absolute top-1 bottom-1 left-0.5 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent rounded-full"></div>
+                <div className="glass-icon-physical">
+                  {/* Icon container light sources */}
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
+                  <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
+                  <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
                   
-                  <Compass className="w-7 h-7 text-white relative z-10 drop-shadow-sm" />
+                  <Compass className="w-7 h-7 text-white relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
                 </div>
-                <h2 className="text-xl font-playfair font-semibold text-white drop-shadow-sm">
+                <h2 className="text-xl font-playfair font-semibold text-white filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
                   Welcome aboard!
                 </h2>
               </div>
 
               {/* Welcome content */}
               <div className="space-y-4 text-white/95 font-inter leading-relaxed">
-                <p className="drop-shadow-sm">
+                <p className="filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
                   The system uses sensors to check if you're doing something important right now.
                 </p>
-                <p className="drop-shadow-sm">
+                <p className="filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
                   When you're working toward your goal, different winds of intention will blow, 
                   pushing your little boat forward and helping you get where you want to go.
                 </p>
               </div>
 
-              {/* Enhanced glass Next button */}
+              {/* Physical glass Next button */}
               <button
                 onClick={handleNext}
-                className="glass-button-primary w-full group"
+                className="glass-button-physical w-full group"
               >
-                {/* Top specular highlight */}
-                <div className="absolute top-0.5 left-2 right-2 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full"></div>
+                {/* Button light sources */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
+                <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
+                <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
                 
-                {/* Left specular highlight */}
-                <div className="absolute top-2 bottom-2 left-0.5 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent rounded-full"></div>
-                
-                {/* Button content */}
-                <span className="relative z-10 drop-shadow-sm">Next</span>
+                <span className="relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Next</span>
               </button>
             </div>
           )}
@@ -183,17 +185,18 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
             <div className="space-y-6">
               {/* Header */}
               <div className="text-center mb-8">
-                <div className="glass-icon-container mx-auto mb-4">
-                  {/* Specular highlights */}
-                  <div className="absolute top-0.5 left-1 right-1 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full"></div>
-                  <div className="absolute top-1 bottom-1 left-0.5 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent rounded-full"></div>
+                <div className="glass-icon-physical mx-auto mb-4">
+                  {/* Icon container light sources */}
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
+                  <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
+                  <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
                   
-                  <Mic className="w-7 h-7 text-white relative z-10 drop-shadow-sm" />
+                  <Mic className="w-7 h-7 text-white relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
                 </div>
-                <h2 className="text-lg font-playfair font-semibold text-white mb-2 drop-shadow-sm">
+                <h2 className="text-lg font-playfair font-semibold text-white mb-2 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
                   Tell the wind of intention,
                 </h2>
-                <p className="text-white/90 font-inter drop-shadow-sm">
+                <p className="text-white/90 font-inter filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
                   What important thing do you want to do today?
                 </p>
               </div>
@@ -202,29 +205,30 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
               <div className="space-y-6">
                 {!audioBlob && (
                   <div className="text-center">
-                    {/* Enhanced glass recording button */}
+                    {/* Physical glass recording button */}
                     <button
                       onClick={isRecording ? stopRecording : startRecording}
-                      className={`glass-recording-button ${isRecording ? 'recording' : ''}`}
+                      className={`glass-recording-physical ${isRecording ? 'recording' : ''}`}
                     >
-                      {/* Enhanced specular highlights for recording button */}
-                      <div className="absolute top-1 left-2 right-2 h-px bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-full"></div>
-                      <div className="absolute top-2 bottom-2 left-1 w-px bg-gradient-to-b from-transparent via-white/40 to-transparent rounded-full"></div>
+                      {/* Recording button light sources */}
+                      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-white/80 to-transparent rounded-t-3xl"></div>
+                      <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-white/60 via-white/40 to-white/20 rounded-l-3xl"></div>
+                      <div className="absolute inset-0 rounded-3xl border border-white/40 pointer-events-none"></div>
                       
                       {isRecording ? (
-                        <Square className="w-8 h-8 text-white relative z-10 drop-shadow-sm" />
+                        <Square className="w-8 h-8 text-white relative z-10 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
                       ) : (
-                        <Mic className="w-8 h-8 text-white relative z-10 drop-shadow-sm" />
+                        <Mic className="w-8 h-8 text-white relative z-10 filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.4)]" />
                       )}
                     </button>
                     
                     {isRecording && (
-                      <div className="mt-4 text-white/90 font-mono text-lg drop-shadow-sm">
+                      <div className="mt-4 text-white/90 font-mono text-lg filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
                         Recording: {formatTime(recordingTime)}
                       </div>
                     )}
                     
-                    <p className="mt-4 text-sm text-white/70 drop-shadow-sm">
+                    <p className="mt-4 text-sm text-white/70 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">
                       {isRecording ? 'Click to stop recording' : 'Click to start recording'}
                     </p>
                   </div>
@@ -232,76 +236,81 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
                 {audioBlob && (
                   <div className="space-y-4">
-                    {/* Enhanced glass recording display */}
-                    <div className="glass-panel-secondary">
-                      {/* Specular highlights */}
-                      <div className="absolute top-0.5 left-2 right-2 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent rounded-full"></div>
-                      <div className="absolute top-2 bottom-2 left-0.5 w-px bg-gradient-to-b from-transparent via-white/25 to-transparent rounded-full"></div>
+                    {/* Physical glass recording display */}
+                    <div className="glass-panel-secondary-physical">
+                      {/* Secondary panel light sources */}
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-t-2xl"></div>
+                      <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/40 via-white/25 to-white/10 rounded-l-2xl"></div>
+                      <div className="absolute inset-0 rounded-2xl border border-white/25 pointer-events-none"></div>
                       
                       <div className="flex items-center justify-between mb-4 relative z-10">
-                        <span className="text-white/90 text-sm font-medium drop-shadow-sm">Your recording</span>
+                        <span className="text-white/90 text-sm font-medium filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Your recording</span>
                         <button
                           onClick={clearRecording}
                           className="text-white/70 hover:text-white text-sm px-3 py-1 rounded-lg
-                                     hover:bg-white/10 transition-all duration-200 drop-shadow-sm"
+                                     hover:bg-white/10 transition-all duration-200 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]"
                         >
                           Clear
                         </button>
                       </div>
                       
                       <div className="flex items-center gap-4 relative z-10">
-                        {/* Enhanced glass play button */}
+                        {/* Physical glass play button */}
                         <button
                           onClick={isPlaying ? pauseRecording : playRecording}
-                          className="glass-button-small group"
+                          className="glass-button-small-physical group"
                         >
-                          {/* Specular highlights */}
-                          <div className="absolute top-0.5 left-1 right-1 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full"></div>
-                          <div className="absolute top-1 bottom-1 left-0.5 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent rounded-full"></div>
+                          {/* Small button light sources */}
+                          <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-t-2xl"></div>
+                          <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/40 via-white/25 to-white/10 rounded-l-2xl"></div>
+                          <div className="absolute inset-0 rounded-2xl border border-white/30 pointer-events-none"></div>
                           
                           {isPlaying ? (
-                            <Pause className="w-5 h-5 text-white relative z-10 drop-shadow-sm" />
+                            <Pause className="w-5 h-5 text-white relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
                           ) : (
-                            <Play className="w-5 h-5 text-white ml-0.5 relative z-10 drop-shadow-sm" />
+                            <Play className="w-5 h-5 text-white ml-0.5 relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]" />
                           )}
                         </button>
                         
-                        {/* Enhanced glass progress bar */}
-                        <div className="flex-1 h-3 glass-progress-bar">
-                          <div className={`h-full glass-progress-fill ${isPlaying ? 'animate-pulse' : ''}`} 
+                        {/* Physical glass progress bar */}
+                        <div className="flex-1 h-3 glass-progress-physical">
+                          <div className={`h-full glass-progress-fill-physical ${isPlaying ? 'animate-pulse' : ''}`} 
                                style={{ width: '100%' }}>
                           </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Enhanced glass submit button */}
+                    {/* Physical glass submit button */}
                     <button
                       onClick={() => {
                         console.log('Voice input submitted:', audioBlob);
                         alert('Voice input recorded successfully!');
                       }}
-                      className="glass-button-primary w-full group"
+                      className="glass-button-physical w-full group"
                     >
-                      {/* Specular highlights */}
-                      <div className="absolute top-0.5 left-2 right-2 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-full"></div>
-                      <div className="absolute top-2 bottom-2 left-0.5 w-px bg-gradient-to-b from-transparent via-white/30 to-transparent rounded-full"></div>
+                      {/* Button light sources */}
+                      <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/70 to-transparent rounded-t-2xl"></div>
+                      <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/50 via-white/30 to-white/15 rounded-l-2xl"></div>
+                      <div className="absolute inset-0 rounded-2xl border border-white/35 pointer-events-none"></div>
                       
-                      <span className="relative z-10 drop-shadow-sm">Submit Voice Input</span>
+                      <span className="relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">Submit Voice Input</span>
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* Enhanced glass back button */}
+              {/* Physical glass back button */}
               <button
                 onClick={() => setCurrentStep('welcome')}
-                className="glass-button-secondary w-full"
+                className="glass-button-secondary-physical w-full"
               >
-                {/* Subtle specular highlights */}
-                <div className="absolute top-0.5 left-2 right-2 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent rounded-full"></div>
+                {/* Secondary button light sources */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-white/50 to-transparent rounded-t-xl"></div>
+                <div className="absolute top-0 bottom-0 left-0 w-0.5 bg-gradient-to-b from-white/30 via-white/20 to-white/10 rounded-l-xl"></div>
+                <div className="absolute inset-0 rounded-xl border border-white/20 pointer-events-none"></div>
                 
-                <span className="relative z-10 drop-shadow-sm">Back</span>
+                <span className="relative z-10 filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.2)]">Back</span>
               </button>
             </div>
           )}
