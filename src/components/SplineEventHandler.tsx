@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Compass, Target, Heart } from 'lucide-react'
+import { X, Sparkles, Compass, Target, Heart, MessageCircle } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 import { WelcomePanel } from './WelcomePanel'
 import { JourneyPanel } from './JourneyPanel'
+import { SeagullPanel } from './SeagullPanel'
 import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem'
 
 interface SplineEvent {
@@ -18,6 +19,9 @@ interface SplineEvent {
     message?: string
     source?: string
     timestamp?: string
+    numbaer5?: number
+    voiceInteraction?: boolean
+    seagullMessage?: string
     [key: string]: any
   }
   timestamp: string
@@ -38,10 +42,11 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
   const [showWelcomePanel, setShowWelcomePanel] = useState(false)
   const [showJourneyPanel, setShowJourneyPanel] = useState(false)
+  const [showSeagullPanel, setShowSeagullPanel] = useState(false)
 
   // 通知父组件模态框状态变化
   useEffect(() => {
-    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel || showJourneyPanel;
+    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel || showJourneyPanel || showSeagullPanel;
     onModalStateChange?.(isAnyModalOpen);
     
     // 也可以通过自定义事件通知
@@ -49,7 +54,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
       detail: { isOpen: isAnyModalOpen } 
     });
     window.dispatchEvent(event);
-  }, [showModal, showLifeGoalsModal, showWelcomePanel, showJourneyPanel, onModalStateChange]);
+  }, [showModal, showLifeGoalsModal, showWelcomePanel, showJourneyPanel, showSeagullPanel, onModalStateChange]);
 
   useEffect(() => {
     console.log('🚀 初始化 Spline 事件处理器...')
@@ -70,6 +75,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         setShowLifeGoalsModal(false)
         setShowWelcomePanel(false)
         setShowJourneyPanel(false)
+        setShowSeagullPanel(false)
         
         // 简化且明确的决策逻辑
         const apiEndpoint = event.payload.apiEndpoint
@@ -80,9 +86,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         let shouldShowWelcome = false
         let shouldShowGoals = false
         let shouldShowJourney = false
+        let shouldShowSeagull = false
         
         // 优先级1: 基于 API 端点和来源的精确匹配
-        if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook') {
+        if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook') {
+          shouldShowSeagull = true
+        } else if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook') {
           shouldShowWelcome = true
         } else if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook') {
           shouldShowGoals = true
@@ -90,7 +99,9 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
           shouldShowJourney = true
         }
         // 优先级2: 基于 Modal 类型
-        else if (modalType === 'welcome') {
+        else if (modalType === 'seagull') {
+          shouldShowSeagull = true
+        } else if (modalType === 'welcome') {
           shouldShowWelcome = true
         } else if (modalType === 'goals') {
           shouldShowGoals = true
@@ -98,7 +109,9 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
           shouldShowJourney = true
         }
         // 优先级3: 基于 UI 动作
-        else if (uiAction === 'show_welcome') {
+        else if (uiAction === 'show_seagull') {
+          shouldShowSeagull = true
+        } else if (uiAction === 'show_welcome') {
           shouldShowWelcome = true
         } else if (uiAction === 'show_goals') {
           shouldShowGoals = true
@@ -106,14 +119,20 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
           shouldShowJourney = true
         }
         // 优先级4: 基于事件类型
-        else if (event.type === 'spline_welcome_trigger') {
+        else if (event.type === 'spline_seagull_trigger') {
+          shouldShowSeagull = true
+        } else if (event.type === 'spline_welcome_trigger') {
           shouldShowWelcome = true
         } else if (event.type === 'spline_goals_trigger') {
           shouldShowGoals = true
         } else if (event.type === 'spline_journey_trigger') {
           shouldShowJourney = true
         }
-        // 优先级5: 基于数字值
+        // 优先级5: 基于特殊字段（numbaer5 for seagull）
+        else if (event.payload.numbaer5 === 0) {
+          shouldShowSeagull = true
+        }
+        // 优先级6: 基于数字值
         else if (event.payload.number === 2) {
           shouldShowWelcome = true
         } else if (event.payload.number === 1) {
@@ -128,18 +147,26 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         
         // 执行决策 - 使用延迟确保状态更新
         setTimeout(() => {
-          if (shouldShowWelcome) {
+          if (shouldShowSeagull) {
+            setShowSeagullPanel(true)
+            setShowWelcomePanel(false)
+            setShowLifeGoalsModal(false)
+            setShowJourneyPanel(false)
+          } else if (shouldShowWelcome) {
             setShowWelcomePanel(true)
             setShowLifeGoalsModal(false)
             setShowJourneyPanel(false)
+            setShowSeagullPanel(false)
           } else if (shouldShowGoals) {
             setShowLifeGoalsModal(true)
             setShowWelcomePanel(false)
             setShowJourneyPanel(false)
+            setShowSeagullPanel(false)
           } else if (shouldShowJourney) {
             setShowJourneyPanel(true)
             setShowWelcomePanel(false)
             setShowLifeGoalsModal(false)
+            setShowSeagullPanel(false)
           }
         }, 100)
         
@@ -174,6 +201,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   const getEventIcon = (event: SplineEvent) => {
     const { apiEndpoint, modalType, uiAction, source } = event.payload
     
+    if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
+        modalType === 'seagull' || uiAction === 'show_seagull') {
+      return <MessageCircle className="w-6 h-6 text-blue-400" />
+    }
     if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
         modalType === 'welcome' || uiAction === 'show_welcome') {
       return <Compass className="w-6 h-6 text-blue-400" />
@@ -192,6 +223,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   const getEventTitle = (event: SplineEvent) => {
     const { apiEndpoint, modalType, uiAction, source, message } = event.payload
     
+    if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
+        modalType === 'seagull' || uiAction === 'show_seagull') {
+      return "海鸥语音助手!"
+    }
     if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
         modalType === 'welcome' || uiAction === 'show_welcome') {
       return "欢迎启航!"
@@ -214,12 +249,19 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
     if (event.payload.source) parts.push(`来源: ${event.payload.source}`)
     if (event.payload.modalType) parts.push(`模态: ${event.payload.modalType}`)
     if (event.payload.uiAction) parts.push(`动作: ${event.payload.uiAction}`)
+    if (event.payload.numbaer5 !== undefined) parts.push(`numbaer5: ${event.payload.numbaer5}`)
     
     return parts.length > 0 ? parts.join(' • ') : '交互元素已激活'
   }
 
   return (
     <>
+      {/* 海鸥语音助手面板 */}
+      <SeagullPanel
+        isVisible={showSeagullPanel}
+        onClose={() => setShowSeagullPanel(false)}
+      />
+
       {/* 人生目标模态框 */}
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
