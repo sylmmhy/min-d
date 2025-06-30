@@ -3,7 +3,6 @@ import { supabase } from '../lib/supabase'
 import { X, Sparkles, Compass, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 import { WelcomePanel } from './WelcomePanel'
-import { JourneyDashboard } from './JourneyDashboard'
 import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem'
 
 interface SplineEvent {
@@ -37,12 +36,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
   const [showWelcomePanel, setShowWelcomePanel] = useState(false)
-  const [showJourneyDashboard, setShowJourneyDashboard] = useState(false)
-  const [userGoal, setUserGoal] = useState<string>('')
 
   // 通知父组件模态框状态变化
   useEffect(() => {
-    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel || showJourneyDashboard;
+    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel;
     onModalStateChange?.(isAnyModalOpen);
     
     // 也可以通过自定义事件通知
@@ -50,7 +47,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
       detail: { isOpen: isAnyModalOpen } 
     });
     window.dispatchEvent(event);
-  }, [showModal, showLifeGoalsModal, showWelcomePanel, showJourneyDashboard, onModalStateChange]);
+  }, [showModal, showLifeGoalsModal, showWelcomePanel, onModalStateChange]);
 
   useEffect(() => {
     console.log('🚀 初始化 Spline 事件处理器...')
@@ -70,7 +67,6 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         // 先关闭所有模态框，避免冲突
         setShowLifeGoalsModal(false)
         setShowWelcomePanel(false)
-        setShowJourneyDashboard(false)
         
         // 简化且明确的决策逻辑
         const apiEndpoint = event.payload.apiEndpoint
@@ -140,20 +136,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
 
   const handleLifeGoalSubmit = (goal: string) => {
     console.log('Life goal submitted:', goal)
-    setUserGoal(goal)
     // Here you could save to Supabase database if needed
-  }
-
-  const handleVoiceSubmit = (transcript: string) => {
-    console.log('Voice input submitted:', transcript)
-    setUserGoal(transcript)
-    setShowWelcomePanel(false)
-    setShowJourneyDashboard(true)
-  }
-
-  const handleBackToVoice = () => {
-    setShowJourneyDashboard(false)
-    setShowWelcomePanel(true)
   }
 
   const getEventIcon = (event: SplineEvent) => {
@@ -204,18 +187,10 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         onSubmit={handleLifeGoalSubmit}
       />
 
-      {/* 欢迎面板 - 全屏居中 */}
+      {/* 欢迎面板 - 左侧固定位置 */}
       <WelcomePanel
         isVisible={showWelcomePanel}
         onClose={() => setShowWelcomePanel(false)}
-        onVoiceSubmit={handleVoiceSubmit}
-      />
-
-      {/* 旅程仪表板 */}
-      <JourneyDashboard
-        isVisible={showJourneyDashboard}
-        onBack={handleBackToVoice}
-        userGoal={userGoal}
       />
 
       {/* 事件详情模态框 - 使用透明玻璃设计系统 */}
