@@ -166,14 +166,8 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
           {currentStep === 'voice' && (
             <div className="space-y-6">
-              {/* Header - title changed to 32px */}
+              {/* Header - removed icon, title changed to 32px */}
               <div className="text-center mb-8">
-                <div className={`w-14 h-14 ${designSystem.patterns.iconContainer} mx-auto mb-4 
-                                ${designSystem.effects.shadows.glass}
-                                relative overflow-hidden`}>
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
-                  <Mic className="w-7 h-7 text-white relative z-10" />
-                </div>
                 <h2 className="text-[32px] font-playfair font-normal text-white mb-4 leading-tight">
                   Tell the wind of intention,
                 </h2>
