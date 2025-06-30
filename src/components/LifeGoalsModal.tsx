@@ -89,33 +89,33 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                 </div>
               </div>
 
-              {/* Single Next button */}
+              {/* Apple-style Next button - optimized size */}
               <div className="flex justify-center pt-4">
                 <button
                   type="button"
                   onClick={handleNext}
                   disabled={!goal.trim() || isSubmitting}
-                  className="px-16 py-4 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                  className="px-12 py-2.5 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                              hover:from-white/20 hover:via-white/15 hover:to-white/12
-                             text-white rounded-2xl transition-all duration-300
+                             text-white rounded-xl transition-all duration-300
                              border border-white/25 hover:border-white/35
-                             font-inter font-medium text-lg backdrop-blur-md
+                             font-inter font-medium text-base backdrop-blur-md
                              shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
                              hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
                              disabled:opacity-50 disabled:cursor-not-allowed
                              transform hover:scale-[1.02] active:scale-[0.98]
-                             flex items-center justify-center gap-3"
+                             flex items-center justify-center gap-2.5 min-w-[120px]"
                 >
                   {isSubmitting ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white 
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white 
                                       rounded-full animate-spin"></div>
-                      Submitting...
+                      <span>Submitting...</span>
                     </>
                   ) : (
                     <>
-                      <Heart className="w-5 h-5" />
-                      Next
+                      <Heart className="w-4 h-4" />
+                      <span>Next</span>
                     </>
                   )}
                 </button>

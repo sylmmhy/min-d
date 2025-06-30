@@ -145,18 +145,18 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 </p>
               </div>
 
-              {/* Next button with enhanced glass style */}
+              {/* Apple-style Next button - optimized size */}
               <div className="flex justify-center pt-4">
                 <button
                   onClick={handleNext}
-                  className="px-16 py-4 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                  className="px-10 py-2.5 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                              hover:from-white/20 hover:via-white/15 hover:to-white/12
-                             text-white rounded-2xl transition-all duration-300
+                             text-white rounded-xl transition-all duration-300
                              border border-white/25 hover:border-white/35
-                             font-inter font-medium text-lg backdrop-blur-md
+                             font-inter font-medium text-base backdrop-blur-md
                              shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
                              hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
-                             transform hover:scale-[1.02] active:scale-[0.98]"
+                             transform hover:scale-[1.02] active:scale-[0.98] min-w-[100px]"
                 >
                   Next
                 </button>
@@ -274,21 +274,21 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </div>
                     </div>
 
-                    {/* Submit button with enhanced glass style */}
+                    {/* Apple-style Submit button - optimized size */}
                     <div className="flex justify-center">
                       <button
                         onClick={() => {
                           console.log('Voice input submitted:', audioBlob);
                           alert('Voice input recorded successfully!');
                         }}
-                        className="px-16 py-4 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                        className="px-10 py-2.5 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                                    hover:from-white/20 hover:via-white/15 hover:to-white/12
-                                   text-white rounded-2xl transition-all duration-300
+                                   text-white rounded-xl transition-all duration-300
                                    border border-white/25 hover:border-white/35
-                                   font-inter font-medium text-lg backdrop-blur-md
+                                   font-inter font-medium text-base backdrop-blur-md
                                    shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
                                    hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
-                                   transform hover:scale-[1.02] active:scale-[0.98]"
+                                   transform hover:scale-[1.02] active:scale-[0.98] min-w-[140px]"
                       >
                         Submit Voice Input
                       </button>
@@ -297,17 +297,17 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 )}
               </div>
 
-              {/* Back button */}
+              {/* Apple-style Back button - smaller size */}
               <div className="flex justify-center">
                 <button
                   onClick={() => setCurrentStep('welcome')}
-                  className="px-8 py-3 bg-gradient-to-br from-white/10 via-white/8 to-white/6
+                  className="px-8 py-2 bg-gradient-to-br from-white/10 via-white/8 to-white/6
                              hover:from-white/15 hover:via-white/12 hover:to-white/10
-                             text-white rounded-xl transition-all duration-300
+                             text-white rounded-lg transition-all duration-300
                              border border-white/20 hover:border-white/30
-                             font-inter font-medium backdrop-blur-md
+                             font-inter font-medium text-sm backdrop-blur-md
                              shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.08)]
-                             transform hover:scale-[1.02] active:scale-[0.98]"
+                             transform hover:scale-[1.02] active:scale-[0.98] min-w-[80px]"
                 >
                   Back
                 </button>

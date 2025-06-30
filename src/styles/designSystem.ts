@@ -12,9 +12,9 @@ export const designSystem = {
       subtle: 'bg-gradient-to-br from-white/8 via-white/5 to-white/3 backdrop-blur-lg',
     },
     
-    // Button styles with enhanced depth
+    // Button styles with enhanced depth and Apple-inspired sizing
     buttons: {
-      // Enhanced glass button with subtle background tint
+      // Enhanced glass button with Apple-style proportions
       glass: 'bg-gradient-to-br from-white/15 via-white/10 to-white/8 hover:from-white/20 hover:via-white/15 hover:to-white/12 border border-white/25 hover:border-white/35 text-white/90 hover:text-white backdrop-blur-md',
       // Accent button for important actions
       accent: 'bg-gradient-to-r from-blue-400/30 to-purple-400/30 hover:from-blue-400/40 hover:to-purple-400/40 text-white border border-white/25 backdrop-blur-md',
@@ -62,7 +62,7 @@ export const designSystem = {
     }
   },
 
-  // Spacing & Layout
+  // Spacing & Layout - Apple-inspired button sizing
   spacing: {
     // Consistent padding for components
     component: {
@@ -71,11 +71,12 @@ export const designSystem = {
       lg: 'p-8',
       xl: 'p-10',
     },
-    // Button padding
+    // Apple-style button padding - more compact
     button: {
-      sm: 'px-4 py-2',
-      md: 'px-6 py-3',
-      lg: 'px-8 py-4',
+      xs: 'px-6 py-1.5',  // Extra small for secondary actions
+      sm: 'px-8 py-2',    // Small for back/cancel buttons
+      md: 'px-10 py-2.5', // Medium for primary actions
+      lg: 'px-12 py-2.5', // Large for important CTAs
     },
     // Gaps between elements
     gap: {
@@ -144,12 +145,12 @@ export const designSystem = {
       before:pointer-events-none
     `,
     
-    // Enhanced glass button with depth
+    // Apple-style glass button with optimized sizing
     glassButton: `
       bg-gradient-to-br from-white/15 via-white/10 to-white/8 backdrop-blur-md 
       border border-white/25 hover:from-white/20 hover:via-white/15 hover:to-white/12 
       hover:border-white/35 text-white/90 hover:text-white
-      rounded-xl transition-all duration-300 font-inter
+      rounded-xl transition-all duration-300 font-inter font-medium text-base
       shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
       hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
     `,
@@ -187,8 +188,8 @@ export const designSystem = {
   }
 };
 
-// Helper functions for consistent styling
-export const getButtonStyle = (variant: 'glass' | 'accent' | 'danger' = 'glass', size: 'sm' | 'md' | 'lg' = 'md') => {
+// Helper functions for consistent styling with Apple-inspired sizing
+export const getButtonStyle = (variant: 'glass' | 'accent' | 'danger' = 'glass', size: 'xs' | 'sm' | 'md' | 'lg' = 'md') => {
   const baseStyle = designSystem.effects.transitions.default;
   const sizeStyle = designSystem.spacing.button[size];
   const variantStyle = variant === 'glass' ? designSystem.patterns.glassButton :
