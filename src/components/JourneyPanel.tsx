@@ -99,10 +99,10 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
         {/* No overlay - let the 3D scene show through seamlessly */}
       </div>
 
-      {/* Right side - Task Panel */}
-      <div className="w-[600px] p-8 flex items-center justify-center">
-        <div className="relative w-full max-w-[520px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
-                        backdrop-blur-2xl border border-white/25 rounded-3xl p-8
+      {/* Right side - Task Panel - Increased width from 600px to 900px (1.5x) */}
+      <div className="w-[900px] p-8 flex items-center justify-center">
+        <div className="relative w-full max-w-[820px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
+                        backdrop-blur-2xl border border-white/25 rounded-3xl p-10
                         shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
                         before:absolute before:inset-0 before:rounded-3xl 
                         before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
@@ -132,10 +132,10 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
               </div>
             </div>
 
-            {/* Main content area */}
-            <div className="flex-1 flex gap-6">
-              {/* Left column - To Do List */}
-              <div className="w-48 space-y-3">
+            {/* Main content area - Increased spacing and column widths */}
+            <div className="flex-1 flex gap-8">
+              {/* Left column - To Do List - Increased width from w-48 to w-64 */}
+              <div className="w-64 space-y-3">
                 <h3 className="text-lg font-playfair font-medium text-white mb-4">
                   to do list
                 </h3>
@@ -145,7 +145,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                     <button
                       key={task.id}
                       onClick={() => setSelectedTask(task)}
-                      className={`w-full text-left p-3 rounded-xl transition-all duration-300 
+                      className={`w-full text-left p-4 rounded-xl transition-all duration-300 
                                   border backdrop-blur-md font-inter text-sm
                                   ${selectedTask.id === task.id 
                                     ? 'bg-white/15 border-white/30 text-white shadow-md' 
@@ -177,24 +177,24 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                 </div>
               </div>
 
-              {/* Right column - Task Details */}
+              {/* Right column - Task Details - Now has more space */}
               <div className="flex-1 space-y-6">
                 <div>
-                  <h3 className="text-xl font-playfair font-medium text-white mb-2">
+                  <h3 className="text-xl font-playfair font-medium text-white mb-3">
                     {selectedTask.title} - {selectedTask.description}：
                   </h3>
-                  <p className="text-white/80 font-inter text-sm leading-relaxed">
+                  <p className="text-white/80 font-inter text-base leading-relaxed">
                     {selectedTask.details}
                   </p>
                 </div>
 
-                {/* Task illustration */}
+                {/* Task illustration - Increased height for better proportion */}
                 <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
                                 border border-white/20 shadow-lg">
                   <img
                     src={selectedTask.imageUrl}
                     alt={selectedTask.title}
-                    className="w-full h-40 object-cover"
+                    className="w-full h-48 object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
