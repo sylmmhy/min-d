@@ -73,7 +73,7 @@ Deno.serve(async (req: Request) => {
         number: 3, // Explicitly set for compatibility
         modalType: 'journey',
         uiAction: 'show_journey',
-        message: '旅程面板',
+        message: 'Journey Panel',
         apiEndpoint: 'journey-webhook',
         timestamp: new Date().toISOString(),
         source: 'journey-webhook'
@@ -100,7 +100,7 @@ Deno.serve(async (req: Request) => {
     const apiResponse = {
       success: true,
       status: 'journey',
-      message: '旅程面板',
+      message: 'Journey Panel',
       action: 'show_journey_panel',
       eventId: crypto.randomUUID(),
       timestamp: new Date().toISOString(),

@@ -7,7 +7,7 @@ When called, it triggers the welcome modal on the frontend.
 ## Usage
 - URL: https://[your-project].supabase.co/functions/v1/welcome-webhook
 - Method: POST
-- Triggers: Welcome modal with "欢迎启航" content
+- Triggers: Welcome modal with "Welcome Aboard" content
 */
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -73,7 +73,7 @@ Deno.serve(async (req: Request) => {
         number: 2, // Explicitly set for compatibility
         modalType: 'welcome',
         uiAction: 'show_welcome',
-        message: '欢迎启航',
+        message: 'Welcome Aboard',
         apiEndpoint: 'welcome-webhook',
         timestamp: new Date().toISOString(),
         source: 'welcome-webhook'
@@ -100,13 +100,13 @@ Deno.serve(async (req: Request) => {
     const apiResponse = {
       success: true,
       status: 'welcome',
-      message: '欢迎启航',
+      message: 'Welcome Aboard',
       action: 'show_welcome_modal',
       eventId: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       content: {
-        title: '欢迎启航',
-        description: '系统会调用传感器来监测你是否当下在做重要的事情。当你做和目标有关的事情的时候，会吹起不同的意念之风，推进你的小船帮你到达目的地。',
+        title: 'Welcome Aboard',
+        description: 'The system uses sensors to monitor whether you are currently doing something important. When you do things related to your goals, different winds of intention will blow, pushing your little boat forward and helping you reach your destination.',
         type: 'welcome',
         modalType: 'welcome'
       },

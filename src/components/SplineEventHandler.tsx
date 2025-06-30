@@ -44,12 +44,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   const [showJourneyPanel, setShowJourneyPanel] = useState(false)
   const [showSeagullPanel, setShowSeagullPanel] = useState(false)
 
-  // 通知父组件模态框状态变化
+  // Notify parent component of modal state changes
   useEffect(() => {
     const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel || showJourneyPanel || showSeagullPanel;
     onModalStateChange?.(isAnyModalOpen);
     
-    // 也可以通过自定义事件通知
+    // Also notify via custom event
     const event = new CustomEvent('modalStateChange', { 
       detail: { isOpen: isAnyModalOpen } 
     });
@@ -57,7 +57,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
   }, [showModal, showLifeGoalsModal, showWelcomePanel, showJourneyPanel, showSeagullPanel, onModalStateChange]);
 
   useEffect(() => {
-    console.log('🚀 初始化 Spline 事件处理器...')
+    console.log('🚀 Initializing Spline event handler...')
 
     // Subscribe to Spline events via Supabase Realtime
     const channel = supabase.channel('spline-events')
@@ -66,18 +66,18 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
       .on('broadcast', { event: 'spline_interaction' }, (payload) => {
         const event = payload.payload as SplineEvent
         
-        console.log('=== 前端收到 SPLINE 事件 ===')
-        console.log('完整事件:', JSON.stringify(event, null, 2))
+        console.log('=== FRONTEND RECEIVED SPLINE EVENT ===')
+        console.log('Complete event:', JSON.stringify(event, null, 2))
         
         setCurrentEvent(event)
         
-        // 先关闭所有模态框，避免冲突
+        // First close all modals to avoid conflicts
         setShowLifeGoalsModal(false)
         setShowWelcomePanel(false)
         setShowJourneyPanel(false)
         setShowSeagullPanel(false)
         
-        // 简化且明确的决策逻辑
+        // Simplified and clear decision logic
         const apiEndpoint = event.payload.apiEndpoint
         const source = event.payload.source
         const modalType = event.payload.modalType
@@ -88,7 +88,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         let shouldShowJourney = false
         let shouldShowSeagull = false
         
-        // 优先级1: 基于 API 端点和来源的精确匹配
+        // Priority 1: Based on API endpoint and source exact matching
         if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
             apiEndpoint === 'test-seagull-webhook' || source === 'test-seagull-webhook') {
           shouldShowSeagull = true
@@ -99,7 +99,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         } else if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook') {
           shouldShowJourney = true
         }
-        // 优先级2: 基于 Modal 类型
+        // Priority 2: Based on Modal type
         else if (modalType === 'seagull') {
           shouldShowSeagull = true
         } else if (modalType === 'welcome') {
@@ -109,7 +109,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         } else if (modalType === 'journey') {
           shouldShowJourney = true
         }
-        // 优先级3: 基于 UI 动作
+        // Priority 3: Based on UI action
         else if (uiAction === 'show_seagull') {
           shouldShowSeagull = true
         } else if (uiAction === 'show_welcome') {
@@ -119,7 +119,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         } else if (uiAction === 'show_journey') {
           shouldShowJourney = true
         }
-        // 优先级4: 基于事件类型
+        // Priority 4: Based on event type
         else if (event.type === 'spline_seagull_trigger') {
           shouldShowSeagull = true
         } else if (event.type === 'spline_welcome_trigger') {
@@ -129,11 +129,11 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         } else if (event.type === 'spline_journey_trigger') {
           shouldShowJourney = true
         }
-        // 优先级5: 基于特殊字段（numbaer5 for seagull）
+        // Priority 5: Based on special fields (numbaer5 for seagull)
         else if (event.payload.numbaer5 === 0) {
           shouldShowSeagull = true
         }
-        // 优先级6: 基于数字值
+        // Priority 6: Based on number value
         else if (event.payload.number === 2) {
           shouldShowWelcome = true
         } else if (event.payload.number === 1) {
@@ -141,12 +141,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         } else if (event.payload.number === 3) {
           shouldShowJourney = true
         }
-        // 默认回退
+        // Default fallback
         else {
           shouldShowGoals = true
         }
         
-        // 执行决策 - 使用延迟确保状态更新
+        // Execute decision - use delay to ensure state update
         setTimeout(() => {
           if (shouldShowSeagull) {
             setShowSeagullPanel(true)
@@ -228,65 +228,65 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
     if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
         apiEndpoint === 'test-seagull-webhook' || source === 'test-seagull-webhook' ||
         modalType === 'seagull' || uiAction === 'show_seagull') {
-      return "海鸥语音助手!"
+      return "Seagull Voice Assistant!"
     }
     if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
         modalType === 'welcome' || uiAction === 'show_welcome') {
-      return "欢迎启航!"
+      return "Welcome Aboard!"
     }
     if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook' || 
         modalType === 'goals' || uiAction === 'show_goals') {
-      return "人生目标!"
+      return "Life Goals!"
     }
     if (apiEndpoint === 'journey-webhook' || source === 'journey-webhook' || 
         modalType === 'journey' || uiAction === 'show_journey') {
-      return "旅程面板!"
+      return "Journey Panel!"
     }
     if (message) return message
-    return "Spline 交互"
+    return "Spline Interaction"
   }
 
   const getEventDescription = (event: SplineEvent) => {
     const parts = []
-    if (event.payload.apiEndpoint) parts.push(`端点: ${event.payload.apiEndpoint}`)
-    if (event.payload.source) parts.push(`来源: ${event.payload.source}`)
-    if (event.payload.modalType) parts.push(`模态: ${event.payload.modalType}`)
-    if (event.payload.uiAction) parts.push(`动作: ${event.payload.uiAction}`)
+    if (event.payload.apiEndpoint) parts.push(`Endpoint: ${event.payload.apiEndpoint}`)
+    if (event.payload.source) parts.push(`Source: ${event.payload.source}`)
+    if (event.payload.modalType) parts.push(`Modal: ${event.payload.modalType}`)
+    if (event.payload.uiAction) parts.push(`Action: ${event.payload.uiAction}`)
     if (event.payload.numbaer5 !== undefined) parts.push(`numbaer5: ${event.payload.numbaer5}`)
     
-    return parts.length > 0 ? parts.join(' • ') : '交互元素已激活'
+    return parts.length > 0 ? parts.join(' • ') : 'Interactive element activated'
   }
 
   return (
     <>
-      {/* 海鸥语音助手面板 - 小型悬浮面板 */}
+      {/* Seagull Voice Assistant Panel - Small floating panel */}
       <SeagullPanel
         isVisible={showSeagullPanel}
         onClose={() => setShowSeagullPanel(false)}
         message={currentEvent?.payload?.seagullMessage}
       />
 
-      {/* 人生目标模态框 */}
+      {/* Life Goals Modal */}
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
         onClose={() => setShowLifeGoalsModal(false)}
         onSubmit={handleLifeGoalSubmit}
       />
 
-      {/* 欢迎面板 - 左侧固定位置 */}
+      {/* Welcome Panel - Left side fixed position */}
       <WelcomePanel
         isVisible={showWelcomePanel}
         onClose={() => setShowWelcomePanel(false)}
         onVoiceSubmitSuccess={handleVoiceSubmitSuccess}
       />
 
-      {/* 旅程面板 - 全屏横向布局 */}
+      {/* Journey Panel - Full screen horizontal layout */}
       <JourneyPanel
         isVisible={showJourneyPanel}
         onClose={() => setShowJourneyPanel(false)}
       />
 
-      {/* 事件详情模态框 - 使用透明玻璃设计系统 */}
+      {/* Event Details Modal - Using transparent glass design system */}
       {showModal && currentEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className={`${getPanelStyle()} p-8 max-w-md w-full mx-4 
@@ -317,12 +317,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
               <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
                               ${designSystem.radius.md} p-4 border ${designSystem.colors.borders.glass}`}>
                 <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
-                  事件详情:
+                  Event Details:
                 </h3>
                 <div className={`space-y-1 ${designSystem.typography.sizes.sm}`}>
-                  <div>来源: {currentEvent.source}</div>
-                  <div>类型: {currentEvent.type}</div>
-                  <div>时间: {new Date(currentEvent.timestamp).toLocaleString()}</div>
+                  <div>Source: {currentEvent.source}</div>
+                  <div>Type: {currentEvent.type}</div>
+                  <div>Time: {new Date(currentEvent.timestamp).toLocaleString()}</div>
                 </div>
               </div>
 
@@ -330,7 +330,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
                 <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
                                 ${designSystem.radius.md} p-4 border ${designSystem.colors.borders.glass}`}>
                   <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
-                    载荷数据:
+                    Payload Data:
                   </h3>
                   <pre className={`${designSystem.typography.sizes.xs} ${designSystem.colors.text.muted} overflow-x-auto`}>
                     {JSON.stringify(currentEvent.payload, null, 2)}
@@ -344,7 +344,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
                 onClick={closeModal}
                 className={getButtonStyle('glass', 'md')}
               >
-                关闭
+                Close
               </button>
             </div>
           </div>

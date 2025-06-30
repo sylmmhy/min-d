@@ -73,7 +73,7 @@ Deno.serve(async (req: Request) => {
         number: 1, // Explicitly set for compatibility
         modalType: 'goals',
         uiAction: 'show_goals',
-        message: '人生目标设定',
+        message: 'Life Goal Setting',
         apiEndpoint: 'goals-webhook',
         timestamp: new Date().toISOString(),
         source: 'goals-webhook'
@@ -100,13 +100,13 @@ Deno.serve(async (req: Request) => {
     const apiResponse = {
       success: true,
       status: 'goals',
-      message: '人生目标设定',
+      message: 'Life Goal Setting',
       action: 'show_goals_modal',
       eventId: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       content: {
-        title: '你的人生目标是什么？',
-        description: '分享你内心深处的梦想与追求',
+        title: 'What are your life goals?',
+        description: 'Share your inner dreams and aspirations',
         type: 'goals',
         modalType: 'goals'
       },

@@ -28,38 +28,38 @@ const mockTasks: Task[] = [
   {
     id: '1',
     title: 'write PS',
-    description: '论文大陆',
+    description: 'Personal Statement',
     completed: false,
     category: 'writing',
     imageUrl: 'https://images.pexels.com/photos/261763/pexels-photo-261763.jpeg?auto=compress&cs=tinysrgb&w=800',
-    details: '由于要申请学校，所以需要写个人陈述这个个人陈述。你的要求是什么？'
+    details: 'Since you need to apply for school, you need to write a personal statement. What are your requirements?'
   },
   {
     id: '2',
     title: 'Design UI',
-    description: '界面设计',
+    description: 'Interface Design',
     completed: false,
     category: 'design',
     imageUrl: 'https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=800',
-    details: '创建用户界面原型，包括交互设计和视觉层次结构。专注于用户体验和可用性。'
+    details: 'Create user interface prototypes, including interaction design and visual hierarchy. Focus on user experience and usability.'
   },
   {
     id: '3',
     title: 'Learn React',
-    description: '前端学习',
+    description: 'Frontend Learning',
     completed: true,
     category: 'learning',
     imageUrl: 'https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg?auto=compress&cs=tinysrgb&w=800',
-    details: '深入学习React框架，掌握组件化开发和状态管理的核心概念。'
+    details: 'Deep dive into React framework, master core concepts of component-based development and state management.'
   },
   {
     id: '4',
     title: 'Morning Meditation',
-    description: '冥想练习',
+    description: 'Meditation Practice',
     completed: false,
     category: 'personal',
     imageUrl: 'https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=800',
-    details: '每日晨间冥想练习，培养内心平静和专注力，为一天的工作做好准备。'
+    details: 'Daily morning meditation practice to cultivate inner peace and focus, preparing for the day ahead.'
   }
 ];
 
@@ -176,7 +176,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
             {/* No overlay - let the 3D scene show through seamlessly */}
           </div>
 
-          {/* Right side - Task Panel - 宽度从 600px 增加到 900px (1.5倍) */}
+          {/* Right side - Task Panel - width increased from 600px to 900px (1.5x) */}
           <div className="w-[900px] p-8 flex items-center justify-center">
             <div className="relative w-full max-w-[820px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
                             backdrop-blur-2xl border border-white/25 rounded-3xl p-10
@@ -258,7 +258,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                   <div className="flex-1 space-y-6">
                     <div>
                       <h3 className="text-xl font-playfair font-medium text-white mb-3">
-                        {selectedTask.title} - {selectedTask.description}：
+                        {selectedTask.title} - {selectedTask.description}:
                       </h3>
                       <p className="text-white/80 font-inter text-base leading-relaxed">
                         {selectedTask.details}
@@ -289,7 +289,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                                    flex items-center justify-center gap-2"
                       >
                         <Sail className="w-5 h-5" />
-                        开始航行
+                        Start Journey
                       </button>
                     </div>
                   </div>
