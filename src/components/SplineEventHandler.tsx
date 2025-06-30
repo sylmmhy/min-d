@@ -37,7 +37,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   const addDebugInfo = (info: string) => {
     const timestamp = new Date().toLocaleTimeString()
-    setDebugInfo(prev => [`[${timestamp}] ${info}`, ...prev.slice(0, 15)])
+    setDebugInfo(prev => [`[${timestamp}] ${info}`, ...prev.slice(0, 20)])
     console.log(`[DEBUG] ${info}`)
   }
 
@@ -82,90 +82,80 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         setEvents(prev => [event, ...prev.slice(0, 9)])
         setCurrentEvent(event)
         
-        // Close any existing modals first
+        // 🔥 CRITICAL: 先关闭所有模态框，避免冲突
         setShowLifeGoalsModal(false)
         setShowWelcomeModal(false)
         
-        // Enhanced decision logic based on multiple factors
+        // 🎯 简化且明确的决策逻辑
         const apiEndpoint = event.payload.apiEndpoint
+        const source = event.payload.source
         const modalType = event.payload.modalType
         const uiAction = event.payload.uiAction
-        const source = event.payload.source
-        const number = event.payload.number
         
-        addDebugInfo(`🔍 决策分析:`)
+        addDebugInfo(`🔍 决策分析开始...`)
         addDebugInfo(`   - API端点: ${apiEndpoint}`)
+        addDebugInfo(`   - 来源: ${source}`)
         addDebugInfo(`   - Modal类型: ${modalType}`)
         addDebugInfo(`   - UI动作: ${uiAction}`)
-        addDebugInfo(`   - 来源: ${source}`)
-        addDebugInfo(`   - Number: ${number}`)
         
+        let finalDecision = ''
         let shouldShowWelcome = false
         let shouldShowGoals = false
-        let decisionReason = ''
         
-        // Priority 1: API endpoint (most reliable)
+        // 🎯 优先级1: 基于 API 端点和来源的精确匹配
         if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook') {
           shouldShowWelcome = true
-          decisionReason = 'API端点 = welcome-webhook'
+          finalDecision = '✅ 欢迎模态 (API端点匹配)'
         } else if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook') {
           shouldShowGoals = true
-          decisionReason = 'API端点 = goals-webhook'
+          finalDecision = '✅ 目标模态 (API端点匹配)'
         }
-        // Priority 2: UI action
-        else if (uiAction === 'show_welcome') {
-          shouldShowWelcome = true
-          decisionReason = 'UI动作 = show_welcome'
-        } else if (uiAction === 'show_goals') {
-          shouldShowGoals = true
-          decisionReason = 'UI动作 = show_goals'
-        }
-        // Priority 3: Modal type
+        // 🎯 优先级2: 基于 Modal 类型
         else if (modalType === 'welcome') {
           shouldShowWelcome = true
-          decisionReason = 'Modal类型 = welcome'
+          finalDecision = '✅ 欢迎模态 (Modal类型匹配)'
         } else if (modalType === 'goals') {
           shouldShowGoals = true
-          decisionReason = 'Modal类型 = goals'
+          finalDecision = '✅ 目标模态 (Modal类型匹配)'
         }
-        // Priority 4: Number value
-        else if (number === 2) {
+        // 🎯 优先级3: 基于 UI 动作
+        else if (uiAction === 'show_welcome') {
           shouldShowWelcome = true
-          decisionReason = 'Number = 2'
-        } else if (number === 1) {
+          finalDecision = '✅ 欢迎模态 (UI动作匹配)'
+        } else if (uiAction === 'show_goals') {
           shouldShowGoals = true
-          decisionReason = 'Number = 1'
+          finalDecision = '✅ 目标模态 (UI动作匹配)'
         }
-        // Priority 5: Event type
+        // 🎯 优先级4: 基于事件类型
         else if (event.type === 'spline_welcome_trigger') {
           shouldShowWelcome = true
-          decisionReason = '事件类型 = welcome_trigger'
+          finalDecision = '✅ 欢迎模态 (事件类型匹配)'
         } else if (event.type === 'spline_goals_trigger') {
           shouldShowGoals = true
-          decisionReason = '事件类型 = goals_trigger'
+          finalDecision = '✅ 目标模态 (事件类型匹配)'
         }
-        // Default fallback
+        // 🎯 默认回退
         else {
           shouldShowGoals = true
-          decisionReason = '默认回退到目标模态'
+          finalDecision = '⚠️ 目标模态 (默认回退)'
         }
         
-        addDebugInfo(`🎯 最终决策: ${decisionReason}`)
+        addDebugInfo(`🎯 最终决策: ${finalDecision}`)
         
-        // Execute the decision with a small delay for better UX
-        if (shouldShowWelcome) {
-          addDebugInfo('🚢 显示欢迎模态')
-          setTimeout(() => {
+        // 🚀 执行决策 - 使用延迟确保状态更新
+        setTimeout(() => {
+          if (shouldShowWelcome) {
+            addDebugInfo('🚢 正在显示欢迎模态...')
             setShowWelcomeModal(true)
+            setShowLifeGoalsModal(false) // 确保另一个关闭
             addDebugInfo('✅ 欢迎模态已打开')
-          }, 300)
-        } else if (shouldShowGoals) {
-          addDebugInfo('🎯 显示目标模态')
-          setTimeout(() => {
+          } else if (shouldShowGoals) {
+            addDebugInfo('🎯 正在显示目标模态...')
             setShowLifeGoalsModal(true)
+            setShowWelcomeModal(false) // 确保另一个关闭
             addDebugInfo('✅ 目标模态已打开')
-          }, 300)
-        }
+          }
+        }, 100) // 短暂延迟确保状态清理完成
         
         // Call the callback if provided
         onEventReceived?.(event)
@@ -199,28 +189,28 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   }
 
   const getEventIcon = (event: SplineEvent) => {
-    const { apiEndpoint, modalType, uiAction, source, number } = event.payload
+    const { apiEndpoint, modalType, uiAction, source } = event.payload
     
     if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
-        modalType === 'welcome' || uiAction === 'show_welcome' || number === 2) {
+        modalType === 'welcome' || uiAction === 'show_welcome') {
       return <Compass className="w-6 h-6 text-blue-400" />
     }
     if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook' || 
-        modalType === 'goals' || uiAction === 'show_goals' || number === 1) {
+        modalType === 'goals' || uiAction === 'show_goals') {
       return <Target className="w-6 h-6 text-purple-400" />
     }
     return <Sparkles className="w-6 h-6 text-white" />
   }
 
   const getEventTitle = (event: SplineEvent) => {
-    const { apiEndpoint, modalType, uiAction, source, number, message } = event.payload
+    const { apiEndpoint, modalType, uiAction, source, message } = event.payload
     
     if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook' || 
-        modalType === 'welcome' || uiAction === 'show_welcome' || number === 2) {
+        modalType === 'welcome' || uiAction === 'show_welcome') {
       return "欢迎启航!"
     }
     if (apiEndpoint === 'goals-webhook' || source === 'goals-webhook' || 
-        modalType === 'goals' || uiAction === 'show_goals' || number === 1) {
+        modalType === 'goals' || uiAction === 'show_goals') {
       return "人生目标!"
     }
     if (message) return message
@@ -232,7 +222,6 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
     if (event.payload.apiEndpoint) parts.push(`端点: ${event.payload.apiEndpoint}`)
     if (event.payload.source) parts.push(`来源: ${event.payload.source}`)
     if (event.payload.modalType) parts.push(`模态: ${event.payload.modalType}`)
-    if (event.payload.number) parts.push(`API: ${event.payload.number}`)
     if (event.payload.uiAction) parts.push(`动作: ${event.payload.uiAction}`)
     
     return parts.length > 0 ? parts.join(' • ') : '交互元素已激活'
@@ -240,26 +229,26 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   return (
     <>
-      {/* Life Goals Modal */}
+      {/* 🎯 人生目标模态框 */}
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
         onClose={() => {
-          addDebugInfo('🎯 关闭人生目标模态')
+          addDebugInfo('🎯 用户关闭人生目标模态')
           setShowLifeGoalsModal(false)
         }}
         onSubmit={handleLifeGoalSubmit}
       />
 
-      {/* Welcome Modal */}
+      {/* 🚢 欢迎启航模态框 */}
       <WelcomeModal
         isOpen={showWelcomeModal}
         onClose={() => {
-          addDebugInfo('🚢 关闭欢迎模态')
+          addDebugInfo('🚢 用户关闭欢迎模态')
           setShowWelcomeModal(false)
         }}
       />
 
-      {/* Enhanced Debug Panel */}
+      {/* 🔧 增强调试面板 */}
       <div className="fixed bottom-4 left-4 z-50 bg-black/95 text-white p-4 rounded-xl text-xs font-mono max-w-md border border-white/20 backdrop-blur-sm">
         <div className="flex items-center gap-2 mb-3">
           <AlertCircle className="w-4 h-4 text-blue-400" />
@@ -274,14 +263,14 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
             </span>
           </div>
           <div className="flex justify-between">
-            <span>目标模态:</span>
-            <span className={showLifeGoalsModal ? 'text-green-400' : 'text-gray-400'}>
+            <span>🎯 目标模态:</span>
+            <span className={showLifeGoalsModal ? 'text-green-400 font-bold' : 'text-gray-400'}>
               {showLifeGoalsModal ? '✅ 打开' : '❌ 关闭'}
             </span>
           </div>
           <div className="flex justify-between">
-            <span>欢迎模态:</span>
-            <span className={showWelcomeModal ? 'text-green-400' : 'text-gray-400'}>
+            <span>🚢 欢迎模态:</span>
+            <span className={showWelcomeModal ? 'text-green-400 font-bold' : 'text-gray-400'}>
               {showWelcomeModal ? '✅ 打开' : '❌ 关闭'}
             </span>
           </div>
@@ -308,7 +297,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         <div className="border-t border-white/20 pt-2">
           <div className="font-bold mb-2 text-green-400">调试日志:</div>
           <div className="max-h-48 overflow-y-auto space-y-1">
-            {debugInfo.slice(0, 12).map((info, index) => (
+            {debugInfo.slice(0, 15).map((info, index) => (
               <div key={index} className="text-xs text-white/80 break-words leading-tight">
                 {info}
               </div>
@@ -317,7 +306,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         </div>
       </div>
 
-      {/* Event History Panel */}
+      {/* 📊 事件历史面板 */}
       {events.length > 0 && (
         <div className="fixed top-4 left-4 z-40 bg-white/10 backdrop-blur-md border border-white/20 
                         rounded-xl p-4 max-w-sm">
@@ -344,7 +333,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         </div>
       )}
 
-      {/* Event Modal for detailed view */}
+      {/* 📋 事件详情模态框 */}
       {showModal && currentEvent && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 
