@@ -101,13 +101,9 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   return (
     <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-[480px]" 
          style={{ left: '65%', transform: 'translateX(-50%) translateY(-50%)' }}>
-      {/* Enhanced glass panel with Apple-inspired depth */}
-      <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
-                      backdrop-blur-2xl border border-white/25 rounded-3xl p-10
-                      shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
-                      before:absolute before:inset-0 before:rounded-3xl 
-                      before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
-                      before:pointer-events-none overflow-hidden transition-all duration-500">
+      
+      {/* Content without external frame */}
+      <div className="relative transition-all duration-500">
         
         <div className="relative z-10">
           {currentStep === 'welcome' && (
