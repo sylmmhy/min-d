@@ -11,6 +11,8 @@ interface SplineEvent {
     action?: string
     buttonId?: string
     apiEndpoint?: string
+    modalType?: string
+    timestamp?: string
     [key: string]: any
   }
   timestamp: string
@@ -35,39 +37,44 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
     channel
       .on('broadcast', { event: 'spline_interaction' }, (payload) => {
         const event = payload.payload as SplineEvent
-        console.log('Received Spline event:', event)
-        console.log('Event payload:', event.payload)
+        console.log('=== SPLINE EVENT RECEIVED ===')
+        console.log('Full event:', JSON.stringify(event, null, 2))
+        console.log('Event type:', event.type)
+        console.log('Event payload:', JSON.stringify(event.payload, null, 2))
         
         setEvents(prev => [event, ...prev.slice(0, 9)]) // Keep last 10 events
         setCurrentEvent(event)
         
-        // Handle different API endpoints or event types based on payload
-        console.log('Checking event conditions:')
-        console.log('- number:', event.payload.number)
-        console.log('- action:', event.payload.action)
-        console.log('- apiEndpoint:', event.payload.apiEndpoint)
+        // Close both modals first
+        setShowLifeGoalsModal(false)
+        setShowWelcomeModal(false)
         
-        // Check for second API call (welcome modal)
-        if (event.payload.number === 2 || 
-            event.payload.action === 'second_api' || 
-            event.payload.apiEndpoint === 'welcome') {
-          console.log('Triggering welcome modal')
-          setShowWelcomeModal(true)
-          setShowLifeGoalsModal(false) // Ensure life goals modal is closed
-        } 
-        // Check for first API call (life goals modal)
-        else if (event.payload.number === 1 || 
-                 event.payload.action === 'first_api' || 
-                 event.payload.apiEndpoint === 'goals') {
-          console.log('Triggering life goals modal')
-          setShowLifeGoalsModal(true)
-          setShowWelcomeModal(false) // Ensure welcome modal is closed
-        } 
-        // Default behavior for unknown events
-        else {
-          console.log('Unknown event, showing life goals modal as default')
-          setShowLifeGoalsModal(true)
-          setShowWelcomeModal(false)
+        // Use explicit modalType if available, otherwise fall back to other checks
+        const modalType = event.payload.modalType
+        console.log('Modal type from payload:', modalType)
+        
+        if (modalType === 'welcome') {
+          console.log('🚢 TRIGGERING WELCOME MODAL')
+          setTimeout(() => setShowWelcomeModal(true), 100)
+        } else if (modalType === 'goals') {
+          console.log('🎯 TRIGGERING GOALS MODAL')
+          setTimeout(() => setShowLifeGoalsModal(true), 100)
+        } else {
+          // Fallback logic
+          console.log('Using fallback logic...')
+          console.log('- number:', event.payload.number, typeof event.payload.number)
+          console.log('- action:', event.payload.action)
+          console.log('- event type:', event.type)
+          
+          if (event.payload.number === 2 || 
+              event.type === 'spline_welcome_trigger' ||
+              event.payload.action === 'second_api') {
+            console.log('🚢 FALLBACK: TRIGGERING WELCOME MODAL')
+            setTimeout(() => setShowWelcomeModal(true), 100)
+          } else {
+            console.log('🎯 FALLBACK: TRIGGERING GOALS MODAL')
+            setTimeout(() => setShowLifeGoalsModal(true), 100)
+          }
         }
         
         // Call the optional callback
@@ -90,31 +97,28 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   const handleLifeGoalSubmit = (goal: string) => {
     console.log('Life goal submitted:', goal)
     // Here you could save the goal to Supabase database
-    // For now, we'll just log it and show a success message
-    
-    // You could also trigger another Spline animation or update the 3D scene
-    // based on the submitted goal
   }
 
   const getEventIcon = (event: SplineEvent) => {
-    if (event.payload.number === 1) return <Play className="w-6 h-6" />
-    if (event.payload.number === 2) return <Compass className="w-6 h-6" />
+    if (event.payload.number === 2 || event.payload.modalType === 'welcome') return <Compass className="w-6 h-6" />
+    if (event.payload.number === 1 || event.payload.modalType === 'goals') return <Play className="w-6 h-6" />
     if (event.payload.action) return <Zap className="w-6 h-6" />
     return <Sparkles className="w-6 h-6" />
   }
 
   const getEventTitle = (event: SplineEvent) => {
-    if (event.payload.number === 1) return "Life Goals Triggered!"
-    if (event.payload.number === 2) return "Welcome Journey Started!"
-    if (event.payload.action === 'first_api') return "Life Goals Modal"
+    if (event.payload.number === 2 || event.payload.modalType === 'welcome') return "Welcome Journey!"
+    if (event.payload.number === 1 || event.payload.modalType === 'goals') return "Life Goals!"
     if (event.payload.action === 'second_api') return "Welcome Message"
+    if (event.payload.action === 'first_api') return "Life Goals Modal"
     if (event.payload.action) return `Action: ${event.payload.action}`
     return "Spline Interaction"
   }
 
   const getEventDescription = (event: SplineEvent) => {
     const parts = []
-    if (event.payload.number) parts.push(`API Call: ${event.payload.number}`)
+    if (event.payload.modalType) parts.push(`Modal: ${event.payload.modalType}`)
+    if (event.payload.number) parts.push(`API: ${event.payload.number}`)
     if (event.payload.buttonId) parts.push(`Button: ${event.payload.buttonId}`)
     if (event.payload.action) parts.push(`Action: ${event.payload.action}`)
     if (event.payload.apiEndpoint) parts.push(`Endpoint: ${event.payload.apiEndpoint}`)
@@ -127,15 +131,29 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       {/* Life Goals Modal */}
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
-        onClose={() => setShowLifeGoalsModal(false)}
+        onClose={() => {
+          console.log('Closing life goals modal')
+          setShowLifeGoalsModal(false)
+        }}
         onSubmit={handleLifeGoalSubmit}
       />
 
       {/* Welcome Modal */}
       <WelcomeModal
         isOpen={showWelcomeModal}
-        onClose={() => setShowWelcomeModal(false)}
+        onClose={() => {
+          console.log('Closing welcome modal')
+          setShowWelcomeModal(false)
+        }}
       />
+
+      {/* Debug Panel - shows current modal states */}
+      <div className="fixed bottom-4 left-4 z-40 bg-black/80 text-white p-3 rounded-lg text-xs font-mono">
+        <div>Goals Modal: {showLifeGoalsModal ? '✅' : '❌'}</div>
+        <div>Welcome Modal: {showWelcomeModal ? '✅' : '❌'}</div>
+        <div>Last Event: {currentEvent?.payload?.number || 'none'}</div>
+        <div>Modal Type: {currentEvent?.payload?.modalType || 'none'}</div>
+      </div>
 
       {/* Event History Panel */}
       {events.length > 0 && (

@@ -63,6 +63,9 @@ Deno.serve(async (req: Request) => {
       )
     }
 
+    // Log the received payload for debugging
+    console.log('Received payload from Spline:', JSON.stringify(payload, null, 2))
+
     // Initialize Supabase client
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
@@ -72,20 +75,51 @@ Deno.serve(async (req: Request) => {
     // Broadcast the event to all connected clients
     const channel = supabase.channel('spline-events')
     
-    // Determine event type based on payload
+    // Determine event type based on payload - be very specific about number comparison
     let eventType = 'spline_button_click'
-    if (payload.number === 2 || payload.action === 'second_api' || payload.apiEndpoint === 'welcome') {
+    let modalType = 'unknown'
+    
+    console.log('Analyzing payload:')
+    console.log('- payload.number:', payload.number, typeof payload.number)
+    console.log('- payload.action:', payload.action)
+    console.log('- payload.apiEndpoint:', payload.apiEndpoint)
+    
+    // Check for exact number match
+    if (payload.number === 2) {
       eventType = 'spline_welcome_trigger'
-    } else if (payload.number === 1 || payload.action === 'first_api') {
+      modalType = 'welcome'
+      console.log('Detected: Welcome modal trigger (number === 2)')
+    } else if (payload.number === 1) {
       eventType = 'spline_goals_trigger'
+      modalType = 'goals'
+      console.log('Detected: Goals modal trigger (number === 1)')
+    } else if (payload.action === 'second_api' || payload.apiEndpoint === 'welcome') {
+      eventType = 'spline_welcome_trigger'
+      modalType = 'welcome'
+      console.log('Detected: Welcome modal trigger (action/endpoint)')
+    } else if (payload.action === 'first_api' || payload.apiEndpoint === 'goals') {
+      eventType = 'spline_goals_trigger'
+      modalType = 'goals'
+      console.log('Detected: Goals modal trigger (action/endpoint)')
+    } else {
+      // Default to goals modal for unknown events
+      eventType = 'spline_goals_trigger'
+      modalType = 'goals'
+      console.log('Detected: Unknown event, defaulting to goals modal')
     }
     
     const eventData = {
       type: eventType,
-      payload: payload,
+      payload: {
+        ...payload,
+        modalType: modalType, // Add explicit modal type
+        timestamp: new Date().toISOString()
+      },
       timestamp: new Date().toISOString(),
       source: 'spline'
     }
+
+    console.log('Broadcasting event:', JSON.stringify(eventData, null, 2))
 
     // Send the event to the realtime channel
     await channel.send({
@@ -94,7 +128,7 @@ Deno.serve(async (req: Request) => {
       payload: eventData
     })
 
-    console.log('Spline webhook received:', eventData)
+    console.log('Spline webhook processed successfully')
 
     // Return success response with appropriate message
     let responseMessage = 'Event broadcasted successfully'
@@ -109,7 +143,9 @@ Deno.serve(async (req: Request) => {
         success: true, 
         message: responseMessage,
         eventId: crypto.randomUUID(),
-        eventType: eventType
+        eventType: eventType,
+        modalType: modalType,
+        receivedPayload: payload
       }),
       {
         status: 200,
