@@ -265,18 +265,18 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                       </p>
                     </div>
 
-                    {/* Task illustration - Increased height for better proportion */}
+                    {/* Task illustration - Increased height from h-48 to h-64 */}
                     <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
                                     border border-white/20 shadow-lg">
                       <img
                         src={selectedTask.imageUrl}
                         alt={selectedTask.title}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-64 object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                     </div>
 
-                    {/* Start Journey Button */}
+                    {/* Start Journey Button - Removed justify-center to align with container edges */}
                     <div className="pt-4">
                       <button
                         onClick={handleStartJourney}
