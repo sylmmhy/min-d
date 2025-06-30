@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Play, Zap, Compass, AlertCircle } from 'lucide-react'
+import { X, Sparkles, Play, Zap, Compass, AlertCircle, Target, Heart } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 import { WelcomeModal } from './WelcomeModal'
 
@@ -12,6 +12,8 @@ interface SplineEvent {
     buttonId?: string
     apiEndpoint?: string
     modalType?: string
+    uiAction?: string
+    message?: string
     timestamp?: string
     [key: string]: any
   }
@@ -34,24 +36,24 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   const addDebugInfo = (info: string) => {
     const timestamp = new Date().toLocaleTimeString()
-    setDebugInfo(prev => [`[${timestamp}] ${info}`, ...prev.slice(0, 9)])
+    setDebugInfo(prev => [`[${timestamp}] ${info}`, ...prev.slice(0, 12)])
     console.log(`[DEBUG] ${info}`)
   }
 
   useEffect(() => {
-    addDebugInfo('Initializing Supabase connection...')
+    addDebugInfo('🚀 Initializing Spline Event Handler...')
     
     // Test Supabase connection
     const testConnection = async () => {
       try {
         const { data, error } = await supabase.from('_test').select('*').limit(1)
-        if (error && error.code !== 'PGRST116') { // PGRST116 is "table not found" which is expected
-          addDebugInfo(`Supabase connection error: ${error.message}`)
+        if (error && error.code !== 'PGRST116') {
+          addDebugInfo(`❌ Supabase error: ${error.message}`)
         } else {
-          addDebugInfo('Supabase connection successful')
+          addDebugInfo('✅ Supabase connection successful')
         }
       } catch (err) {
-        addDebugInfo(`Connection test failed: ${err}`)
+        addDebugInfo(`❌ Connection test failed: ${err}`)
       }
     }
     
@@ -64,114 +66,159 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       .on('broadcast', { event: 'spline_interaction' }, (payload) => {
         const event = payload.payload as SplineEvent
         
-        addDebugInfo('=== NEW SPLINE EVENT ===')
-        addDebugInfo(`Event type: ${event.type}`)
-        addDebugInfo(`Payload: ${JSON.stringify(event.payload)}`)
+        addDebugInfo('🎯 === NEW SPLINE EVENT RECEIVED ===')
+        addDebugInfo(`📊 Event type: ${event.type}`)
+        addDebugInfo(`🔢 Number: ${event.payload.number} (${typeof event.payload.number})`)
+        addDebugInfo(`🎭 Modal type: ${event.payload.modalType}`)
+        addDebugInfo(`⚡ UI Action: ${event.payload.uiAction}`)
+        addDebugInfo(`💬 Message: ${event.payload.message}`)
         
-        console.log('=== SPLINE EVENT RECEIVED ===')
+        console.log('=== FRONTEND RECEIVED SPLINE EVENT ===')
         console.log('Full event:', JSON.stringify(event, null, 2))
-        console.log('Event type:', event.type)
-        console.log('Event payload:', JSON.stringify(event.payload, null, 2))
         
+        // Update events list
         setEvents(prev => [event, ...prev.slice(0, 9)])
         setCurrentEvent(event)
         
-        // Close both modals first
+        // Close any existing modals first
         setShowLifeGoalsModal(false)
         setShowWelcomeModal(false)
         
-        // Detailed analysis of the payload
+        // Process the event with detailed decision logic
         const number = event.payload.number
         const modalType = event.payload.modalType
+        const uiAction = event.payload.uiAction
         const action = event.payload.action
         
-        addDebugInfo(`Analyzing: number=${number} (${typeof number}), modalType=${modalType}, action=${action}`)
+        addDebugInfo(`🔍 Decision analysis:`)
+        addDebugInfo(`   - number: ${number} (${typeof number})`)
+        addDebugInfo(`   - modalType: ${modalType}`)
+        addDebugInfo(`   - uiAction: ${uiAction}`)
+        addDebugInfo(`   - action: ${action}`)
         
-        // Decision logic with detailed logging
+        // Decision logic with priority order
         let shouldShowWelcome = false
         let shouldShowGoals = false
+        let decisionReason = ''
         
-        if (modalType === 'welcome') {
+        // Priority 1: Explicit UI action
+        if (uiAction === 'show_welcome') {
           shouldShowWelcome = true
-          addDebugInfo('Decision: Welcome modal (explicit modalType)')
+          decisionReason = 'uiAction === show_welcome'
+        } else if (uiAction === 'show_goals') {
+          shouldShowGoals = true
+          decisionReason = 'uiAction === show_goals'
+        }
+        // Priority 2: Modal type
+        else if (modalType === 'welcome') {
+          shouldShowWelcome = true
+          decisionReason = 'modalType === welcome'
         } else if (modalType === 'goals') {
           shouldShowGoals = true
-          addDebugInfo('Decision: Goals modal (explicit modalType)')
-        } else if (number === 2) {
+          decisionReason = 'modalType === goals'
+        }
+        // Priority 3: Number value
+        else if (number === 2) {
           shouldShowWelcome = true
-          addDebugInfo('Decision: Welcome modal (number === 2)')
+          decisionReason = 'number === 2'
         } else if (number === 1) {
           shouldShowGoals = true
-          addDebugInfo('Decision: Goals modal (number === 1)')
-        } else if (action === 'second_api') {
+          decisionReason = 'number === 1'
+        }
+        // Priority 4: Action string
+        else if (action === 'second_api' || action === 'welcome') {
           shouldShowWelcome = true
-          addDebugInfo('Decision: Welcome modal (action === second_api)')
-        } else if (action === 'first_api') {
+          decisionReason = 'action indicates welcome'
+        } else if (action === 'first_api' || action === 'goals') {
           shouldShowGoals = true
-          addDebugInfo('Decision: Goals modal (action === first_api)')
-        } else {
+          decisionReason = 'action indicates goals'
+        }
+        // Default fallback
+        else {
           shouldShowGoals = true
-          addDebugInfo('Decision: Goals modal (default fallback)')
+          decisionReason = 'default fallback to goals'
         }
         
-        // Execute the decision
+        addDebugInfo(`🎯 DECISION: ${decisionReason}`)
+        
+        // Execute the decision with a small delay for better UX
         if (shouldShowWelcome) {
           addDebugInfo('🚢 SHOWING WELCOME MODAL')
-          setTimeout(() => setShowWelcomeModal(true), 100)
+          setTimeout(() => {
+            setShowWelcomeModal(true)
+            addDebugInfo('✅ Welcome modal opened')
+          }, 200)
         } else if (shouldShowGoals) {
           addDebugInfo('🎯 SHOWING GOALS MODAL')
-          setTimeout(() => setShowLifeGoalsModal(true), 100)
+          setTimeout(() => {
+            setShowLifeGoalsModal(true)
+            addDebugInfo('✅ Goals modal opened')
+          }, 200)
         }
         
+        // Call the callback if provided
         onEventReceived?.(event)
       })
       .subscribe((status) => {
         console.log('Realtime subscription status:', status)
         setConnectionStatus(status)
-        addDebugInfo(`Realtime status: ${status}`)
+        addDebugInfo(`📡 Realtime status: ${status}`)
+        
+        if (status === 'SUBSCRIBED') {
+          addDebugInfo('🎉 Successfully subscribed to spline-events channel')
+        }
       })
 
     return () => {
       supabase.removeChannel(channel)
-      addDebugInfo('Disconnected from Supabase')
+      addDebugInfo('🔌 Disconnected from Supabase')
     }
   }, [onEventReceived])
 
   const closeModal = () => {
     setShowModal(false)
     setCurrentEvent(null)
+    addDebugInfo('❌ Event modal closed')
   }
 
   const handleLifeGoalSubmit = (goal: string) => {
     console.log('Life goal submitted:', goal)
-    addDebugInfo(`Life goal submitted: ${goal.substring(0, 50)}...`)
+    addDebugInfo(`💝 Life goal submitted: "${goal.substring(0, 30)}${goal.length > 30 ? '...' : ''}"`)
+    // Here you could save to Supabase database if needed
   }
 
   const getEventIcon = (event: SplineEvent) => {
-    if (event.payload.number === 2 || event.payload.modalType === 'welcome') return <Compass className="w-6 h-6" />
-    if (event.payload.number === 1 || event.payload.modalType === 'goals') return <Play className="w-6 h-6" />
-    if (event.payload.action) return <Zap className="w-6 h-6" />
-    return <Sparkles className="w-6 h-6" />
+    if (event.payload.number === 2 || event.payload.modalType === 'welcome' || event.payload.uiAction === 'show_welcome') {
+      return <Compass className="w-6 h-6 text-blue-400" />
+    }
+    if (event.payload.number === 1 || event.payload.modalType === 'goals' || event.payload.uiAction === 'show_goals') {
+      return <Target className="w-6 h-6 text-purple-400" />
+    }
+    if (event.payload.action) return <Zap className="w-6 h-6 text-yellow-400" />
+    return <Sparkles className="w-6 h-6 text-white" />
   }
 
   const getEventTitle = (event: SplineEvent) => {
-    if (event.payload.number === 2 || event.payload.modalType === 'welcome') return "Welcome Journey!"
-    if (event.payload.number === 1 || event.payload.modalType === 'goals') return "Life Goals!"
-    if (event.payload.action === 'second_api') return "Welcome Message"
-    if (event.payload.action === 'first_api') return "Life Goals Modal"
+    if (event.payload.number === 2 || event.payload.modalType === 'welcome' || event.payload.uiAction === 'show_welcome') {
+      return "欢迎启航!"
+    }
+    if (event.payload.number === 1 || event.payload.modalType === 'goals' || event.payload.uiAction === 'show_goals') {
+      return "人生目标!"
+    }
+    if (event.payload.message) return event.payload.message
     if (event.payload.action) return `Action: ${event.payload.action}`
-    return "Spline Interaction"
+    return "Spline 交互"
   }
 
   const getEventDescription = (event: SplineEvent) => {
     const parts = []
-    if (event.payload.modalType) parts.push(`Modal: ${event.payload.modalType}`)
+    if (event.payload.modalType) parts.push(`模态: ${event.payload.modalType}`)
     if (event.payload.number) parts.push(`API: ${event.payload.number}`)
-    if (event.payload.buttonId) parts.push(`Button: ${event.payload.buttonId}`)
-    if (event.payload.action) parts.push(`Action: ${event.payload.action}`)
-    if (event.payload.apiEndpoint) parts.push(`Endpoint: ${event.payload.apiEndpoint}`)
+    if (event.payload.uiAction) parts.push(`动作: ${event.payload.uiAction}`)
+    if (event.payload.buttonId) parts.push(`按钮: ${event.payload.buttonId}`)
+    if (event.payload.action) parts.push(`操作: ${event.payload.action}`)
     
-    return parts.length > 0 ? parts.join(' • ') : 'Interactive element activated'
+    return parts.length > 0 ? parts.join(' • ') : '交互元素已激活'
   }
 
   return (
@@ -180,7 +227,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       <LifeGoalsModal
         isOpen={showLifeGoalsModal}
         onClose={() => {
-          addDebugInfo('Closing life goals modal')
+          addDebugInfo('🎯 Closing life goals modal')
           setShowLifeGoalsModal(false)
         }}
         onSubmit={handleLifeGoalSubmit}
@@ -190,31 +237,62 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       <WelcomeModal
         isOpen={showWelcomeModal}
         onClose={() => {
-          addDebugInfo('Closing welcome modal')
+          addDebugInfo('🚢 Closing welcome modal')
           setShowWelcomeModal(false)
         }}
       />
 
       {/* Enhanced Debug Panel */}
-      <div className="fixed bottom-4 left-4 z-50 bg-black/90 text-white p-4 rounded-lg text-xs font-mono max-w-md">
-        <div className="flex items-center gap-2 mb-2">
-          <AlertCircle className="w-4 h-4" />
-          <span className="font-bold">Debug Panel</span>
+      <div className="fixed bottom-4 left-4 z-50 bg-black/95 text-white p-4 rounded-xl text-xs font-mono max-w-md border border-white/20 backdrop-blur-sm">
+        <div className="flex items-center gap-2 mb-3">
+          <AlertCircle className="w-4 h-4 text-blue-400" />
+          <span className="font-bold text-blue-400">Spline Debug Panel</span>
         </div>
         
-        <div className="space-y-1 mb-3">
-          <div>Connection: <span className={connectionStatus === 'SUBSCRIBED' ? 'text-green-400' : 'text-yellow-400'}>{connectionStatus}</span></div>
-          <div>Goals Modal: {showLifeGoalsModal ? '✅ OPEN' : '❌ CLOSED'}</div>
-          <div>Welcome Modal: {showWelcomeModal ? '✅ OPEN' : '❌ CLOSED'}</div>
-          <div>Last Event Number: {currentEvent?.payload?.number || 'none'}</div>
-          <div>Modal Type: {currentEvent?.payload?.modalType || 'none'}</div>
+        <div className="space-y-1 mb-3 text-xs">
+          <div className="flex justify-between">
+            <span>连接状态:</span>
+            <span className={connectionStatus === 'SUBSCRIBED' ? 'text-green-400' : 'text-yellow-400'}>
+              {connectionStatus}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>目标模态:</span>
+            <span className={showLifeGoalsModal ? 'text-green-400' : 'text-gray-400'}>
+              {showLifeGoalsModal ? '✅ 打开' : '❌ 关闭'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>欢迎模态:</span>
+            <span className={showWelcomeModal ? 'text-green-400' : 'text-gray-400'}>
+              {showWelcomeModal ? '✅ 打开' : '❌ 关闭'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>最后事件:</span>
+            <span className="text-blue-300">
+              {currentEvent?.payload?.number || 'none'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>模态类型:</span>
+            <span className="text-purple-300">
+              {currentEvent?.payload?.modalType || 'none'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>UI 动作:</span>
+            <span className="text-yellow-300">
+              {currentEvent?.payload?.uiAction || 'none'}
+            </span>
+          </div>
         </div>
         
         <div className="border-t border-white/20 pt-2">
-          <div className="font-bold mb-1">Recent Debug Log:</div>
-          <div className="max-h-32 overflow-y-auto space-y-1">
-            {debugInfo.slice(0, 8).map((info, index) => (
-              <div key={index} className="text-xs text-white/80 break-words">
+          <div className="font-bold mb-2 text-green-400">调试日志:</div>
+          <div className="max-h-40 overflow-y-auto space-y-1">
+            {debugInfo.slice(0, 10).map((info, index) => (
+              <div key={index} className="text-xs text-white/80 break-words leading-tight">
                 {info}
               </div>
             ))}
@@ -225,19 +303,22 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
       {/* Event History Panel */}
       {events.length > 0 && (
         <div className="fixed top-4 left-4 z-40 bg-white/10 backdrop-blur-md border border-white/20 
-                        rounded-lg p-4 max-w-sm">
-          <h3 className="text-white font-medium mb-2 flex items-center gap-2">
+                        rounded-xl p-4 max-w-sm">
+          <h3 className="text-white font-medium mb-3 flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
-            Recent Events ({events.length})
+            最近事件 ({events.length})
           </h3>
-          <div className="space-y-2 max-h-40 overflow-y-auto">
+          <div className="space-y-2 max-h-48 overflow-y-auto">
             {events.slice(0, 5).map((event, index) => (
-              <div key={index} className="text-xs text-white/80 bg-white/5 rounded p-2">
-                <div className="font-medium">{getEventTitle(event)}</div>
-                <div className="text-white/60">
+              <div key={index} className="text-xs text-white/80 bg-white/5 rounded-lg p-3 border border-white/10">
+                <div className="flex items-center gap-2 mb-1">
+                  {getEventIcon(event)}
+                  <div className="font-medium text-white">{getEventTitle(event)}</div>
+                </div>
+                <div className="text-white/60 mb-1">
                   {new Date(event.timestamp).toLocaleTimeString()}
                 </div>
-                <div className="text-white/50 text-xs mt-1">
+                <div className="text-white/50 text-xs">
                   {getEventDescription(event)}
                 </div>
               </div>
@@ -246,9 +327,9 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         </div>
       )}
 
-      {/* Event Modal */}
+      {/* Event Modal for detailed view */}
       {showModal && currentEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-8 
                           max-w-md w-full mx-4 transform transition-all duration-300 scale-100">
             <div className="flex items-center justify-between mb-6">
@@ -258,7 +339,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
               </div>
               <button
                 onClick={closeModal}
-                className="text-white/60 hover:text-white transition-colors p-1"
+                className="text-white/60 hover:text-white transition-colors p-1 rounded-full hover:bg-white/10"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -268,17 +349,17 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
               <p className="text-lg">{getEventDescription(currentEvent)}</p>
               
               <div className="bg-white/5 rounded-lg p-4">
-                <h3 className="font-medium mb-2 text-white">Event Details:</h3>
+                <h3 className="font-medium mb-2 text-white">事件详情:</h3>
                 <div className="space-y-1 text-sm">
-                  <div>Source: {currentEvent.source}</div>
-                  <div>Type: {currentEvent.type}</div>
-                  <div>Time: {new Date(currentEvent.timestamp).toLocaleString()}</div>
+                  <div>来源: {currentEvent.source}</div>
+                  <div>类型: {currentEvent.type}</div>
+                  <div>时间: {new Date(currentEvent.timestamp).toLocaleString()}</div>
                 </div>
               </div>
 
               {Object.keys(currentEvent.payload).length > 0 && (
                 <div className="bg-white/5 rounded-lg p-4">
-                  <h3 className="font-medium mb-2 text-white">Payload:</h3>
+                  <h3 className="font-medium mb-2 text-white">载荷数据:</h3>
                   <pre className="text-xs text-white/70 overflow-x-auto">
                     {JSON.stringify(currentEvent.payload, null, 2)}
                   </pre>
@@ -292,7 +373,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
                 className="px-6 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg 
                            transition-colors duration-200"
               >
-                Close
+                关闭
               </button>
             </div>
           </div>
