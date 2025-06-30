@@ -116,28 +116,20 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   return (
     <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-[480px]" 
          style={{ left: '65%', transform: 'translateX(-50%) translateY(-50%)' }}>
-      {/* Transparent glass panel */}
-      <div className={`${getPanelStyle()} p-10 
-                      ${designSystem.effects.shadows.strong} ${designSystem.effects.transitions.slow}
-                      relative overflow-hidden`}>
-        
-        {/* Very subtle inner glass reflection effect */}
-        <div className={designSystem.patterns.innerGlow}></div>
+      {/* Enhanced glass panel with Apple-inspired depth */}
+      <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
+                      backdrop-blur-2xl border border-white/25 rounded-3xl p-10
+                      shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
+                      before:absolute before:inset-0 before:rounded-3xl 
+                      before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
+                      before:pointer-events-none overflow-hidden transition-all duration-500">
         
         <div className="relative z-10">
           {currentStep === 'welcome' && (
             <div className="space-y-6">
-              {/* Header with transparent icon */}
-              <div className="flex items-center gap-4 mb-8">
-                <div className={`w-14 h-14 ${designSystem.patterns.iconContainer}
-                                ${designSystem.effects.shadows.glass}
-                                relative overflow-hidden`}>
-                  {/* Very subtle inner highlight */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
-                  <Compass className="w-7 h-7 text-white relative z-10" />
-                </div>
-                <h2 className={`${designSystem.typography.sizes.xl} ${designSystem.typography.fonts.heading} 
-                               ${designSystem.typography.weights.semibold} ${designSystem.colors.text.primary}`}>
+              {/* Header without logo - just title */}
+              <div className="text-center mb-8">
+                <h2 className="text-[45px] font-playfair font-normal text-white mb-6 leading-tight">
                   Welcome aboard!
                 </h2>
               </div>
@@ -153,11 +145,18 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 </p>
               </div>
 
-              {/* Next button with transparent glass style */}
+              {/* Next button with enhanced glass style */}
               <div className="flex justify-center pt-4">
                 <button
                   onClick={handleNext}
-                  className={getButtonStyle('glass', 'md')}
+                  className="px-16 py-4 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                             hover:from-white/20 hover:via-white/15 hover:to-white/12
+                             text-white rounded-2xl transition-all duration-300
+                             border border-white/25 hover:border-white/35
+                             font-inter font-medium text-lg backdrop-blur-md
+                             shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
+                             hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
+                             transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Next
                 </button>
@@ -188,14 +187,14 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
               <div className="space-y-6">
                 {!audioBlob && (
                   <div className="text-center">
-                    {/* Transparent recording button */}
+                    {/* Enhanced recording button */}
                     <button
                       onClick={isRecording ? stopRecording : startRecording}
                       className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-300 
                                   backdrop-blur-md border shadow-lg relative overflow-hidden group ${
                         isRecording 
                           ? 'bg-red-400/20 border-red-300/30 shadow-red-400/20 animate-pulse' 
-                          : 'bg-white/10 border-white/25 shadow-white/10 hover:bg-white/15'
+                          : 'bg-gradient-to-br from-white/15 via-white/10 to-white/8 border-white/25 shadow-white/10 hover:from-white/20 hover:via-white/15 hover:to-white/12'
                       }`}
                     >
                       {/* Button inner glow */}
@@ -226,10 +225,10 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
                 {audioBlob && (
                   <div className="space-y-4">
-                    {/* Transparent recording display */}
-                    <div className={`${designSystem.colors.glass.overlay} 
-                                    ${designSystem.effects.blur.md} ${designSystem.colors.borders.glass} ${designSystem.radius.lg} p-5 
-                                    ${designSystem.effects.shadows.glass} relative overflow-hidden`}>
+                    {/* Enhanced recording display */}
+                    <div className={`bg-black/15 backdrop-blur-md border border-white/25 rounded-2xl p-5 
+                                    shadow-[inset_0_2px_8px_rgba(0,0,0,0.15),inset_0_1px_0_rgba(255,255,255,0.05)] 
+                                    relative overflow-hidden`}>
                       <div className="absolute inset-0 bg-gradient-to-br from-white/8 to-transparent rounded-2xl"></div>
                       
                       <div className="flex items-center justify-between mb-4 relative z-10">
@@ -246,14 +245,14 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </div>
                       
                       <div className="flex items-center gap-4 relative z-10">
-                        {/* Transparent play button */}
+                        {/* Enhanced play button */}
                         <button
                           onClick={isPlaying ? pauseRecording : playRecording}
-                          className={`w-12 h-12 ${designSystem.colors.glass.primary} 
-                                     hover:bg-white/15 ${designSystem.radius.lg} 
+                          className={`w-12 h-12 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                                     hover:from-white/20 hover:via-white/15 hover:to-white/12 rounded-2xl 
                                      flex items-center justify-center ${designSystem.effects.transitions.default}
-                                     ${designSystem.effects.shadows.button} ${designSystem.colors.borders.glass}
-                                     relative overflow-hidden group`}
+                                     shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
+                                     border border-white/25 relative overflow-hidden group`}
                         >
                           <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 
                                           rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
@@ -264,8 +263,8 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                           )}
                         </button>
                         
-                        {/* Transparent progress bar */}
-                        <div className={`flex-1 h-3 bg-white/15 ${designSystem.effects.blur.sm} ${designSystem.colors.borders.glass} 
+                        {/* Enhanced progress bar */}
+                        <div className={`flex-1 h-3 bg-white/15 ${designSystem.effects.blur.sm} border border-white/20
                                         rounded-full overflow-hidden shadow-inner`}>
                           <div className={`h-full bg-gradient-to-r from-white/40 to-white/30 
                                           ${designSystem.effects.blur.sm} ${designSystem.effects.transitions.default} ${
@@ -275,14 +274,21 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </div>
                     </div>
 
-                    {/* Submit button with transparent glass style */}
+                    {/* Submit button with enhanced glass style */}
                     <div className="flex justify-center">
                       <button
                         onClick={() => {
                           console.log('Voice input submitted:', audioBlob);
                           alert('Voice input recorded successfully!');
                         }}
-                        className={getButtonStyle('glass', 'md')}
+                        className="px-16 py-4 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                                   hover:from-white/20 hover:via-white/15 hover:to-white/12
+                                   text-white rounded-2xl transition-all duration-300
+                                   border border-white/25 hover:border-white/35
+                                   font-inter font-medium text-lg backdrop-blur-md
+                                   shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
+                                   hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
+                                   transform hover:scale-[1.02] active:scale-[0.98]"
                       >
                         Submit Voice Input
                       </button>
@@ -295,7 +301,13 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
               <div className="flex justify-center">
                 <button
                   onClick={() => setCurrentStep('welcome')}
-                  className={getButtonStyle('glass', 'sm')}
+                  className="px-8 py-3 bg-gradient-to-br from-white/10 via-white/8 to-white/6
+                             hover:from-white/15 hover:via-white/12 hover:to-white/10
+                             text-white rounded-xl transition-all duration-300
+                             border border-white/20 hover:border-white/30
+                             font-inter font-medium backdrop-blur-md
+                             shadow-[0_2px_8px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.08)]
+                             transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Back
                 </button>
