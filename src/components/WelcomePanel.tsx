@@ -263,11 +263,6 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
             </button>
           </div>
         )}
-
-        {/* Decorative elements */}
-        <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-400/30 rounded-full blur-sm animate-pulse"></div>
-        <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-purple-400/30 rounded-full blur-sm animate-pulse" 
-             style={{animationDelay: '1s'}}></div>
       </div>
     </div>
   );
