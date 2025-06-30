@@ -113,7 +113,8 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed left-6 top-1/2 transform -translate-y-1/2 z-40 w-80">
+    <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-80" 
+         style={{ left: '75%', transform: 'translateX(-50%) translateY(-50%)' }}>
       <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 
                       shadow-2xl shadow-black/20 transition-all duration-500">
         
