@@ -17,6 +17,7 @@ export const SplineScene: React.FC = () => {
           scene="https://prod.spline.design/edOeRvrcuWyGaD41/scene.splinecode"
           style={{ width: '100%', height: '100%' }}
           onError={handleSplineError}
+          scroll-events
         />
       </Suspense>
     </div>
