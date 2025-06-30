@@ -14,25 +14,25 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className={`relative ${getPanelStyle()} p-10 max-w-2xl w-full mx-4 
                       transform transition-all duration-700 scale-100 animate-in`}>
         
-        {/* Inner glow overlay */}
+        {/* Very subtle inner glow overlay */}
         <div className={designSystem.patterns.innerGlow}></div>
         
-        {/* Decorative top element */}
+        {/* Decorative top element - more transparent */}
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full 
-                          animate-pulse shadow-lg shadow-blue-400/50"></div>
+          <div className="w-8 h-8 bg-gradient-to-r from-white/30 to-white/20 rounded-full 
+                          animate-pulse shadow-lg shadow-white/20"></div>
         </div>
 
         {/* Header with sailing icon */}
         <div className="text-center mb-8 relative z-10">
           <div className={`inline-flex items-center justify-center w-20 h-20 
                           ${designSystem.patterns.iconContainer} mb-6 animate-float`}>
-            {/* Inner highlight for icon container */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+            {/* Very subtle inner highlight for icon container */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-white/5 to-transparent rounded-2xl"></div>
             <Compass className="w-10 h-10 text-white animate-spin relative z-10" style={{animationDuration: '8s'}} />
           </div>
           
@@ -45,9 +45,9 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
         {/* Main content */}
         <div className="space-y-6 text-center relative z-10">
           <div className="flex items-center justify-center gap-3 mb-6">
-            <Wind className="w-6 h-6 text-blue-300 animate-pulse" />
+            <Wind className="w-6 h-6 text-white/80 animate-pulse" />
             <div className="h-px bg-gradient-to-r from-transparent via-white/30 to-transparent flex-1"></div>
-            <Target className="w-6 h-6 text-purple-300 animate-pulse" />
+            <Target className="w-6 h-6 text-white/80 animate-pulse" />
           </div>
 
           <p className={`${designSystem.typography.sizes.xl} ${designSystem.colors.text.secondary} 
@@ -70,20 +70,20 @@ export const WelcomeModal: React.FC<WelcomeModalProps> = ({
           </button>
         </div>
 
-        {/* Floating decorative elements */}
-        <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-400/40 rounded-full blur-sm animate-pulse"></div>
-        <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-purple-400/40 rounded-full blur-sm animate-pulse" 
+        {/* Very subtle floating decorative elements */}
+        <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/25 rounded-full blur-sm animate-pulse"></div>
+        <div className="absolute -bottom-3 -right-3 w-6 h-6 bg-white/20 rounded-full blur-sm animate-pulse" 
              style={{animationDelay: '1s'}}></div>
         <div className="absolute top-1/4 -right-2 w-2 h-2 bg-white/30 rounded-full blur-sm animate-pulse"
              style={{animationDelay: '2s'}}></div>
-        <div className="absolute bottom-1/4 -left-2 w-3 h-3 bg-blue-300/30 rounded-full blur-sm animate-pulse"
+        <div className="absolute bottom-1/4 -left-2 w-3 h-3 bg-white/25 rounded-full blur-sm animate-pulse"
              style={{animationDelay: '0.5s'}}></div>
 
-        {/* Wind effect lines */}
+        {/* Wind effect lines - more transparent */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-          <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent
+          <div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/25 to-transparent
                           animate-pulse" style={{animationDelay: '1.5s'}}></div>
-          <div className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-blue-300/20 to-transparent
+          <div className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent
                           animate-pulse" style={{animationDelay: '2.5s'}}></div>
         </div>
       </div>

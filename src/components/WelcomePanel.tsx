@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Compass, Mic, MicOff, Play, Pause, Square } from 'lucide-react';
+import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
 
 interface WelcomePanelProps {
   isVisible: boolean;
@@ -115,36 +116,34 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   return (
     <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-[480px]" 
          style={{ left: '65%', transform: 'translateX(-50%) translateY(-50%)' }}>
-      {/* iOS-style glass panel with blue tint - wider */}
-      <div className="bg-gradient-to-br from-blue-400/20 via-blue-300/15 to-blue-500/25 
-                      backdrop-blur-xl border border-white/30 rounded-3xl p-10 
-                      shadow-2xl shadow-blue-500/20 transition-all duration-500
-                      relative overflow-hidden">
+      {/* Transparent glass panel */}
+      <div className={`${getPanelStyle()} p-10 
+                      ${designSystem.effects.shadows.strong} ${designSystem.effects.transitions.slow}
+                      relative overflow-hidden`}>
         
-        {/* Inner glass reflection effect */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent 
-                        rounded-3xl pointer-events-none"></div>
+        {/* Very subtle inner glass reflection effect */}
+        <div className={designSystem.patterns.innerGlow}></div>
         
         <div className="relative z-10">
           {currentStep === 'welcome' && (
             <div className="space-y-6">
-              {/* Header with iOS-style icon */}
+              {/* Header with transparent icon */}
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-400/40 to-blue-600/40 
-                                rounded-2xl flex items-center justify-center backdrop-blur-md 
-                                border border-white/40 shadow-lg shadow-blue-500/20
-                                relative overflow-hidden">
-                  {/* Inner highlight */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+                <div className={`w-14 h-14 ${designSystem.patterns.iconContainer}
+                                ${designSystem.effects.shadows.glass}
+                                relative overflow-hidden`}>
+                  {/* Very subtle inner highlight */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
                   <Compass className="w-7 h-7 text-white relative z-10" />
                 </div>
-                <h2 className="text-xl font-playfair font-semibold text-white">
+                <h2 className={`${designSystem.typography.sizes.xl} ${designSystem.typography.fonts.heading} 
+                               ${designSystem.typography.weights.semibold} ${designSystem.colors.text.primary}`}>
                   Welcome aboard!
                 </h2>
               </div>
 
               {/* Welcome content */}
-              <div className="space-y-4 text-white/95 font-inter leading-relaxed">
+              <div className={`space-y-4 ${designSystem.colors.text.secondary} ${designSystem.typography.fonts.body} leading-relaxed`}>
                 <p>
                   The system uses sensors to check if you're doing something important right now.
                 </p>
@@ -154,14 +153,11 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 </p>
               </div>
 
-              {/* Next button with same style as Back button */}
+              {/* Next button with transparent glass style */}
               <div className="flex justify-center pt-4">
                 <button
                   onClick={handleNext}
-                  className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20
-                             hover:bg-white/20 hover:border-white/30 text-white/80 hover:text-white
-                             rounded-xl transition-all duration-300 font-inter text-sm
-                             shadow-md shadow-white/5 hover:shadow-white/10"
+                  className={getButtonStyle('glass', 'md')}
                 >
                   Next
                 </button>
@@ -173,17 +169,17 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
             <div className="space-y-6">
               {/* Header */}
               <div className="text-center mb-8">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-400/40 to-blue-600/40 
-                                rounded-2xl flex items-center justify-center mx-auto mb-4 
-                                backdrop-blur-md border border-white/40 shadow-lg shadow-blue-500/20
-                                relative overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+                <div className={`w-14 h-14 ${designSystem.patterns.iconContainer} mx-auto mb-4 
+                                ${designSystem.effects.shadows.glass}
+                                relative overflow-hidden`}>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
                   <Mic className="w-7 h-7 text-white relative z-10" />
                 </div>
-                <h2 className="text-lg font-playfair font-semibold text-white mb-2">
+                <h2 className={`${designSystem.typography.sizes.lg} ${designSystem.typography.fonts.heading} 
+                               ${designSystem.typography.weights.semibold} ${designSystem.colors.text.primary} mb-2`}>
                   Tell the wind of intention,
                 </h2>
-                <p className="text-white/90 font-inter">
+                <p className={`${designSystem.colors.text.secondary} ${designSystem.typography.fonts.body}`}>
                   What important thing do you want to do today?
                 </p>
               </div>
@@ -192,21 +188,21 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
               <div className="space-y-6">
                 {!audioBlob && (
                   <div className="text-center">
-                    {/* iOS-style recording button */}
+                    {/* Transparent recording button */}
                     <button
                       onClick={isRecording ? stopRecording : startRecording}
                       className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-300 
                                   backdrop-blur-md border shadow-lg relative overflow-hidden group ${
                         isRecording 
-                          ? 'bg-gradient-to-br from-red-400/60 to-red-600/60 border-red-300/50 shadow-red-500/30 animate-pulse' 
-                          : 'bg-gradient-to-br from-blue-400/50 to-blue-600/50 border-white/40 shadow-blue-500/30 hover:from-blue-400/70 hover:to-blue-600/70'
+                          ? 'bg-red-400/20 border-red-300/30 shadow-red-400/20 animate-pulse' 
+                          : 'bg-white/10 border-white/25 shadow-white/10 hover:bg-white/15'
                       }`}
                     >
                       {/* Button inner glow */}
                       <div className={`absolute inset-0 rounded-3xl transition-opacity duration-300 ${
                         isRecording 
-                          ? 'bg-gradient-to-br from-red-300/30 to-red-500/30' 
-                          : 'bg-gradient-to-br from-white/20 to-white/10 opacity-0 group-hover:opacity-100'
+                          ? 'bg-gradient-to-br from-red-300/20 to-red-500/20' 
+                          : 'bg-gradient-to-br from-white/10 to-white/5 opacity-0 group-hover:opacity-100'
                       }`}></div>
                       
                       {isRecording ? (
@@ -217,12 +213,12 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                     </button>
                     
                     {isRecording && (
-                      <div className="mt-4 text-white/90 font-mono text-lg">
+                      <div className={`mt-4 ${designSystem.colors.text.secondary} font-mono ${designSystem.typography.sizes.lg}`}>
                         Recording: {formatTime(recordingTime)}
                       </div>
                     )}
                     
-                    <p className="mt-4 text-sm text-white/70">
+                    <p className={`mt-4 ${designSystem.typography.sizes.sm} ${designSystem.colors.text.muted}`}>
                       {isRecording ? 'Click to stop recording' : 'Click to start recording'}
                     </p>
                   </div>
@@ -230,34 +226,36 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
 
                 {audioBlob && (
                   <div className="space-y-4">
-                    {/* iOS-style recording display */}
-                    <div className="bg-gradient-to-br from-white/15 via-white/10 to-white/5 
-                                    backdrop-blur-md border border-white/30 rounded-2xl p-5 
-                                    shadow-lg shadow-blue-500/10 relative overflow-hidden">
-                      <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-2xl"></div>
+                    {/* Transparent recording display */}
+                    <div className={`${designSystem.colors.glass.overlay} 
+                                    ${designSystem.effects.blur.md} ${designSystem.colors.borders.glass} ${designSystem.radius.lg} p-5 
+                                    ${designSystem.effects.shadows.glass} relative overflow-hidden`}>
+                      <div className="absolute inset-0 bg-gradient-to-br from-white/8 to-transparent rounded-2xl"></div>
                       
                       <div className="flex items-center justify-between mb-4 relative z-10">
-                        <span className="text-white/90 text-sm font-medium">Your recording</span>
+                        <span className={`${designSystem.colors.text.secondary} ${designSystem.typography.sizes.sm} ${designSystem.typography.weights.medium}`}>
+                          Your recording
+                        </span>
                         <button
                           onClick={clearRecording}
-                          className="text-white/70 hover:text-white text-sm px-3 py-1 rounded-lg
-                                     hover:bg-white/10 transition-all duration-200"
+                          className={`${designSystem.colors.text.muted} hover:${designSystem.colors.text.primary} ${designSystem.typography.sizes.sm} px-3 py-1 rounded-lg
+                                     hover:bg-white/10 ${designSystem.effects.transitions.fast}`}
                         >
                           Clear
                         </button>
                       </div>
                       
                       <div className="flex items-center gap-4 relative z-10">
-                        {/* iOS-style play button */}
+                        {/* Transparent play button */}
                         <button
                           onClick={isPlaying ? pauseRecording : playRecording}
-                          className="w-12 h-12 bg-gradient-to-br from-blue-400/50 to-blue-600/50 
-                                     hover:from-blue-400/70 hover:to-blue-600/70 rounded-2xl 
-                                     flex items-center justify-center transition-all duration-300
-                                     shadow-lg shadow-blue-500/20 backdrop-blur-md border border-white/30
-                                     relative overflow-hidden group"
+                          className={`w-12 h-12 ${designSystem.colors.glass.primary} 
+                                     hover:bg-white/15 ${designSystem.radius.lg} 
+                                     flex items-center justify-center ${designSystem.effects.transitions.default}
+                                     ${designSystem.effects.shadows.button} ${designSystem.colors.borders.glass}
+                                     relative overflow-hidden group`}
                         >
-                          <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-white/10 
+                          <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 
                                           rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                           {isPlaying ? (
                             <Pause className="w-5 h-5 text-white relative z-10" />
@@ -266,28 +264,25 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                           )}
                         </button>
                         
-                        {/* iOS-style progress bar */}
-                        <div className="flex-1 h-3 bg-white/20 backdrop-blur-sm border border-white/30 
-                                        rounded-full overflow-hidden shadow-inner">
-                          <div className={`h-full bg-gradient-to-r from-blue-400/80 to-blue-600/80 
-                                          backdrop-blur-sm transition-all duration-300 ${
+                        {/* Transparent progress bar */}
+                        <div className={`flex-1 h-3 bg-white/15 ${designSystem.effects.blur.sm} ${designSystem.colors.borders.glass} 
+                                        rounded-full overflow-hidden shadow-inner`}>
+                          <div className={`h-full bg-gradient-to-r from-white/40 to-white/30 
+                                          ${designSystem.effects.blur.sm} ${designSystem.effects.transitions.default} ${
                             isPlaying ? 'animate-pulse' : ''
                           }`} style={{ width: '100%' }}></div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Submit button with same style as Back button */}
+                    {/* Submit button with transparent glass style */}
                     <div className="flex justify-center">
                       <button
                         onClick={() => {
                           console.log('Voice input submitted:', audioBlob);
                           alert('Voice input recorded successfully!');
                         }}
-                        className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20
-                                   hover:bg-white/20 hover:border-white/30 text-white/80 hover:text-white
-                                   rounded-xl transition-all duration-300 font-inter text-sm
-                                   shadow-md shadow-white/5 hover:shadow-white/10"
+                        className={getButtonStyle('glass', 'md')}
                       >
                         Submit Voice Input
                       </button>
@@ -300,10 +295,7 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
               <div className="flex justify-center">
                 <button
                   onClick={() => setCurrentStep('welcome')}
-                  className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20
-                             hover:bg-white/20 hover:border-white/30 text-white/80 hover:text-white
-                             rounded-xl transition-all duration-300 font-inter text-sm
-                             shadow-md shadow-white/5 hover:shadow-white/10"
+                  className={getButtonStyle('glass', 'sm')}
                 >
                   Back
                 </button>

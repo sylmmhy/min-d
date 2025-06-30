@@ -1,39 +1,40 @@
 // Design System Guide - The Mindboat
-// Based on the beautiful glass morphism and ocean theme
+// Based on transparent glass morphism and ocean theme
 
 export const designSystem = {
   // Color Palette
   colors: {
-    // Glass morphism backgrounds
+    // Transparent glass morphism backgrounds
     glass: {
-      primary: 'bg-gradient-to-br from-blue-400/20 via-blue-300/15 to-blue-500/25',
-      secondary: 'bg-gradient-to-br from-white/15 via-white/10 to-white/5',
-      overlay: 'bg-gradient-to-br from-white/10 via-transparent to-transparent',
+      primary: 'bg-white/10 backdrop-blur-xl',
+      secondary: 'bg-white/5 backdrop-blur-lg',
+      overlay: 'bg-gradient-to-br from-white/15 via-white/8 to-white/5',
+      subtle: 'bg-white/8 backdrop-blur-md',
     },
     
     // Button styles
     buttons: {
-      // Subtle glass button (primary style)
-      glass: 'bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/30 text-white/80 hover:text-white',
+      // Transparent glass button (primary style)
+      glass: 'bg-white/10 hover:bg-white/15 border border-white/20 hover:border-white/30 text-white/90 hover:text-white backdrop-blur-md',
       // Accent button for important actions
-      accent: 'bg-gradient-to-r from-blue-500/80 to-purple-500/80 hover:from-blue-500 hover:to-purple-500 text-white border border-white/20',
+      accent: 'bg-gradient-to-r from-blue-400/30 to-purple-400/30 hover:from-blue-400/40 hover:to-purple-400/40 text-white border border-white/25 backdrop-blur-md',
       // Danger/warning button
-      danger: 'bg-gradient-to-r from-red-400/60 to-red-600/60 border-red-300/50 text-white',
+      danger: 'bg-red-400/20 hover:bg-red-400/30 border border-red-300/30 text-white backdrop-blur-md',
     },
     
     // Text colors
     text: {
       primary: 'text-white',
-      secondary: 'text-white/90',
-      muted: 'text-white/70',
-      subtle: 'text-white/60',
+      secondary: 'text-white/95',
+      muted: 'text-white/80',
+      subtle: 'text-white/70',
     },
     
     // Border colors
     borders: {
       glass: 'border-white/20',
       glassHover: 'border-white/30',
-      accent: 'border-blue-400/50',
+      accent: 'border-white/25',
     }
   },
 
@@ -95,12 +96,12 @@ export const designSystem = {
       xl: 'backdrop-blur-xl',
     },
     
-    // Shadows
+    // Shadows - lighter and more subtle
     shadows: {
-      glass: 'shadow-lg shadow-blue-500/10',
-      button: 'shadow-md shadow-white/5 hover:shadow-white/10',
-      accent: 'shadow-lg shadow-blue-500/20',
-      strong: 'shadow-2xl shadow-blue-500/20',
+      glass: 'shadow-lg shadow-white/5',
+      button: 'shadow-md shadow-white/10',
+      accent: 'shadow-lg shadow-blue-400/10',
+      strong: 'shadow-xl shadow-white/10',
     },
     
     // Transitions
@@ -128,49 +129,47 @@ export const designSystem = {
 
   // Component Patterns
   patterns: {
-    // Glass panel (main container style)
+    // Transparent glass panel (main container style)
     glassPanel: `
-      bg-gradient-to-br from-blue-400/20 via-blue-300/15 to-blue-500/25 
-      backdrop-blur-xl border border-white/30 rounded-3xl 
-      shadow-2xl shadow-blue-500/20 relative overflow-hidden
+      bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl 
+      shadow-xl shadow-white/10 relative overflow-hidden
     `,
     
-    // Glass button (primary button style)
+    // Transparent glass button (primary button style)
     glassButton: `
       bg-white/10 backdrop-blur-md border border-white/20
-      hover:bg-white/20 hover:border-white/30 text-white/80 hover:text-white
+      hover:bg-white/15 hover:border-white/30 text-white/90 hover:text-white
       rounded-xl transition-all duration-300 font-inter
-      shadow-md shadow-white/5 hover:shadow-white/10
+      shadow-md shadow-white/10
     `,
     
-    // Accent button (for important actions)
+    // Accent button (for important actions) - more transparent
     accentButton: `
-      bg-gradient-to-r from-blue-500/80 to-purple-500/80
-      hover:from-blue-500 hover:to-purple-500 text-white rounded-xl 
+      bg-gradient-to-r from-blue-400/30 to-purple-400/30
+      hover:from-blue-400/40 hover:to-purple-400/40 text-white rounded-xl 
       transition-all duration-300 font-inter font-medium
-      shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
-      border border-white/20
+      shadow-lg shadow-blue-400/10 backdrop-blur-md
+      border border-white/25
     `,
     
-    // Icon container
+    // Icon container - more transparent
     iconContainer: `
-      bg-gradient-to-br from-blue-400/40 to-blue-600/40 
-      rounded-2xl flex items-center justify-center backdrop-blur-md 
-      border border-white/40 shadow-lg shadow-blue-500/20
+      bg-white/15 backdrop-blur-md rounded-2xl flex items-center justify-center
+      border border-white/25 shadow-lg shadow-white/10
       relative overflow-hidden
     `,
     
-    // Inner glow overlay for containers
+    // Inner glow overlay for containers - very subtle
     innerGlow: `
-      absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent 
+      absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent 
       rounded-3xl pointer-events-none
     `,
     
-    // Input field
+    // Input field - transparent
     inputField: `
-      bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl 
-      text-white placeholder-white/50 focus:outline-none focus:ring-2 
-      focus:ring-blue-400/50 focus:border-blue-400/50 transition-all duration-300
+      bg-white/8 backdrop-blur-md border border-white/20 rounded-xl 
+      text-white placeholder-white/60 focus:outline-none focus:ring-2 
+      focus:ring-white/30 focus:border-white/40 transition-all duration-300
     `,
   }
 };

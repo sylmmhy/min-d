@@ -177,13 +177,13 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         onClose={() => setShowWelcomePanel(false)}
       />
 
-      {/* 事件详情模态框 - 使用设计系统 */}
+      {/* 事件详情模态框 - 使用透明玻璃设计系统 */}
       {showModal && currentEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className={`${getPanelStyle()} p-8 max-w-md w-full mx-4 
                           transform transition-all duration-300 scale-100`}>
             
-            {/* Inner glow overlay */}
+            {/* Very subtle inner glow overlay */}
             <div className={designSystem.patterns.innerGlow}></div>
             
             <div className="flex items-center justify-between mb-6 relative z-10">
@@ -206,7 +206,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
               <p className={designSystem.typography.sizes.lg}>{getEventDescription(currentEvent)}</p>
               
               <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
-                              ${designSystem.radius.md} p-4`}>
+                              ${designSystem.radius.md} p-4 border ${designSystem.colors.borders.glass}`}>
                 <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
                   事件详情:
                 </h3>
@@ -219,7 +219,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
               {Object.keys(currentEvent.payload).length > 0 && (
                 <div className={`${designSystem.colors.glass.secondary} ${designSystem.effects.blur.sm} 
-                                ${designSystem.radius.md} p-4`}>
+                                ${designSystem.radius.md} p-4 border ${designSystem.colors.borders.glass}`}>
                   <h3 className={`${designSystem.typography.weights.medium} mb-2 ${designSystem.colors.text.primary}`}>
                     载荷数据:
                   </h3>

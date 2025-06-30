@@ -39,11 +39,11 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div className={`relative ${getPanelStyle()} p-10 max-w-lg w-full mx-4 
                       transform transition-all duration-500 scale-100 animate-in`}>
         
-        {/* Inner glow overlay */}
+        {/* Very subtle inner glow overlay */}
         <div className={designSystem.patterns.innerGlow}></div>
         
         {/* Close button */}
@@ -59,8 +59,8 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
         <div className="text-center mb-8 relative z-10">
           <div className={`inline-flex items-center justify-center w-16 h-16 
                           ${designSystem.patterns.iconContainer} mb-4`}>
-            {/* Inner highlight for icon container */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl"></div>
+            {/* Very subtle inner highlight for icon container */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/15 via-white/5 to-transparent rounded-2xl"></div>
             <Target className="w-8 h-8 text-white relative z-10" />
           </div>
           
@@ -126,10 +126,10 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
           </div>
         </form>
 
-        {/* Decorative elements */}
-        <div className="absolute -top-2 -left-2 w-4 h-4 bg-blue-400/30 rounded-full blur-sm"></div>
-        <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-purple-400/30 rounded-full blur-sm"></div>
-        <div className="absolute top-1/2 -right-4 w-2 h-2 bg-white/20 rounded-full blur-sm"></div>
+        {/* Very subtle decorative elements */}
+        <div className="absolute -top-2 -left-2 w-4 h-4 bg-white/20 rounded-full blur-sm"></div>
+        <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-white/15 rounded-full blur-sm"></div>
+        <div className="absolute top-1/2 -right-4 w-2 h-2 bg-white/25 rounded-full blur-sm"></div>
       </div>
     </div>
   );
