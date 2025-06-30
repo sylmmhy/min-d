@@ -25,13 +25,29 @@ interface SplineEvent {
 
 interface SplineEventHandlerProps {
   onEventReceived?: (event: SplineEvent) => void
+  onModalStateChange?: (isOpen: boolean) => void
 }
 
-export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventReceived }) => {
+export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ 
+  onEventReceived,
+  onModalStateChange 
+}) => {
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
   const [showWelcomePanel, setShowWelcomePanel] = useState(false)
+
+  // 通知父组件模态框状态变化
+  useEffect(() => {
+    const isAnyModalOpen = showModal || showLifeGoalsModal || showWelcomePanel;
+    onModalStateChange?.(isAnyModalOpen);
+    
+    // 也可以通过自定义事件通知
+    const event = new CustomEvent('modalStateChange', { 
+      detail: { isOpen: isAnyModalOpen } 
+    });
+    window.dispatchEvent(event);
+  }, [showModal, showLifeGoalsModal, showWelcomePanel, onModalStateChange]);
 
   useEffect(() => {
     console.log('🚀 初始化 Spline 事件处理器...')
