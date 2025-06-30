@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import { X, Sparkles, Play, Zap, Target, Heart } from 'lucide-react'
+import { X, Sparkles, Play, Zap, Target, Compass } from 'lucide-react'
 import { LifeGoalsModal } from './LifeGoalsModal'
 
 interface SplineEvent {
@@ -26,7 +26,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   const [showModal, setShowModal] = useState(false)
   const [currentEvent, setCurrentEvent] = useState<SplineEvent | null>(null)
   const [showLifeGoalsModal, setShowLifeGoalsModal] = useState(false)
-  const [showSetGoalOverlay, setShowSetGoalOverlay] = useState(false)
+  const [showWelcomeMessage, setShowWelcomeMessage] = useState(false)
 
   useEffect(() => {
     // Subscribe to Spline events via Supabase Realtime
@@ -42,8 +42,12 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         
         // Handle different types of Spline interactions
         if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') {
-          // This is the "Set a goal" interaction
-          setShowSetGoalOverlay(true)
+          // This is the "Set a goal" interaction - show welcome message
+          setShowWelcomeMessage(true)
+          // Auto-hide after 8 seconds
+          setTimeout(() => {
+            setShowWelcomeMessage(false)
+          }, 8000)
         } else if (event.payload.number === 1 || !event.payload.scene_id) {
           // This is the original life goals modal interaction
           setShowLifeGoalsModal(true)
@@ -75,14 +79,6 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
     // based on the submitted goal
   }
 
-  const handleSetGoalSubmit = (goal: string) => {
-    console.log('Set a goal submitted:', goal)
-    // Handle the "Set a goal" submission
-    // This could be different from the life goals submission
-    // For example, you might want to save it to a different table
-    // or trigger different animations
-  }
-
   const getEventIcon = (event: SplineEvent) => {
     if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') return <Target className="w-6 h-6" />
     if (event.payload.number === 1) return <Play className="w-6 h-6" />
@@ -91,7 +87,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
   }
 
   const getEventTitle = (event: SplineEvent) => {
-    if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') return "Set a Goal Triggered!"
+    if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') return "欢迎启航"
     if (event.payload.number === 1) return "Animation Triggered!"
     if (event.payload.action) return `Action: ${event.payload.action}`
     return "Spline Interaction"
@@ -99,7 +95,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
 
   const getEventDescription = (event: SplineEvent) => {
     if (event.payload.scene_id === 'scene_B' || event.payload.ui_type === 'overlay_B') {
-      return "Set a goal interaction activated"
+      return "欢迎启航 - 传感器监测已激活"
     }
     
     const parts = []
@@ -121,99 +117,59 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
         onSubmit={handleLifeGoalSubmit}
       />
 
-      {/* Set a Goal Overlay - New */}
-      {showSetGoalOverlay && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-          <div className="relative bg-gradient-to-br from-emerald-500/10 to-teal-500/5 backdrop-blur-md 
-                          border border-emerald-400/20 rounded-3xl p-8 max-w-lg w-full mx-4 
-                          transform transition-all duration-500 scale-100 animate-in">
+      {/* Welcome Message - Top Left Corner */}
+      {showWelcomeMessage && (
+        <div className="fixed top-6 left-6 z-50 max-w-sm animate-in slide-in-from-left duration-700">
+          <div className="bg-gradient-to-br from-blue-500/20 to-cyan-500/10 backdrop-blur-md 
+                          border border-blue-400/30 rounded-2xl p-6 shadow-2xl
+                          transform transition-all duration-500">
             
             {/* Close button */}
             <button
-              onClick={() => setShowSetGoalOverlay(false)}
-              className="absolute top-4 right-4 text-white/60 hover:text-white 
-                         transition-colors p-2 rounded-full hover:bg-white/10"
+              onClick={() => setShowWelcomeMessage(false)}
+              className="absolute top-3 right-3 text-white/60 hover:text-white 
+                         transition-colors p-1 rounded-full hover:bg-white/10"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
 
-            {/* Header with icon */}
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 
-                              bg-gradient-to-br from-emerald-400/20 to-teal-400/20 
-                              rounded-full mb-4 backdrop-blur-sm border border-emerald-400/20">
-                <Target className="w-8 h-8 text-emerald-300" />
+            {/* Icon and Title */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center justify-center w-10 h-10 
+                              bg-gradient-to-br from-blue-400/30 to-cyan-400/20 
+                              rounded-full backdrop-blur-sm border border-blue-400/20">
+                <Compass className="w-5 h-5 text-blue-300" />
               </div>
-              
-              <h2 className="text-3xl font-playfair font-semibold text-white mb-2">
-                Set a Goal
-              </h2>
-              
-              <p className="text-white/70 text-lg font-inter">
-                Define your next milestone and take action
+              <h3 className="text-xl font-playfair font-semibold text-white">
+                欢迎启航
+              </h3>
+            </div>
+
+            {/* Welcome Message */}
+            <div className="space-y-3 text-white/90 font-inter leading-relaxed">
+              <p className="text-sm">
+                系统会调用传感器来监测你是否当下在做重要的事情。
+              </p>
+              <p className="text-sm">
+                当你做和目标有关的事情的时候，会吹起不同的意念之风，推进你的小船帮你到达目的地。
               </p>
             </div>
 
-            {/* Form */}
-            <form onSubmit={(e) => {
-              e.preventDefault()
-              const formData = new FormData(e.currentTarget)
-              const goal = formData.get('goal') as string
-              if (goal.trim()) {
-                handleSetGoalSubmit(goal.trim())
-                setShowSetGoalOverlay(false)
-              }
-            }} className="space-y-6">
-              <div className="relative">
-                <textarea
-                  name="goal"
-                  placeholder="What goal would you like to set?"
-                  className="w-full h-32 px-4 py-3 bg-white/10 backdrop-blur-sm 
-                             border border-emerald-400/20 rounded-xl text-white placeholder-white/50
-                             focus:outline-none focus:ring-2 focus:ring-emerald-400/50 
-                             focus:border-emerald-400/50 transition-all duration-300
-                             resize-none font-inter"
-                  maxLength={300}
-                  required
-                />
-              </div>
-
-              {/* Action buttons */}
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowSetGoalOverlay(false)}
-                  className="flex-1 px-6 py-3 bg-white/10 hover:bg-white/20 
-                             text-white rounded-xl transition-all duration-300
-                             border border-white/20 hover:border-white/30
-                             font-inter font-medium"
-                >
-                  Cancel
-                </button>
-                
-                <button
-                  type="submit"
-                  className="flex-1 px-6 py-3 bg-gradient-to-r from-emerald-500/80 to-teal-500/80
-                             hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl 
-                             transition-all duration-300 font-inter font-medium
-                             flex items-center justify-center gap-2"
-                >
-                  <Target className="w-4 h-4" />
-                  Set Goal
-                </button>
-              </div>
-            </form>
-
             {/* Decorative elements */}
-            <div className="absolute -top-2 -left-2 w-4 h-4 bg-emerald-400/30 rounded-full blur-sm"></div>
-            <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-teal-400/30 rounded-full blur-sm"></div>
-            <div className="absolute top-1/2 -right-4 w-2 h-2 bg-emerald-300/20 rounded-full blur-sm"></div>
+            <div className="absolute -top-1 -left-1 w-3 h-3 bg-blue-400/40 rounded-full blur-sm animate-pulse"></div>
+            <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-cyan-400/30 rounded-full blur-sm animate-pulse delay-1000"></div>
+            
+            {/* Progress bar for auto-hide */}
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10 rounded-b-2xl overflow-hidden">
+              <div className="h-full bg-gradient-to-r from-blue-400 to-cyan-400 
+                              animate-[shrink_8s_linear_forwards] origin-left"></div>
+            </div>
           </div>
         </div>
       )}
 
       {/* Event History Panel */}
-      {events.length > 0 && (
+      {events.length > 0 && !showWelcomeMessage && (
         <div className="fixed top-4 left-4 z-40 bg-white/10 backdrop-blur-md border border-white/20 
                         rounded-lg p-4 max-w-sm">
           <h3 className="text-white font-medium mb-2 flex items-center gap-2">
@@ -270,8 +226,8 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({ onEventR
                     {JSON.stringify(currentEvent.payload, null, 2)}
                   </pre>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
             <div className="flex justify-end mt-6">
               <button
