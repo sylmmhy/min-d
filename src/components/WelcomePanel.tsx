@@ -127,9 +127,9 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
         <div className="relative z-10">
           {currentStep === 'welcome' && (
             <div className="space-y-6">
-              {/* Header without logo - just title */}
-              <div className="text-center mb-8">
-                <h2 className="text-[45px] font-playfair font-normal text-white mb-6 leading-tight">
+              {/* Header - left aligned title, 32px */}
+              <div className="mb-8">
+                <h2 className="text-[32px] font-playfair font-normal text-white mb-6 leading-tight text-left">
                   Welcome aboard!
                 </h2>
               </div>
