@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Compass, CheckCircle, Circle, Mail as Sail, Mountain, BookOpen, Palette } from 'lucide-react';
-import { designSystem, getButtonStyle, getPanelStyle } from '../styles/designSystem';
+import { designSystem, getButtonStyle, getPanelStyle, getIconContainerStyle, getInnerGlowStyle } from '../styles/designSystem';
 import { ControlPanel } from './ControlPanel';
 import { SailingSummaryPanel } from './SailingSummaryPanel';
 
@@ -178,25 +178,25 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
 
           {/* Right side - Task Panel - width increased from 600px to 900px (1.5x) */}
           <div className="w-[900px] p-8 flex items-center justify-center">
-            <div className="relative w-full max-w-[820px] bg-gradient-to-br from-white/12 via-white/8 to-white/6 
+            <div className="relative w-full max-w-[820px] bg-gradient-to-br from-slate-500/20 via-slate-400/15 to-slate-600/25 
                             backdrop-blur-2xl border border-white/25 rounded-3xl p-10
                             shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
                             before:absolute before:inset-0 before:rounded-3xl 
-                            before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
+                            before:bg-gradient-to-br before:from-slate-400/10 before:via-transparent before:to-transparent 
                             before:pointer-events-none overflow-hidden">
               
-              {/* Inner glow overlay */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
+              {/* Inner glow overlay - tinted */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-400/10 via-transparent to-transparent 
                               rounded-3xl pointer-events-none"></div>
               
               <div className="relative z-10 h-full flex flex-col">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-8">
-                  <div className="bg-gradient-to-br from-white/15 via-white/10 to-white/8 backdrop-blur-md 
+                  <div className="bg-gradient-to-br from-slate-500/20 via-slate-400/15 to-slate-600/25 backdrop-blur-md 
                                   rounded-2xl flex items-center justify-center w-12 h-12
                                   border border-white/25 shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06)]
                                   relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-white/5 rounded-2xl"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-slate-400/10 to-slate-600/5 rounded-2xl"></div>
                     <Sail className="w-6 h-6 text-white relative z-10" />
                   </div>
                   <div>
@@ -225,8 +225,8 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                           className={`w-full text-left p-4 rounded-xl transition-all duration-300 
                                       border backdrop-blur-md font-inter text-sm
                                       ${selectedTask.id === task.id 
-                                        ? 'bg-white/25 border-white/30 text-white shadow-md' 
-                                        : 'bg-white/15 border-white/20 text-white/80 hover:bg-white/20 hover:border-white/30'
+                                        ? 'bg-gradient-to-br from-slate-500/30 via-slate-400/25 to-slate-600/35 border-white/30 text-white shadow-md' 
+                                        : 'bg-gradient-to-br from-slate-500/15 via-slate-400/10 to-slate-600/20 border-white/20 text-white/80 hover:from-slate-500/20 hover:via-slate-400/15 hover:to-slate-600/25 hover:border-white/30'
                                       }`}
                         >
                           <div className="flex items-center gap-2 mb-1">
@@ -266,7 +266,7 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
                     </div>
 
                     {/* Task illustration - Increased height from h-48 to h-64 */}
-                    <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-white/10 to-white/5 
+                    <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-slate-500/15 via-slate-400/10 to-slate-600/20 
                                     border border-white/20 shadow-lg">
                       <img
                         src={selectedTask.imageUrl}
