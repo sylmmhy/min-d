@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Target, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 
 interface LifeGoalsModalProps {
   isOpen: boolean;
@@ -47,17 +47,8 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
       <div className="flex items-center justify-center min-h-screen p-8">
         <div className="relative max-w-2xl w-full">
           
-          {/* Header with icon */}
+          {/* Header without icon */}
           <div className="text-center mb-10 relative z-10">
-            <div className="inline-flex items-center justify-center w-20 h-20 
-                            bg-white/10 backdrop-blur-md border border-white/20 
-                            rounded-2xl mb-6 shadow-lg shadow-white/5
-                            relative overflow-hidden">
-              {/* Ultra subtle inner highlight for icon container */}
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-white/3 to-transparent rounded-2xl"></div>
-              <Target className="w-10 h-10 text-white relative z-10" />
-            </div>
-            
             <h2 className="text-[42px] font-playfair font-normal text-white mb-6 leading-tight">
               What kind of person do you want to become?
             </h2>
