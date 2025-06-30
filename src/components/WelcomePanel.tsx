@@ -154,22 +154,24 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 </p>
               </div>
 
-              {/* iOS-style Next button - refined colors */}
-              <button
-                onClick={handleNext}
-                className="w-full px-8 py-4 bg-gradient-to-r from-blue-500/80 via-blue-400/80 to-blue-500/85
-                           hover:from-blue-500/95 hover:via-blue-400/95 hover:to-blue-500/95 
-                           text-white rounded-2xl transition-all duration-300 font-inter font-medium text-lg
-                           shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
-                           transform hover:scale-[1.02] active:scale-[0.98]
-                           backdrop-blur-sm border border-white/20
-                           relative overflow-hidden group"
-              >
-                {/* Button inner glow */}
-                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 
-                                rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <span className="relative z-10">Next</span>
-              </button>
+              {/* iOS-style Next button - centered and narrower */}
+              <div className="flex justify-center pt-4">
+                <button
+                  onClick={handleNext}
+                  className="px-12 py-4 bg-gradient-to-r from-blue-500/80 via-blue-400/80 to-blue-500/85
+                             hover:from-blue-500/95 hover:via-blue-400/95 hover:to-blue-500/95 
+                             text-white rounded-2xl transition-all duration-300 font-inter font-medium text-lg
+                             shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
+                             transform hover:scale-[1.02] active:scale-[0.98]
+                             backdrop-blur-sm border border-white/20
+                             relative overflow-hidden group"
+                >
+                  {/* Button inner glow */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 
+                                  rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <span className="relative z-10">Next</span>
+                </button>
+              </div>
             </div>
           )}
 
@@ -281,38 +283,42 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </div>
                     </div>
 
-                    {/* iOS-style submit button - refined colors */}
-                    <button
-                      onClick={() => {
-                        console.log('Voice input submitted:', audioBlob);
-                        alert('Voice input recorded successfully!');
-                      }}
-                      className="w-full px-8 py-4 bg-gradient-to-r from-blue-500/80 via-blue-400/80 to-blue-500/85
-                                 hover:from-blue-500/95 hover:via-blue-400/95 hover:to-blue-500/95 
-                                 text-white rounded-2xl transition-all duration-300 font-inter font-medium text-lg
-                                 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
-                                 transform hover:scale-[1.02] active:scale-[0.98]
-                                 backdrop-blur-sm border border-white/20
-                                 relative overflow-hidden group"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 
-                                      rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <span className="relative z-10">Submit Voice Input</span>
-                    </button>
+                    {/* iOS-style submit button - centered and narrower */}
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => {
+                          console.log('Voice input submitted:', audioBlob);
+                          alert('Voice input recorded successfully!');
+                        }}
+                        className="px-12 py-4 bg-gradient-to-r from-blue-500/80 via-blue-400/80 to-blue-500/85
+                                   hover:from-blue-500/95 hover:via-blue-400/95 hover:to-blue-500/95 
+                                   text-white rounded-2xl transition-all duration-300 font-inter font-medium text-lg
+                                   shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
+                                   transform hover:scale-[1.02] active:scale-[0.98]
+                                   backdrop-blur-sm border border-white/20
+                                   relative overflow-hidden group"
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-white/5 
+                                        rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <span className="relative z-10">Submit Voice Input</span>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
 
-              {/* iOS-style back button */}
-              <button
-                onClick={() => setCurrentStep('welcome')}
-                className="w-full px-4 py-3 bg-white/10 backdrop-blur-md border border-white/20
-                           hover:bg-white/20 hover:border-white/30 text-white/80 hover:text-white
-                           rounded-xl transition-all duration-300 font-inter text-sm
-                           shadow-md shadow-white/5 hover:shadow-white/10"
-              >
-                Back
-              </button>
+              {/* iOS-style back button - centered and narrower */}
+              <div className="flex justify-center">
+                <button
+                  onClick={() => setCurrentStep('welcome')}
+                  className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20
+                             hover:bg-white/20 hover:border-white/30 text-white/80 hover:text-white
+                             rounded-xl transition-all duration-300 font-inter text-sm
+                             shadow-md shadow-white/5 hover:shadow-white/10"
+                >
+                  Back
+                </button>
+              </div>
             </div>
           )}
         </div>
