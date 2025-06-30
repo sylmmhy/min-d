@@ -89,7 +89,8 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
         let shouldShowSeagull = false
         
         // 优先级1: 基于 API 端点和来源的精确匹配
-        if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook') {
+        if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
+            apiEndpoint === 'test-seagull-webhook' || source === 'test-seagull-webhook') {
           shouldShowSeagull = true
         } else if (apiEndpoint === 'welcome-webhook' || source === 'welcome-webhook') {
           shouldShowWelcome = true
@@ -202,6 +203,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
     const { apiEndpoint, modalType, uiAction, source } = event.payload
     
     if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
+        apiEndpoint === 'test-seagull-webhook' || source === 'test-seagull-webhook' ||
         modalType === 'seagull' || uiAction === 'show_seagull') {
       return <MessageCircle className="w-6 h-6 text-blue-400" />
     }
@@ -224,6 +226,7 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
     const { apiEndpoint, modalType, uiAction, source, message } = event.payload
     
     if (apiEndpoint === 'seagull-webhook' || source === 'seagull-webhook' || 
+        apiEndpoint === 'test-seagull-webhook' || source === 'test-seagull-webhook' ||
         modalType === 'seagull' || uiAction === 'show_seagull') {
       return "海鸥语音助手!"
     }
@@ -256,10 +259,11 @@ export const SplineEventHandler: React.FC<SplineEventHandlerProps> = ({
 
   return (
     <>
-      {/* 海鸥语音助手面板 */}
+      {/* 海鸥语音助手面板 - 小型悬浮面板 */}
       <SeagullPanel
         isVisible={showSeagullPanel}
         onClose={() => setShowSeagullPanel(false)}
+        message={currentEvent?.payload?.seagullMessage}
       />
 
       {/* 人生目标模态框 */}
