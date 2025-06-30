@@ -39,7 +39,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-      {/* Enhanced glass panel with Apple-inspired depth - made more compact */}
+      {/* Enhanced glass panel with Apple-inspired depth */}
       <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
                       backdrop-blur-2xl border border-white/25 rounded-3xl px-6 py-4
                       shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
@@ -51,102 +51,99 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
         <div className="absolute inset-0 bg-gradient-to-br from-white/8 via-transparent to-transparent 
                         rounded-3xl pointer-events-none"></div>
         
-        <div className="relative z-10 flex flex-col items-center gap-4">
-          {/* End Voyage Button - positioned above the control buttons */}
+        {/* All buttons in a single horizontal row */}
+        <div className="relative z-10 flex items-center gap-4">
+          {/* Microphone Control */}
           <button
-            onClick={handleEndVoyage}
-            className="px-4 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
-                       hover:from-white/20 hover:via-white/15 hover:to-white/12
-                       text-white rounded-xl transition-all duration-300
-                       border border-white/25 hover:border-white/35
-                       font-inter font-medium text-sm backdrop-blur-md
-                       shadow-[0_4px_16px_rgba(0,0,0,0.1),0_1px_4px_rgba(0,0,0,0.06),inset_0_1px_0_rgba(255,255,255,0.1)]
-                       hover:shadow-[0_6px_20px_rgba(0,0,0,0.15),0_2px_8px_rgba(0,0,0,0.1),inset_0_1px_0_rgba(255,255,255,0.15)]
-                       transform hover:scale-[1.02] active:scale-[0.98]
-                       flex items-center justify-center gap-2"
-            title="End the voyage and return to journey selection"
+            onClick={toggleMic}
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
+                        backdrop-blur-md border shadow-lg relative overflow-hidden group ${
+              micEnabled 
+                ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
+                : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
+            }`}
+            title={micEnabled ? 'Turn off microphone' : 'Turn on microphone'}
           >
-            <Anchor className="w-4 h-4" />
-            <span>End voyage</span>
+            {/* Button inner glow */}
+            <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
+              micEnabled 
+                ? 'bg-gradient-to-br from-green-300/20 to-green-500/20' 
+                : 'bg-gradient-to-br from-red-300/20 to-red-500/20'
+            }`}></div>
+            
+            {micEnabled ? (
+              <Mic className="w-5 h-5 text-white relative z-10" />
+            ) : (
+              <MicOff className="w-5 h-5 text-white relative z-10" />
+            )}
           </button>
 
-          {/* Control buttons row */}
-          <div className="flex items-center gap-4">
-            {/* Microphone Control - smaller size */}
-            <button
-              onClick={toggleMic}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                          backdrop-blur-md border shadow-lg relative overflow-hidden group ${
-                micEnabled 
-                  ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
-                  : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
-              }`}
-              title={micEnabled ? 'Turn off microphone' : 'Turn on microphone'}
-            >
-              {/* Button inner glow */}
-              <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
-                micEnabled 
-                  ? 'bg-gradient-to-br from-green-300/20 to-green-500/20' 
-                  : 'bg-gradient-to-br from-red-300/20 to-red-500/20'
-              }`}></div>
-              
-              {micEnabled ? (
-                <Mic className="w-5 h-5 text-white relative z-10" />
-              ) : (
-                <MicOff className="w-5 h-5 text-white relative z-10" />
-              )}
-            </button>
+          {/* Video Control */}
+          <button
+            onClick={toggleVideo}
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
+                        backdrop-blur-md border shadow-lg relative overflow-hidden group ${
+              videoEnabled 
+                ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
+                : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
+            }`}
+            title={videoEnabled ? 'Turn off video' : 'Turn on video'}
+          >
+            {/* Button inner glow */}
+            <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
+              videoEnabled 
+                ? 'bg-gradient-to-br from-green-300/20 to-green-500/20' 
+                : 'bg-gradient-to-br from-red-300/20 to-red-500/20'
+            }`}></div>
+            
+            {videoEnabled ? (
+              <Video className="w-5 h-5 text-white relative z-10" />
+            ) : (
+              <VideoOff className="w-5 h-5 text-white relative z-10" />
+            )}
+          </button>
 
-            {/* Video Control - smaller size */}
-            <button
-              onClick={toggleVideo}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                          backdrop-blur-md border shadow-lg relative overflow-hidden group ${
-                videoEnabled 
-                  ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
-                  : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
-              }`}
-              title={videoEnabled ? 'Turn off video' : 'Turn on video'}
-            >
-              {/* Button inner glow */}
-              <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
-                videoEnabled 
-                  ? 'bg-gradient-to-br from-green-300/20 to-green-500/20' 
-                  : 'bg-gradient-to-br from-red-300/20 to-red-500/20'
-              }`}></div>
-              
-              {videoEnabled ? (
-                <Video className="w-5 h-5 text-white relative z-10" />
-              ) : (
-                <VideoOff className="w-5 h-5 text-white relative z-10" />
-              )}
-            </button>
+          {/* Screen Share Control */}
+          <button
+            onClick={toggleScreenShare}
+            className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
+                        backdrop-blur-md border shadow-lg relative overflow-hidden group ${
+              screenShareEnabled 
+                ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
+                : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
+            }`}
+            title={screenShareEnabled ? 'Stop screen sharing' : 'Start screen sharing'}
+          >
+            {/* Button inner glow */}
+            <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
+              screenShareEnabled 
+                ? 'bg-gradient-to-br from-green-300/20 to-green-500/20' 
+                : 'bg-gradient-to-br from-red-300/20 to-red-500/20'
+            }`}></div>
+            
+            {screenShareEnabled ? (
+              <Monitor className="w-5 h-5 text-white relative z-10" />
+            ) : (
+              <MonitorOff className="w-5 h-5 text-white relative z-10" />
+            )}
+          </button>
 
-            {/* Screen Share Control - smaller size */}
-            <button
-              onClick={toggleScreenShare}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
-                          backdrop-blur-md border shadow-lg relative overflow-hidden group ${
-                screenShareEnabled 
-                  ? 'bg-green-400/20 border-green-300/30 shadow-green-400/20' 
-                  : 'bg-red-400/20 border-red-300/30 shadow-red-400/20'
-              }`}
-              title={screenShareEnabled ? 'Stop screen sharing' : 'Start screen sharing'}
-            >
-              {/* Button inner glow */}
-              <div className={`absolute inset-0 rounded-2xl transition-opacity duration-300 ${
-                screenShareEnabled 
-                  ? 'bg-gradient-to-br from-green-300/20 to-green-500/20' 
-                  : 'bg-gradient-to-br from-red-300/20 to-red-500/20'
-              }`}></div>
-              
-              {screenShareEnabled ? (
-                <Monitor className="w-5 h-5 text-white relative z-10" />
-              ) : (
-                <MonitorOff className="w-5 h-5 text-white relative z-10" />
-              )}
-            </button>
-          </div>
+          {/* End Voyage Button - now matches the size and style of other buttons */}
+          <button
+            onClick={handleEndVoyage}
+            className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 
+                       backdrop-blur-md border border-white/25 shadow-lg relative overflow-hidden group
+                       bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                       hover:from-white/20 hover:via-white/15 hover:to-white/12 hover:border-white/35
+                       shadow-white/10 hover:shadow-white/15"
+            title="End the voyage and return to journey selection"
+          >
+            {/* Button inner glow */}
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/10 to-white/5 
+                            opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            
+            <Anchor className="w-5 h-5 text-white relative z-10" />
+          </button>
         </div>
 
         {/* Subtle decorative elements */}
