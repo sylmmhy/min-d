@@ -113,11 +113,11 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-80" 
+    <div className="fixed top-1/2 transform -translate-y-1/2 z-40 w-[480px]" 
          style={{ left: '75%', transform: 'translateX(-50%) translateY(-50%)' }}>
-      {/* iOS-style glass panel with blue tint */}
+      {/* iOS-style glass panel with blue tint - wider */}
       <div className="bg-gradient-to-br from-blue-400/20 via-blue-300/15 to-blue-500/25 
-                      backdrop-blur-xl border border-white/30 rounded-3xl p-8 
+                      backdrop-blur-xl border border-white/30 rounded-3xl p-10 
                       shadow-2xl shadow-blue-500/20 transition-all duration-500
                       relative overflow-hidden">
         
@@ -154,11 +154,11 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                 </p>
               </div>
 
-              {/* iOS-style Next button */}
+              {/* iOS-style Next button - refined colors */}
               <button
                 onClick={handleNext}
-                className="w-full px-8 py-4 bg-gradient-to-r from-blue-500/70 via-blue-400/70 to-purple-500/70
-                           hover:from-blue-500/90 hover:via-blue-400/90 hover:to-purple-500/90 
+                className="w-full px-8 py-4 bg-gradient-to-r from-blue-500/80 via-blue-400/80 to-blue-500/85
+                           hover:from-blue-500/95 hover:via-blue-400/95 hover:to-blue-500/95 
                            text-white rounded-2xl transition-all duration-300 font-inter font-medium text-lg
                            shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
                            transform hover:scale-[1.02] active:scale-[0.98]
@@ -281,14 +281,14 @@ export const WelcomePanel: React.FC<WelcomePanelProps> = ({
                       </div>
                     </div>
 
-                    {/* iOS-style submit button */}
+                    {/* iOS-style submit button - refined colors */}
                     <button
                       onClick={() => {
                         console.log('Voice input submitted:', audioBlob);
                         alert('Voice input recorded successfully!');
                       }}
-                      className="w-full px-8 py-4 bg-gradient-to-r from-blue-500/70 via-blue-400/70 to-purple-500/70
-                                 hover:from-blue-500/90 hover:via-blue-400/90 hover:to-purple-500/90 
+                      className="w-full px-8 py-4 bg-gradient-to-r from-blue-500/80 via-blue-400/80 to-blue-500/85
+                                 hover:from-blue-500/95 hover:via-blue-400/95 hover:to-blue-500/95 
                                  text-white rounded-2xl transition-all duration-300 font-inter font-medium text-lg
                                  shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50
                                  transform hover:scale-[1.02] active:scale-[0.98]
