@@ -95,8 +95,33 @@ export const JourneyPanel: React.FC<JourneyPanelProps> = ({
     ));
   };
 
-  const handleStartJourney = () => {
+  const handleStartJourney = async () => {
     console.log('Starting journey with task:', selectedTask.title);
+    
+    try {
+      // Send webhook via backend proxy
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/spline-proxy`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({ 
+          webhookUrl: 'https://hooks.spline.design/vS-vioZuERs',
+          payload: { numbaer2: 0 }
+        })
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        console.log('Journey webhook sent successfully:', responseData);
+      } else {
+        console.error('Failed to send journey webhook:', response.status, response.statusText);
+      }
+    } catch (error) {
+      console.error('Error sending journey webhook:', error);
+    }
+    
     // Hide the journey panel and show control panel
     setShowControlPanel(true);
     onClose?.();

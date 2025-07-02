@@ -7,7 +7,7 @@ avoiding CORS issues when calling from the frontend.
 ## Usage
 - URL: https://[your-project].supabase.co/functions/v1/spline-proxy
 - Method: POST
-- Body: { number: 0 } (or any data you want to send to Spline)
+- Body: { webhookUrl: string, payload: object } (for flexible webhook calls)
 - Returns: Response from Spline API
 */
 
@@ -18,7 +18,11 @@ const corsHeaders = {
 }
 
 interface SplineProxyRequest {
+  webhookUrl?: string;
+  payload?: any;
+  // Legacy support for direct payload
   number?: number;
+  numbaer2?: number;
   [key: string]: any;
 }
 
@@ -61,18 +65,33 @@ Deno.serve(async (req: Request) => {
     console.log('Request data:', JSON.stringify(requestData, null, 2))
     console.log('Timestamp:', new Date().toISOString())
 
+    // Determine webhook URL and payload
+    let webhookUrl: string
+    let payload: any
+
+    if (requestData.webhookUrl && requestData.payload) {
+      // New flexible format
+      webhookUrl = requestData.webhookUrl
+      payload = requestData.payload
+    } else {
+      // Legacy format - default to original webhook
+      webhookUrl = 'https://hooks.spline.design/gpRFQacPBZs'
+      payload = requestData
+    }
+
     // Make the request to Spline webhook
     try {
-      console.log('Calling Spline webhook...')
+      console.log('Calling Spline webhook:', webhookUrl)
+      console.log('With payload:', JSON.stringify(payload, null, 2))
       
-      const splineResponse = await fetch('https://hooks.spline.design/gpRFQacPBZs', {
+      const splineResponse = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'QgxEuHaAD0fyTDdEAYvVH_ynObU2SUnWdip86Gb1RJE',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(requestData)
+        body: JSON.stringify(payload)
       })
 
       console.log('Spline response status:', splineResponse.status)
@@ -97,6 +116,8 @@ Deno.serve(async (req: Request) => {
         statusText: splineResponse.statusText,
         timestamp: new Date().toISOString(),
         requestData: requestData,
+        webhookUrl: webhookUrl,
+        sentPayload: payload,
         splineResponse: splineData,
         headers: Object.fromEntries(splineResponse.headers.entries())
       }
@@ -122,7 +143,8 @@ Deno.serve(async (req: Request) => {
           error: 'Failed to call Spline webhook',
           message: splineError.message,
           timestamp: new Date().toISOString(),
-          requestData: requestData
+          requestData: requestData,
+          webhookUrl: webhookUrl
         }),
         {
           status: 500,
