@@ -99,12 +99,12 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
       <div className="flex items-center justify-center min-h-screen p-8">
         <div className="relative max-w-2xl w-full">
           
-          {/* Main glass panel with Apple-inspired styling and tinted background */}
-          <div className="relative bg-gradient-to-br from-slate-500/20 via-slate-400/15 to-slate-600/25 
+          {/* Main glass panel with Apple-inspired styling - reverted to transparent background */}
+          <div className="relative bg-gradient-to-br from-white/12 via-white/8 to-white/6 
                           backdrop-blur-2xl border border-white/20 rounded-3xl p-10
                           shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(0,0,0,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
                           before:absolute before:inset-0 before:rounded-3xl 
-                          before:bg-gradient-to-br before:from-slate-400/10 before:via-transparent before:to-transparent 
+                          before:bg-gradient-to-br before:from-white/8 before:via-transparent before:to-transparent 
                           before:pointer-events-none overflow-hidden">
             
             {/* Header without logo - title changed to 32px */}
@@ -125,7 +125,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                   value={goal}
                   onChange={(e) => setGoal(e.target.value)}
                   placeholder="Share your thoughts on who you want to become..."
-                  className="w-full h-40 px-6 py-4 bg-gradient-to-br from-slate-600/20 via-slate-500/15 to-slate-700/25 backdrop-blur-md 
+                  className="w-full h-40 px-6 py-4 bg-black/15 backdrop-blur-md 
                              border border-white/25 rounded-2xl text-white placeholder-white/60
                              focus:outline-none focus:ring-2 focus:ring-white/30 
                              focus:border-white/40 transition-all duration-300
@@ -141,14 +141,14 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                 </div>
               </div>
 
-              {/* Apple-style Next button - using Back button size (smaller) */}
+              {/* Apple-style Next button - using Back button size (smaller) - reverted to transparent background */}
               <div className="flex justify-center pt-4">
                 <button
                   type="button"
                   onClick={handleNext}
                   disabled={!goal.trim() || isSubmitting}
-                  className="px-8 py-2 bg-gradient-to-br from-slate-500/20 via-slate-400/15 to-slate-600/25
-                             hover:from-slate-500/25 hover:via-slate-400/20 hover:to-slate-600/30
+                  className="px-8 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
+                             hover:from-white/20 hover:via-white/15 hover:to-white/12
                              text-white rounded-xl transition-all duration-300
                              border border-white/25 hover:border-white/35
                              font-inter font-medium text-base backdrop-blur-md
