@@ -17,27 +17,33 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
 
   const sendSplineWebhook = async () => {
     try {
-      console.log('Sending Spline webhook...');
+      console.log('Sending Spline webhook via backend proxy...');
       
-      const response = await fetch('https://hooks.spline.design/gpRFQacPBZs', {
+      // Call our backend proxy instead of Spline directly
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/spline-proxy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'QgxEuHaAD0fyTDdEAYvVH_ynObU2SUnWdip86Gb1RJE',
-          'Accept': 'application/json'
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify({ number: 0 })
       });
 
       if (response.ok) {
-        console.log('Spline webhook sent successfully');
         const responseData = await response.json();
-        console.log('Webhook response:', responseData);
+        console.log('Backend proxy response:', responseData);
+        
+        if (responseData.success) {
+          console.log('Spline webhook sent successfully via proxy');
+          console.log('Spline response:', responseData.splineResponse);
+        } else {
+          console.error('Spline webhook failed:', responseData);
+        }
       } else {
-        console.error('Failed to send Spline webhook:', response.status, response.statusText);
+        console.error('Failed to call backend proxy:', response.status, response.statusText);
       }
     } catch (error) {
-      console.error('Error sending Spline webhook:', error);
+      console.error('Error calling backend proxy:', error);
     }
   };
 
@@ -48,7 +54,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
     setIsSubmitting(true);
     
     try {
-      // Send the Spline webhook first
+      // Send the Spline webhook first via backend proxy
       await sendSplineWebhook();
       
       // Simulate a brief delay for better UX
@@ -70,7 +76,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
       setIsSubmitting(true);
       
       try {
-        // Send the Spline webhook first
+        // Send the Spline webhook first via backend proxy
         await sendSplineWebhook();
         
         // Simulate a brief delay for better UX
