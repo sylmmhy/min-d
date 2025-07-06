@@ -51,14 +51,6 @@ export const SplineScene: React.FC<SplineSceneProps> = ({
 
   return (
     <div className="fixed inset-0 z-0">
-      {/* 刷新按钮 - 用于调试 */}
-      <button
-        onClick={forceRefresh}
-        className="fixed top-4 right-4 z-50 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg backdrop-blur-sm border border-white/20 transition-all duration-200"
-      >
-        刷新场景
-      </button>
-
       {/* 交互禁用遮罩层 - 当模态框打开时阻止Spline交互 */}
       {isInteractionDisabled && (
         <div 
