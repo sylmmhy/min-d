@@ -229,7 +229,7 @@ export const SeagullPanel: React.FC<SeagullPanelProps> = ({
             <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/30 
                             shadow-lg relative">
               <img
-                src="/截屏2025-06-30 09.27.12 copy.png"
+                src="/seagull-avatar-copy.png"
                 alt="Seagull Captain"
                 className="w-full h-full object-cover"
                 onError={(e) => {
