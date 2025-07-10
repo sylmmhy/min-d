@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { Heart } from 'lucide-react';
 
+// Utility function to get or create a user ID bound to the browser
+const getOrCreateUserId = (): string => {
+  const storageKey = 'mindboat_user_id';
+  let userId = localStorage.getItem(storageKey);
+  
+  if (!userId) {
+    // Generate a new UUID-like ID
+    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem(storageKey, userId);
+  }
+  
+  return userId;
+};
+
 interface LifeGoalsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -13,37 +27,54 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
   onSubmit
 }) => {
   const [goal, setGoal] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  // Function to save goal data to Supabase
+  const saveGoalToSupabase = async (userId: string, goalText: string) => {
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/goals-webhook`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({
+        userId: userId,
+        goal: goalText,
+        timestamp: new Date().toISOString(),
+        source: 'life_goals_modal'
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to save goal: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  };
+
+  // Function to trigger Spline animation
   const sendSplineWebhook = async () => {
     try {
-      console.log('Sending Spline webhook via backend proxy...');
-      
-      // Call our backend proxy instead of Spline directly
       const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/spline-proxy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
-        body: JSON.stringify({ number: 0 })
+        body: JSON.stringify({ 
+          webhookUrl: 'https://hooks.spline.design/gpRFQacPBZs',
+          payload: { number: 0 }
+        })
       });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        console.log('Backend proxy response:', responseData);
-        
-        if (responseData.success) {
-          console.log('Spline webhook sent successfully via proxy');
-          console.log('Spline response:', responseData.splineResponse);
-        } else {
-          console.error('Spline webhook failed:', responseData);
-        }
-      } else {
-        console.error('Failed to call backend proxy:', response.status, response.statusText);
+      if (!response.ok) {
+        throw new Error(`Failed to trigger Spline animation: ${response.status} ${response.statusText}`);
       }
+
+      return await response.json();
     } catch (error) {
-      console.error('Error calling backend proxy:', error);
+      console.error('Error triggering Spline animation:', error);
+      throw error;
     }
   };
 
@@ -72,25 +103,38 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
   };
 
   const handleNext = async () => {
-    if (goal.trim()) {
-      setIsSubmitting(true);
-      
-      try {
-        // Send the Spline webhook first via backend proxy
-        await sendSplineWebhook();
-        
-        // Simulate a brief delay for better UX
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        // Then submit the goal
-        onSubmit(goal.trim());
-        setGoal('');
-        onClose();
-      } catch (error) {
-        console.error('Error in handleNext:', error);
-      } finally {
-        setIsSubmitting(false);
-      }
+    if (!goal.trim()) return;
+
+    // Start loading state - prevent multiple clicks
+    setIsLoading(true);
+
+    try {
+      // Step 1: Get or create user ID (bound to browser)
+      const userId = getOrCreateUserId();
+      console.log('User ID:', userId);
+
+      // Step 2: Save data to Supabase
+      console.log('Saving goal to Supabase...');
+      const saveResult = await saveGoalToSupabase(userId, goal.trim());
+      console.log('Goal saved successfully:', saveResult);
+
+      // Step 3: Trigger Spline animation
+      console.log('Triggering Spline animation...');
+      const animationResult = await sendSplineWebhook();
+      console.log('Spline animation triggered successfully:', animationResult);
+
+      // Step 4: Complete operations
+      onSubmit(goal.trim());
+      onClose();
+      setGoal('');
+
+    } catch (error) {
+      console.error('Error in handleNext:', error);
+      // You could add user-facing error handling here, such as:
+      // alert('保存失败，请重试');
+    } finally {
+      // Always reset loading state
+      setIsLoading(false);
     }
   };
 
@@ -152,7 +196,7 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                 <button
                   type="button"
                   onClick={handleNext}
-                  disabled={!goal.trim() || isSubmitting}
+                  disabled={!goal.trim() || isLoading}
                   className="px-8 py-2 bg-gradient-to-br from-white/15 via-white/10 to-white/8
                              hover:from-white/20 hover:via-white/15 hover:to-white/12
                              text-white rounded-xl transition-all duration-300
@@ -164,11 +208,11 @@ export const LifeGoalsModal: React.FC<LifeGoalsModalProps> = ({
                              transform hover:scale-[1.02] active:scale-[0.98]
                              flex items-center justify-center gap-2.5 min-w-[100px]"
                 >
-                  {isSubmitting ? (
+                  {isLoading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white/30 border-t-white 
                                       rounded-full animate-spin"></div>
-                      <span>Submitting...</span>
+                      <span>Saving...</span>
                     </>
                   ) : (
                     <>
