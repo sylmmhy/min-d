@@ -1,11 +1,13 @@
 /*
-# Spline Webhook Edge Function
+# Spline Webhook Edge Function with Logging
 
 This Edge Function receives POST requests from Spline when buttons are clicked,
-and broadcasts the data to connected clients via Supabase Realtime.
+logs all events to spline_event_logs table for debugging, and broadcasts the 
+data to connected clients via Supabase Realtime.
 
 ## Features
 - Receives JSON data from Spline API calls
+- Logs all events to spline_event_logs table for debugging
 - Validates incoming requests
 - Broadcasts events to Supabase Realtime channel
 - Handles CORS for cross-origin requests
@@ -29,6 +31,8 @@ interface SplineWebhookPayload {
 }
 
 Deno.serve(async (req: Request) => {
+  let logId: string | null = null;
+  
   try {
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
@@ -134,6 +138,32 @@ Deno.serve(async (req: Request) => {
       source: 'spline'
     }
 
+    console.log('=== LOGGING EVENT TO DATABASE ===')
+    
+    // Insert initial log record
+    try {
+      const { data: logData, error: logError } = await supabase
+        .from('spline_event_logs')
+        .insert({
+          event_type: eventType,
+          source_webhook: 'spline-webhook',
+          raw_payload: payload,
+          broadcast_payload: eventData,
+          status: 'received'
+        })
+        .select('id')
+        .single()
+
+      if (logError) {
+        console.error('Failed to insert log record:', logError)
+      } else {
+        logId = logData?.id
+        console.log('Log record created with ID:', logId)
+      }
+    } catch (logInsertError) {
+      console.error('Error inserting log record:', logInsertError)
+    }
+
     console.log('=== BROADCASTING EVENT ===')
     console.log('Event data:', JSON.stringify(eventData, null, 2))
 
@@ -148,10 +178,31 @@ Deno.serve(async (req: Request) => {
 
     console.log('Broadcast result:', broadcastResult)
 
+    // Update log record with broadcast status
+    if (logId) {
+      try {
+        const { error: updateError } = await supabase
+          .from('spline_event_logs')
+          .update({
+            status: 'broadcasted'
+          })
+          .eq('id', logId)
+
+        if (updateError) {
+          console.error('Failed to update log record status:', updateError)
+        } else {
+          console.log('Log record updated to broadcasted status')
+        }
+      } catch (logUpdateError) {
+        console.error('Error updating log record:', logUpdateError)
+      }
+    }
+
     // Prepare response based on the decision
     let apiResponse = {
       success: true,
       eventId: crypto.randomUUID(),
+      logId: logId,
       timestamp: new Date().toISOString(),
       receivedPayload: payload,
       processedAs: {
@@ -204,11 +255,32 @@ Deno.serve(async (req: Request) => {
     console.error('=== ERROR IN WEBHOOK ===')
     console.error('Error details:', error)
     
+    // Update log record with error status if we have a logId
+    if (logId) {
+      try {
+        const supabase = createClient(
+          Deno.env.get('SUPABASE_URL') ?? '',
+          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+        )
+        
+        await supabase
+          .from('spline_event_logs')
+          .update({
+            status: 'error',
+            error_message: error.message
+          })
+          .eq('id', logId)
+      } catch (logUpdateError) {
+        console.error('Error updating log record with error status:', logUpdateError)
+      }
+    }
+    
     return new Response(
       JSON.stringify({ 
         error: 'Internal server error',
         message: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        logId: logId
       }),
       {
         status: 500,
