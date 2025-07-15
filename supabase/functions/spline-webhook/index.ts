@@ -1,18 +1,22 @@
 /*
-# Spline Webhook Edge Function with Logging
+# Spline Webhook Edge Function - Anonymous Access Enabled
 
-This Edge Function receives POST requests from Spline when buttons are clicked,
-logs all events to spline_event_logs table for debugging, and broadcasts the 
-data to connected clients via Supabase Realtime.
+This Edge Function is designed to accept anonymous requests from Spline without JWT validation.
+It explicitly handles requests without authentication headers and logs all events for debugging.
 
 ## Features
-- Receives JSON data from Spline API calls
-- Logs all events to spline_event_logs table for debugging
-- Validates incoming requests
-- Broadcasts events to Supabase Realtime channel
-- Handles CORS for cross-origin requests
-- Supports multiple API endpoints for different interactions
-- Now supports both authenticated and anonymous requests
+- ✅ Accepts anonymous requests (no JWT required)
+- ✅ Handles CORS for cross-origin requests  
+- ✅ Logs all events to spline_event_logs table
+- ✅ Broadcasts events to Supabase Realtime
+- ✅ Supports multiple payload formats
+- ✅ Detailed error handling and logging
+
+## Usage
+- URL: https://[your-project].supabase.co/functions/v1/spline-webhook
+- Method: POST
+- Headers: Content-Type: application/json (Authorization header is OPTIONAL)
+- Body: {"number": 1} for LifeGoalsModal, {"number": 2} for WelcomePanel
 */
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
@@ -20,7 +24,8 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-requested-with',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
+  'Access-Control-Max-Age': '86400',
 }
 
 interface SplineWebhookPayload {
@@ -35,18 +40,42 @@ Deno.serve(async (req: Request) => {
   let logId: string | null = null;
   
   try {
+    console.log('=== SPLINE WEBHOOK REQUEST RECEIVED ===')
+    console.log('Method:', req.method)
+    console.log('URL:', req.url)
+    console.log('Timestamp:', new Date().toISOString())
+
     // Handle CORS preflight requests
     if (req.method === 'OPTIONS') {
+      console.log('✅ Handling CORS preflight request')
       return new Response(null, {
         status: 200,
         headers: corsHeaders,
       })
     }
 
-    // Only allow POST requests
-    if (req.method !== 'POST') {
+    // Allow GET requests for health checks
+    if (req.method === 'GET') {
+      console.log('✅ Health check request')
       return new Response(
-        JSON.stringify({ error: 'Method not allowed' }),
+        JSON.stringify({ 
+          status: 'healthy',
+          message: 'Spline Webhook is running',
+          timestamp: new Date().toISOString(),
+          allowsAnonymous: true
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      )
+    }
+
+    // Only allow POST requests for webhook functionality
+    if (req.method !== 'POST') {
+      console.log('❌ Method not allowed:', req.method)
+      return new Response(
+        JSON.stringify({ error: 'Method not allowed', allowedMethods: ['POST', 'OPTIONS', 'GET'] }),
         {
           status: 405,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -54,39 +83,44 @@ Deno.serve(async (req: Request) => {
       )
     }
 
-    // Log request headers for debugging
+    // Log all request headers for debugging (but don't require Authorization)
     console.log('=== REQUEST HEADERS ===')
-    console.log('Authorization:', req.headers.get('authorization'))
+    const headers = Object.fromEntries(req.headers.entries())
+    console.log('All headers:', headers)
+    
+    const hasAuth = req.headers.get('authorization')
+    console.log('Has Authorization header:', !!hasAuth)
     console.log('Content-Type:', req.headers.get('content-type'))
     console.log('User-Agent:', req.headers.get('user-agent'))
     console.log('Origin:', req.headers.get('origin'))
 
     // Parse the request body
-    let payload: SplineWebhookPayload
+    let payload: SplineWebhookPayload = {}
     try {
-      payload = await req.json()
+      const bodyText = await req.text()
+      console.log('Raw body:', bodyText)
+      
+      if (bodyText.trim()) {
+        payload = JSON.parse(bodyText)
+        console.log('✅ Parsed JSON payload:', JSON.stringify(payload, null, 2))
+      } else {
+        console.log('⚠️ Empty body, using default payload')
+        payload = { number: 1 } // Default to show LifeGoalsModal
+      }
     } catch (error) {
-      console.error('JSON parsing error:', error)
-      return new Response(
-        JSON.stringify({ error: 'Invalid JSON payload' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
+      console.error('❌ JSON parsing error:', error)
+      console.log('Using default payload due to parse error')
+      payload = { number: 1 } // Default fallback
     }
 
-    // Log the received payload for debugging
-    console.log('=== SPLINE WEBHOOK RECEIVED ===')
-    console.log('Raw payload:', JSON.stringify(payload, null, 2))
-    console.log('Payload number:', payload.number, 'Type:', typeof payload.number)
-    console.log('Payload action:', payload.action)
-
     // Initialize Supabase client with service role key for database operations
+    // This bypasses RLS and allows anonymous function execution
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    console.log('✅ Supabase client initialized with service role')
 
     // Determine event type and modal type based on payload
     let eventType = 'spline_button_click'
@@ -94,8 +128,9 @@ Deno.serve(async (req: Request) => {
     let responseMessage = 'Event processed'
     let uiAction = 'show_goals'
 
-    // Very explicit number checking with detailed logging
     console.log('=== DECISION LOGIC ===')
+    console.log('Payload number:', payload.number, 'Type:', typeof payload.number)
+    console.log('Payload action:', payload.action)
     
     if (payload.number === 2) {
       eventType = 'spline_welcome_trigger'
@@ -141,7 +176,9 @@ Deno.serve(async (req: Request) => {
         uiAction: uiAction,
         message: responseMessage,
         timestamp: new Date().toISOString(),
-        processedAt: new Date().toISOString()
+        processedAt: new Date().toISOString(),
+        source: 'spline-webhook',
+        hasAuth: !!hasAuth
       },
       timestamp: new Date().toISOString(),
       source: 'spline'
@@ -149,7 +186,7 @@ Deno.serve(async (req: Request) => {
 
     console.log('=== LOGGING EVENT TO DATABASE ===')
     
-    // Insert initial log record
+    // Insert log record using service role (bypasses RLS)
     try {
       const { data: logData, error: logError } = await supabase
         .from('spline_event_logs')
@@ -164,47 +201,52 @@ Deno.serve(async (req: Request) => {
         .single()
 
       if (logError) {
-        console.error('Failed to insert log record:', logError)
+        console.error('❌ Failed to insert log record:', logError)
+        console.error('Log error details:', JSON.stringify(logError, null, 2))
       } else {
         logId = logData?.id
-        console.log('Log record created with ID:', logId)
+        console.log('✅ Log record created with ID:', logId)
       }
     } catch (logInsertError) {
-      console.error('Error inserting log record:', logInsertError)
+      console.error('❌ Exception inserting log record:', logInsertError)
     }
 
     console.log('=== BROADCASTING EVENT ===')
     console.log('Event data:', JSON.stringify(eventData, null, 2))
 
     // Broadcast to realtime channel
-    const channel = supabase.channel('spline-events')
-    
-    const broadcastResult = await channel.send({
-      type: 'broadcast',
-      event: 'spline_interaction',
-      payload: eventData
-    })
+    try {
+      const channel = supabase.channel('spline-events')
+      
+      const broadcastResult = await channel.send({
+        type: 'broadcast',
+        event: 'spline_interaction',
+        payload: eventData
+      })
 
-    console.log('Broadcast result:', broadcastResult)
+      console.log('✅ Broadcast result:', broadcastResult)
 
-    // Update log record with broadcast status
-    if (logId) {
-      try {
-        const { error: updateError } = await supabase
-          .from('spline_event_logs')
-          .update({
-            status: 'broadcasted'
-          })
-          .eq('id', logId)
+      // Update log record with broadcast status
+      if (logId) {
+        try {
+          const { error: updateError } = await supabase
+            .from('spline_event_logs')
+            .update({
+              status: 'broadcasted'
+            })
+            .eq('id', logId)
 
-        if (updateError) {
-          console.error('Failed to update log record status:', updateError)
-        } else {
-          console.log('Log record updated to broadcasted status')
+          if (updateError) {
+            console.error('❌ Failed to update log record status:', updateError)
+          } else {
+            console.log('✅ Log record updated to broadcasted status')
+          }
+        } catch (logUpdateError) {
+          console.error('❌ Exception updating log record:', logUpdateError)
         }
-      } catch (logUpdateError) {
-        console.error('Error updating log record:', logUpdateError)
       }
+    } catch (broadcastError) {
+      console.error('❌ Broadcast failed:', broadcastError)
     }
 
     // Prepare response based on the decision
@@ -214,12 +256,14 @@ Deno.serve(async (req: Request) => {
       logId: logId,
       timestamp: new Date().toISOString(),
       receivedPayload: payload,
+      anonymousAccess: true,
+      hasAuthHeader: !!hasAuth,
       requestInfo: {
         method: req.method,
         url: req.url,
-        headers: Object.fromEntries(req.headers.entries()),
         userAgent: req.headers.get('user-agent'),
-        origin: req.headers.get('origin')
+        origin: req.headers.get('origin'),
+        contentType: req.headers.get('content-type')
       },
       processedAs: {
         eventType: eventType,
@@ -229,8 +273,8 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    // Add specific response content based on number
-    if (payload.number === 2 || modalType === 'welcome') {
+    // Add specific response content based on modal type
+    if (modalType === 'welcome') {
       apiResponse = {
         ...apiResponse,
         status: 'welcome',
@@ -242,7 +286,7 @@ Deno.serve(async (req: Request) => {
           type: 'welcome'
         }
       }
-    } else if (payload.number === 1 || modalType === 'goals') {
+    } else {
       apiResponse = {
         ...apiResponse,
         status: 'goals',
@@ -268,9 +312,11 @@ Deno.serve(async (req: Request) => {
     )
 
   } catch (error) {
-    console.error('=== ERROR IN WEBHOOK ===')
+    console.error('=== CRITICAL ERROR IN WEBHOOK ===')
     console.error('Error details:', error)
     console.error('Error stack:', error.stack)
+    console.error('Error name:', error.name)
+    console.error('Error message:', error.message)
     
     // Update log record with error status if we have a logId
     if (logId) {
@@ -287,19 +333,24 @@ Deno.serve(async (req: Request) => {
             error_message: error.message
           })
           .eq('id', logId)
+          
+        console.log('✅ Updated log record with error status')
       } catch (logUpdateError) {
-        console.error('Error updating log record with error status:', logUpdateError)
+        console.error('❌ Error updating log record with error status:', logUpdateError)
       }
     }
     
+    const errorResponse = {
+      error: 'Internal server error',
+      message: error.message,
+      timestamp: new Date().toISOString(),
+      logId: logId,
+      anonymousAccess: true,
+      stack: error.stack
+    }
+    
     return new Response(
-      JSON.stringify({ 
-        error: 'Internal server error',
-        message: error.message,
-        stack: error.stack,
-        timestamp: new Date().toISOString(),
-        logId: logId
-      }),
+      JSON.stringify(errorResponse),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
