@@ -12,13 +12,14 @@ data to connected clients via Supabase Realtime.
 - Broadcasts events to Supabase Realtime channel
 - Handles CORS for cross-origin requests
 - Supports multiple API endpoints for different interactions
+- Now supports both authenticated and anonymous requests
 */
 
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-requested-with',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 }
 
@@ -53,11 +54,19 @@ Deno.serve(async (req: Request) => {
       )
     }
 
+    // Log request headers for debugging
+    console.log('=== REQUEST HEADERS ===')
+    console.log('Authorization:', req.headers.get('authorization'))
+    console.log('Content-Type:', req.headers.get('content-type'))
+    console.log('User-Agent:', req.headers.get('user-agent'))
+    console.log('Origin:', req.headers.get('origin'))
+
     // Parse the request body
     let payload: SplineWebhookPayload
     try {
       payload = await req.json()
     } catch (error) {
+      console.error('JSON parsing error:', error)
       return new Response(
         JSON.stringify({ error: 'Invalid JSON payload' }),
         {
@@ -73,7 +82,7 @@ Deno.serve(async (req: Request) => {
     console.log('Payload number:', payload.number, 'Type:', typeof payload.number)
     console.log('Payload action:', payload.action)
 
-    // Initialize Supabase client
+    // Initialize Supabase client with service role key for database operations
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
@@ -205,6 +214,13 @@ Deno.serve(async (req: Request) => {
       logId: logId,
       timestamp: new Date().toISOString(),
       receivedPayload: payload,
+      requestInfo: {
+        method: req.method,
+        url: req.url,
+        headers: Object.fromEntries(req.headers.entries()),
+        userAgent: req.headers.get('user-agent'),
+        origin: req.headers.get('origin')
+      },
       processedAs: {
         eventType: eventType,
         modalType: modalType,
@@ -254,6 +270,7 @@ Deno.serve(async (req: Request) => {
   } catch (error) {
     console.error('=== ERROR IN WEBHOOK ===')
     console.error('Error details:', error)
+    console.error('Error stack:', error.stack)
     
     // Update log record with error status if we have a logId
     if (logId) {
@@ -279,6 +296,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({ 
         error: 'Internal server error',
         message: error.message,
+        stack: error.stack,
         timestamp: new Date().toISOString(),
         logId: logId
       }),
