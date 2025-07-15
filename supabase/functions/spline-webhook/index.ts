@@ -23,8 +23,8 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-requested-with',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS, GET',
+  'Access-Control-Allow-Headers': '*',
+  'Access-Control-Allow-Methods': '*',
   'Access-Control-Max-Age': '86400',
 }
 
@@ -62,7 +62,8 @@ Deno.serve(async (req: Request) => {
           status: 'healthy',
           message: 'Spline Webhook is running',
           timestamp: new Date().toISOString(),
-          allowsAnonymous: true
+          allowsAnonymous: true,
+          note: 'This function accepts completely anonymous requests'
         }),
         {
           status: 200,
